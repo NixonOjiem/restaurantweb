@@ -21,13 +21,13 @@
 
         <div class="hidden md:flex items-center space-x-4">
           <button
-            class="px-4 py-2 rounded-full border border-green-600 text-green-600 font-medium hover:bg-green-600 hover:text-white transition-colors">
-            Call Us
+            class="px-4 py-2 rounded-full border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors">
+            Book Now
           </button>
-          <button
-            class="px-6 py-2 rounded-full bg-red-600 text-white font-medium hover:bg-red-700 transition-colors flex items-center">
-            Book Table
-          </button>
+          <a href="/login"
+            class="px-6 py-2 rounded-full bg-[#2C3E50] text-white font-medium hover:bg-[#455566] transition-colors flex items-center">
+            Get Started
+          </a>
         </div>
 
         <button @click="toggleMenu"
@@ -59,7 +59,7 @@
 
           <div class="pt-4 flex space-x-3">
             <button
-              class="flex-1 px-4 py-3 rounded-lg border border-green-600 text-green-600 font-medium hover:bg-green-600 hover:text-white transition-colors flex items-center justify-center">
+              class="flex-1 px-4 py-3 rounded-lg border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors flex items-center justify-center">
               Call
             </button>
             <button
@@ -79,7 +79,7 @@ import { ref, defineOptions } from 'vue';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 
 defineOptions({
-  name: "NavbarComponent",
+  name: "RestaurantNavbar",
 });
 
 const isMenuOpen = ref(false);
