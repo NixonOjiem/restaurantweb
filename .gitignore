@@ -1,0 +1,72 @@
+# --- General Operating System and Editor Ignores ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Node.js / npm Ignores (Applies to both server and client) ---
+# Dependencies directory
+/node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+*.pid
+*.seed
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.development.local
+
+# npm/yarn/pnpm caches
+.npm
+.yarn-cache
+.pnp
+.pnpm-store
+
+# Optional npm/yarn lock files (If you decide to ignore them)
+# package-lock.json
+# yarn.lock
+
+# --- Server Specific Ignores (Node.js) ---
+# Compiled JavaScript or TypeScript output
+/server/dist
+/server/build
+/server/.env
+/server/.env.local
+/server/node_modules
+
+# Test coverage results
+/server/coverage
+
+# Database files (if local, temporary, or sensitive)
+/server/*.sqlite
+/server/data/*.db
+
+# Secrets or config files (e.g., if not using .env)
+/server/config/secrets.js
+
+# --- Client Specific Ignores (Vue/Vite) ---
+# Vite/Vue build output
+/client/dist
+/client/node_modules
+/client/out
+/client/.env
+/client/.env.local
+
+# Vite's cache directory
+/client/.vite
+
+# Test coverage results
+/client/coverage
+
+# End-to-End (e2e) tests cache
+/client/cypress/videos
+/client/cypress/screenshots
