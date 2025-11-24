@@ -8,6 +8,9 @@ const PORT = 3000;
 
 // 4. Mount the testUrl router at the '/restaurant' path.
 // All routes defined in test.route.js will be prefixed with '/restaurant'
+app.get("/", (req, res) => {
+  res.send("Hello from the restaurant main express server!");
+});
 app.use("/restaurant", testUrl);
 
 // 5. Start the server and listen on the defined port
