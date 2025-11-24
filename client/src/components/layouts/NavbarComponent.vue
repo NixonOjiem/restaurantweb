@@ -3,15 +3,10 @@
     <nav class="bg-white rounded-2xl shadow-xl p-4 w-full max-w-6xl">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-              </path>
-            </svg>
+          <div class="w-16 h-16 rounded-full flex items-center justify-center">
+            <img :src="logoSvg" alt="Bistro Elegante Logo" class="w-14 h-14 text-white object-contain" />
           </div>
-          <span class="text-2xl font-bold text-gray-800">Bistro Elegante</span>
+          <span class="text-2xl font-bold text-gray-800">Cuisine Élégante</span>
         </div>
 
         <div class="hidden md:flex items-center space-x-8">
@@ -26,13 +21,13 @@
 
         <div class="hidden md:flex items-center space-x-4">
           <button
-            class="px-4 py-2 rounded-full border border-green-600 text-green-600 font-medium hover:bg-green-600 hover:text-white transition-colors">
-            Call Us
+            class="px-4 py-2 rounded-full border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors">
+            Book Now
           </button>
-          <button
-            class="px-6 py-2 rounded-full bg-red-600 text-white font-medium hover:bg-red-700 transition-colors flex items-center">
-            Book Table
-          </button>
+          <a href="/login"
+            class="px-6 py-2 rounded-full bg-[#2C3E50] text-white font-medium hover:bg-[#455566] transition-colors flex items-center">
+            Get Started
+          </a>
         </div>
 
         <button @click="toggleMenu"
@@ -64,7 +59,7 @@
 
           <div class="pt-4 flex space-x-3">
             <button
-              class="flex-1 px-4 py-3 rounded-lg border border-green-600 text-green-600 font-medium hover:bg-green-600 hover:text-white transition-colors flex items-center justify-center">
+              class="flex-1 px-4 py-3 rounded-lg border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors flex items-center justify-center">
               Call
             </button>
             <button
@@ -81,9 +76,10 @@
 
 <script setup lang="ts">
 import { ref, defineOptions } from 'vue';
+import logoSvg from '@/assets/Cuisine-Elegante.svg';
 
 defineOptions({
-  name: "NavbarComponent",
+  name: "RestaurantNavbar",
 });
 
 const isMenuOpen = ref(false);
