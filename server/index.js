@@ -2,9 +2,10 @@
 require("dotenv").config();
 const express = require("express");
 const connectDB = require("./src/config/db.config");
+const errorHandler = require("./src/config/errorHandler");
 // Import the router you exported from test.route.js
 const testUrl = require("./src/routes/test.route");
-
+const authRoutes = require("./src/routes/auth.route");
 const app = express();
 const PORT = 3000;
 
@@ -21,7 +22,7 @@ app.get("/", (req, res) => {
 
 // 5.Test Api ROUTE  prefixed with /restaurant
 app.use("/restaurant", testUrl);
-
+app.use("/restaurant/v1/auth", authRoutes);
 // 6. Start the server and listen on the defined port
 app.listen(PORT, () => {
   console.log(`✅ Server is running on http://localhost:${PORT}`);

@@ -9,17 +9,20 @@ function applyUserMethods(UserSchema) {
   // --- Mongoose Middleware (Pre-Save Hooks) ---
 
   // 1. Hash the password before saving the User document
-  UserSchema.pre("save", async function (next) {
+  UserSchema.pre("save", async function () {
     // Only run this function if password was actually modified (or is new)
-    // and a local password exists (not OAuth-only account)
     if (!this.isModified("password") || !this.password) {
-      return next();
+      // Return without hashing if criteria not met.
+      // Mongoose treats a synchronous return as success.
+      return;
     }
 
     // Generate a salt and hash the password
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
+
+    // Do NOT call next() here. The Promise returned by this async function
+    // will implicitly tell Mongoose that the middleware is complete.
   });
 
   // --- Mongoose Instance Methods ---

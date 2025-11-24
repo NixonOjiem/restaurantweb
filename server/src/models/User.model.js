@@ -42,7 +42,6 @@ const UserSchema = new mongoose.Schema({
     default: "user",
     // Add enum to restrict values to 'user' or 'admin'
     enum: ["user", "admin"],
-    required: [true, "Please add a role"],
     trim: true,
   },
   createdAt: {
@@ -51,7 +50,7 @@ const UserSchema = new mongoose.Schema({
   },
   deletedAt: {
     type: Date,
-    default: Date.now,
+    default: null,
   },
 });
 
