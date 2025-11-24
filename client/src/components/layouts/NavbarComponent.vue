@@ -3,15 +3,10 @@
     <nav class="bg-white rounded-2xl shadow-xl p-4 w-full max-w-6xl">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-              </path>
-            </svg>
+          <div class="w-16 h-16 rounded-full flex items-center justify-center">
+            <img :src="logoSvg" alt="Bistro Elegante Logo" class="w-14 h-14 text-white object-contain" />
           </div>
-          <span class="text-2xl font-bold text-gray-800">Bistro Elegante</span>
+          <span class="text-2xl font-bold text-gray-800">Cuisine Élégante</span>
         </div>
 
         <div class="hidden md:flex items-center space-x-8">
@@ -81,6 +76,7 @@
 
 <script setup lang="ts">
 import { ref, defineOptions } from 'vue';
+import logoSvg from '@/assets/Cuisine-Elegante.svg';
 
 defineOptions({
   name: "NavbarComponent",
