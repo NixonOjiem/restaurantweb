@@ -1,6 +1,6 @@
 <template>
   <div>
-    login page
+    Home
   </div>
 </template>
 <script setup lang="ts">
