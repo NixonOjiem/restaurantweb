@@ -13,6 +13,11 @@ const UserSchema = new mongoose.Schema({
       "Please provide a valid email",
     ],
   },
+  fullName: {
+    type: String,
+    required: [true, "Please provide an email"],
+    unique: false,
+  },
   password: {
     type: String,
     // Password is not required if the user signs up via Google
@@ -34,6 +39,7 @@ const UserSchema = new mongoose.Schema({
   userName: {
     type: String,
     required: [true, "Please add a name"],
+    unique: true,
     trim: true,
   },
   role: {

@@ -24,9 +24,9 @@ const sendTokenResponse = (user, statusCode, res) => {
       token: token, // Also return the token in the body for easy testing/mobile apps
       user: {
         id: user._id,
-        name: user.userName, // NOTE: Changed 'user.name' to 'user.userName' to match your schema
+        name: user.userName,
         email: user.email,
-        role: user.role, // Including the role is often useful here
+        role: user.role,
       },
     });
 };
@@ -40,11 +40,17 @@ const sendTokenResponse = (user, statusCode, res) => {
  */
 exports.signup = async (req, res, next) => {
   // NOTE: Schema uses 'userName' not 'name'. Destructure accordingly.
-  const { userName, email, password, role } = req.body;
+  const { fullName, userName, email, password, role } = req.body;
 
   try {
     // Create user in the database (password is auto-hashed via Mongoose pre-save hook)
-    const user = await User.create({ userName, email, password, role });
+    const user = await User.create({
+      fullName,
+      userName,
+      email,
+      password,
+      role,
+    });
 
     sendTokenResponse(user, 201, res);
   } catch (err) {
