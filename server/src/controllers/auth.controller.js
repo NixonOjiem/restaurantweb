@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
-
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // Utility function to send JWT token in a response
 const sendTokenResponse = (user, statusCode, res) => {
   // Get token from model method
@@ -35,16 +36,39 @@ const sendTokenResponse = (user, statusCode, res) => {
 
 /**
  * @desc    Register user (Local Signup)
- * @route   POST /api/v1/auth/signup
+ * @route   POST /restaurant/v1/auth/signup
  * @access  Public
  */
 exports.signup = async (req, res, next) => {
-  // NOTE: Schema uses 'userName' not 'name'. Destructure accordingly.
   const { fullName, userName, email, password, role } = req.body;
 
   try {
-    // Create user in the database (password is auto-hashed via Mongoose pre-save hook)
-    const user = await User.create({
+    // 1. Check if a user (active OR soft-deleted) already exists with this email
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // 2. If user exists, check if they are soft-deleted
+      if (user.deletedAt) {
+        // Option 2: Reactivate the existing account
+        user.deletedAt = null; // Remove the soft-delete marker
+        user.fullName = fullName; // Update details
+        user.userName = userName;
+        user.password = password; // The Mongoose pre-save hook will hash this new password
+        user.role = role || user.role; // Allow role update, or keep old one
+        await user.save();
+
+        // Log in the now-reactivated user
+        return sendTokenResponse(user, 200, res);
+      } else {
+        // User exists and is active - throw duplicate email error
+        const error = new Error("Account with this email already exists.");
+        error.statusCode = 400;
+        return next(error);
+      }
+    }
+
+    // 3. If no user found (standard new signup)
+    user = await User.create({
       fullName,
       userName,
       email,
@@ -54,58 +78,128 @@ exports.signup = async (req, res, next) => {
 
     sendTokenResponse(user, 201, res);
   } catch (err) {
-    // Pass the error to the global error handler middleware
+    // Mongoose validation or other errors
     next(err);
   }
 };
 
 /**
  * @desc    Log in user (Local Sign-in)
- * @route   POST /api/v1/auth/signin
+ * @route   POST /restaurant/v1/auth/sigin
  * @access  Public
  */
 exports.signin = async (req, res, next) => {
   const { email, password } = req.body;
 
-  // 1. Basic validation
+  // 1. Basic validation (existing code)
   if (!email || !password) {
-    // Instead of a custom ErrorResponse, create a standard JavaScript Error and set a status property,
-    // or just use next(new Error('...')) to let the global handler manage it.
     const error = new Error("Please provide an email and password");
     error.statusCode = 400;
     return next(error);
   }
 
   try {
-    // 2. Find user by email and explicitly select the password field
-    const user = await User.findOne({ email }).select("+password");
+    // 2. Find user by email, explicitly select password, AND check if deletedAt is NOT set
+    const user = await User.findOne({
+      email,
+      deletedAt: { $exists: false }, // Check if the field does NOT exist
+      // OR use: deletedAt: null // If you ensure the field is explicitly set to null by default
+    }).select("+password");
 
     if (!user) {
-      const error = new Error("Invalid credentials");
+      // This covers both 'user not found' and 'user is soft-deleted' cases.
+      const error = new Error("Invalid credentials or account is deactivated.");
       error.statusCode = 401;
       return next(error);
     }
 
-    // 3. Check if password matches using the Mongoose instance method
+    // 3. Check if password matches (existing code)
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      const error = new Error("Invalid credentials");
+      const error = new Error("Invalid credentials or account is deactivated.");
       error.statusCode = 401;
       return next(error);
     }
 
-    // 4. If credentials are valid, send JWT token response
+    // 4. If valid, send JWT token response (existing code)
     sendTokenResponse(user, 200, res);
   } catch (err) {
     next(err);
   }
 };
 
-// Placeholder for Google Auth (to be implemented next)
+/**
+ * @desc    Google Sign-up/Sign-in handler
+ * @route   POST /restaurant/v1/auth/googleauth
+ * @access  Public
+ */
 exports.googleAuth = async (req, res, next) => {
-  // ... logic for Google sign up/in ...
-  res
-    .status(501)
-    .json({ success: false, message: "Google Auth not yet implemented" });
+  const { idToken } = req.body;
+  if (!idToken) {
+    const error = new Error("Google ID token is missing.");
+    error.statusCode = 400;
+    return next(error);
+  }
+
+  try {
+    // 1. Verify the ID Token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    // Get the user data from the verified payload
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Note: Google's 'name' is usually full name. We use it for fullName/userName
+    const userName = name.split(" ")[0] + Date.now().toString().slice(-4); // Generate unique username if needed
+    const fullName = name;
+
+    // 2. Check if a user with this email already exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // Handle soft-delete and sign-in for existing user
+      if (user.deletedAt) {
+        // Reactivate soft-deleted account
+        user.deletedAt = null;
+        user.fullName = fullName;
+        user.userName = user.userName || userName; // Keep old userName if it exists
+        user.googleId = payload.sub; // Link Google ID for future checks
+        await user.save({ validateBeforeSave: false }); // Skip password validation
+        console.log("Google Auth: Account Reactivated");
+      } else {
+        // User is active, ensure Google ID is linked if not already
+        if (!user.googleId) {
+          user.googleId = payload.sub;
+          await user.save({ validateBeforeSave: false });
+        }
+        console.log("Google Auth: Existing User Signed In");
+      }
+
+      // Log in the existing/reactivated user
+      return sendTokenResponse(user, 200, res);
+    } else {
+      // 3. New User Sign-up
+      const newUser = await User.create({
+        fullName: fullName,
+        userName: userName, // Use the generated/parsed username
+        email: email,
+        googleId: payload.sub, // Store the unique Google ID
+        role: "user", // Assign default role
+      });
+
+      console.log("Google Auth: New User Signed Up");
+      return sendTokenResponse(newUser, 201, res);
+    }
+  } catch (err) {
+    console.error("Google verification failed:", err);
+    const error = new Error(
+      "Google sign-in failed. Invalid token or server error."
+    );
+    error.statusCode = 401;
+    next(error);
+  }
 };

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <SignUp />
+    <RegisterComponent />
   </div>
 </template>
 <script setup lang="ts">
-import SignUp from '../components/signup/RegisterComponent.vue';
+import RegisterComponent from '../components/signup/RegisterComponent.vue';
 </script>
 <style lang=""></style>
