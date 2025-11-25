@@ -24,9 +24,9 @@ const sendTokenResponse = (user, statusCode, res) => {
       token: token, // Also return the token in the body for easy testing/mobile apps
       user: {
         id: user._id,
-        name: user.userName, // NOTE: Changed 'user.name' to 'user.userName' to match your schema
+        name: user.userName,
         email: user.email,
-        role: user.role, // Including the role is often useful here
+        role: user.role,
       },
     });
 };
