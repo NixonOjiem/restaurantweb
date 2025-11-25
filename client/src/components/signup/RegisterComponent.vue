@@ -5,27 +5,28 @@
         <div class="signupTitle">
           <h2>Sign Up</h2>
         </div>
-        <form>
+        <form @submit.prevent="handleRegister">
 
           <div class="fullname">
-            <label>Full Name</label>
-            <input type="text" placeholder="Enter your full name" required>
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="Enter your full name" required v-model="fullName">
           </div>
+
 
           <div class="username">
-            <label>User Name </label>
-            <input type="text" placeholder="Enter your user name" required>
+            <label for="userName">User Name </label>
+            <input type="text" id="userName" placeholder="Enter your user name" required v-model="userName">
           </div>
 
-          <label>Email Address</label>
-          <input type="email" placeholder="Enter your email" required>
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="Enter your email" required v-model="email">
 
-          <label>Password</label>
-          <input type="password" placeholder="Enter password" required>
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter password" required v-model="password">
 
           <button type="submit" class="signup-button">Create Account</button>
           <p class="text-center ">or</p>
-          <button type="submit" class="signup-button">Login with google</button>
+          <button type="button" class="signup-button google-signup-button">Login with Google</button>
         </form>
       </div>
 
@@ -36,7 +37,7 @@
   </section>
 </template>
 
-<style>
+<style scoped>
 /* New styles for the section element to achieve centering */
 .section {
   /* Makes the section take the full height of the viewport */
@@ -129,13 +130,72 @@ input[type="password"] {
   color: white;
   font-size: 16px;
   cursor: pointer;
+  margin-top: 5px;
+  /* Added spacing */
 }
 
 .signup-button:hover {
   background: #555;
 }
+
+.google-signup-button {
+  background: #4285F4;
+  /* Google blue */
+}
+
+.google-signup-button:hover {
+  background: #3c78d8;
+}
+
+.text-center {
+  text-align: center;
+  margin: 10px 0;
+}
 </style>
 
 <script setup lang="ts">
-// Your script block remains empty
+import { defineOptions, ref } from 'vue';
+const ApiBaseurl = import.meta.env.VITE_API_BASE_URL;
+const RegisterUrl = `${ApiBaseurl}/auth/signup`;
+
+defineOptions({
+  name: "RegistrationComponent"
+});
+
+// 1. Reactive state for all form inputs
+const fullName = ref('');
+const userName = ref('');
+const email = ref('');
+const password = ref('');
+// 2. Define 'role' as a non-reactive constant or reactive variable with a default value
+// Assuming all users signing up through this form are regular users.
+// const role = ref('user');
+
+
+// 3. Function to handle form submission
+const handleRegister = () => {
+  // Destructure the required data for clarity
+  const registrationData = {
+    fullName: fullName.value,
+    userName: userName.value,
+    email: email.value,
+    password: password.value,
+    //role: role.value,
+  };
+
+  //console.log('Registration Data Ready for Submission:', registrationData);
+
+
+  fetch(RegisterUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(registrationData),
+  })
+    .then(response => response.json())
+    .then(data => console.log('Success:'))
+    .catch((error) => console.error('Error:', error));
+
+};
 </script>
