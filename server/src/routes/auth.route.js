@@ -4,6 +4,7 @@ const {
   signin,
   googleAuth,
 } = require("../controllers/auth.controller");
+
 const router = express.Router();
 
 router.post("/signup", signup);
