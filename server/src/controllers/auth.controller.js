@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
-
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // Utility function to send JWT token in a response
 const sendTokenResponse = (user, statusCode, res) => {
   // Get token from model method
@@ -128,10 +129,77 @@ exports.signin = async (req, res, next) => {
   }
 };
 
-// Placeholder for Google Auth (to be implemented next)
+/**
+ * @desc    Google Sign-up/Sign-in handler
+ * @route   POST /restaurant/v1/auth/googleauth
+ * @access  Public
+ */
 exports.googleAuth = async (req, res, next) => {
-  // ... logic for Google sign up/in ...
-  res
-    .status(501)
-    .json({ success: false, message: "Google Auth not yet implemented" });
+  const { idToken } = req.body;
+  if (!idToken) {
+    const error = new Error("Google ID token is missing.");
+    error.statusCode = 400;
+    return next(error);
+  }
+
+  try {
+    // 1. Verify the ID Token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    // Get the user data from the verified payload
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Note: Google's 'name' is usually full name. We use it for fullName/userName
+    const userName = name.split(" ")[0] + Date.now().toString().slice(-4); // Generate unique username if needed
+    const fullName = name;
+
+    // 2. Check if a user with this email already exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // Handle soft-delete and sign-in for existing user
+      if (user.deletedAt) {
+        // Reactivate soft-deleted account
+        user.deletedAt = null;
+        user.fullName = fullName;
+        user.userName = user.userName || userName; // Keep old userName if it exists
+        user.googleId = payload.sub; // Link Google ID for future checks
+        await user.save({ validateBeforeSave: false }); // Skip password validation
+        console.log("Google Auth: Account Reactivated");
+      } else {
+        // User is active, ensure Google ID is linked if not already
+        if (!user.googleId) {
+          user.googleId = payload.sub;
+          await user.save({ validateBeforeSave: false });
+        }
+        console.log("Google Auth: Existing User Signed In");
+      }
+
+      // Log in the existing/reactivated user
+      return sendTokenResponse(user, 200, res);
+    } else {
+      // 3. New User Sign-up
+      const newUser = await User.create({
+        fullName: fullName,
+        userName: userName, // Use the generated/parsed username
+        email: email,
+        googleId: payload.sub, // Store the unique Google ID
+        role: "user", // Assign default role
+      });
+
+      console.log("Google Auth: New User Signed Up");
+      return sendTokenResponse(newUser, 201, res);
+    }
+  } catch (err) {
+    console.error("Google verification failed:", err);
+    const error = new Error(
+      "Google sign-in failed. Invalid token or server error."
+    );
+    error.statusCode = 401;
+    next(error);
+  }
 };

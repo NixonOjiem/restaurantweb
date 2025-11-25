@@ -26,7 +26,9 @@
 
           <button type="submit" class="signup-button">Create Account</button>
           <p class="text-center ">or</p>
-          <button type="button" class="signup-button google-signup-button">Login with Google</button>
+          <button type="button" class="signup-button google-signup-button" id="google-signin-button">
+            Signin with google
+          </button>
         </form>
       </div>
 
@@ -36,6 +38,98 @@
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { defineOptions, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+const ApiBaseurl = import.meta.env.VITE_API_BASE_URL;
+const RegisterUrl = `${ApiBaseurl}/auth/signup`;
+const GoogleAuthUrl = `${ApiBaseurl}/auth/googleauth`;
+const router = useRouter();
+defineOptions({
+  name: "RegistrationComponent"
+});
+
+// 1. Reactive state for all form inputs
+const fullName = ref('');
+const userName = ref('');
+const email = ref('');
+const password = ref('');
+
+
+
+// 3. Function to handle form submission
+const handleRegister = () => {
+  // Destructure the required data for clarity
+  const registrationData = {
+    fullName: fullName.value,
+    userName: userName.value,
+    email: email.value,
+    password: password.value,
+
+  };
+
+  fetch(RegisterUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(registrationData),
+  })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+    .catch((error) => console.error('Error:', error));
+
+};
+
+// --- Google Sign-in Logic ---
+// 1. Function to send the Google ID token to the backend
+const handleGoogleAuthResponse = async (response: any) => {
+  // response.credential contains the Google ID Token
+  const idToken = response.credential;
+
+  try {
+    const res = await fetch(GoogleAuthUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Send the ID token to your backend
+      body: JSON.stringify({ idToken }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      console.log('Google Sign-in Successful', data.user.name);
+      // TODO: Handle token storage (if not using httpOnly cookies)
+      router.push('/'); // Redirect user
+    } else {
+      console.error('Google Sign-in failed on backend:', data.message);
+    }
+  } catch (error) {
+    console.error('Error during Google Sign-in fetch:', error);
+  }
+};
+
+// 2. Initialize Google Sign-in on component mount
+onMounted(() => {
+  // Check if google is available (it should be, due to the script in index.html)
+  if (window.google) {
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID, // YOUR CLIENT ID
+      callback: handleGoogleAuthResponse // The function to call with the token
+    });
+
+    // Render the Google button inside the specified div
+    window.google.accounts.id.renderButton(
+      document.getElementById("google-signin-button"),
+      { theme: "outline", size: "large" } // Customization options
+    );
+  }
+});
+
+</script>
 
 <style scoped>
 /* New styles for the section element to achieve centering */
@@ -152,50 +246,3 @@ input[type="password"] {
   margin: 10px 0;
 }
 </style>
-
-<script setup lang="ts">
-import { defineOptions, ref } from 'vue';
-const ApiBaseurl = import.meta.env.VITE_API_BASE_URL;
-const RegisterUrl = `${ApiBaseurl}/auth/signup`;
-
-defineOptions({
-  name: "RegistrationComponent"
-});
-
-// 1. Reactive state for all form inputs
-const fullName = ref('');
-const userName = ref('');
-const email = ref('');
-const password = ref('');
-// 2. Define 'role' as a non-reactive constant or reactive variable with a default value
-// Assuming all users signing up through this form are regular users.
-// const role = ref('user');
-
-
-// 3. Function to handle form submission
-const handleRegister = () => {
-  // Destructure the required data for clarity
-  const registrationData = {
-    fullName: fullName.value,
-    userName: userName.value,
-    email: email.value,
-    password: password.value,
-    //role: role.value,
-  };
-
-  //console.log('Registration Data Ready for Submission:', registrationData);
-
-
-  fetch(RegisterUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(registrationData),
-  })
-    .then(response => response.json())
-    .then(data => console.log('Success:'))
-    .catch((error) => console.error('Error:', error));
-
-};
-</script>
