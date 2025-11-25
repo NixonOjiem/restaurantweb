@@ -4,6 +4,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import signin from '../components/signup/signin.vue';
+import signin from '../components/signup/SigninComponent.vue';
 </script>
 <style lang=""></style>

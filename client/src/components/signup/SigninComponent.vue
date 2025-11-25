@@ -37,15 +37,6 @@
 </template>
 
 <style>
-body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  /* Kept background, removed centering properties */
-  background: skyblue;
-  font-family: Arial, sans-serif;
-}
-
 /* New styles for the section element to achieve centering */
 .section {
   /* Makes the section take the full height of the viewport */
@@ -56,6 +47,10 @@ body {
   align-items: center;
   /* Centers content horizontally (on the main-axis) */
   justify-content: center;
+  background: skyblue;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .signupTitle {
@@ -141,6 +136,6 @@ input[type="password"] {
 }
 </style>
 
-<script>
+<script setup lang="ts">
 // Your script block remains empty
 </script>
