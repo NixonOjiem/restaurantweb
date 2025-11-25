@@ -167,9 +167,7 @@ const fullName = ref('');
 const userName = ref('');
 const email = ref('');
 const password = ref('');
-// 2. Define 'role' as a non-reactive constant or reactive variable with a default value
-// Assuming all users signing up through this form are regular users.
-// const role = ref('user');
+
 
 
 // 3. Function to handle form submission
@@ -180,7 +178,7 @@ const handleRegister = () => {
     userName: userName.value,
     email: email.value,
     password: password.value,
-    //role: role.value,
+
   };
 
   //console.log('Registration Data Ready for Submission:', registrationData);
