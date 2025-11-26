@@ -1,139 +1,257 @@
 <template>
-    <section>
-        <!--The banner part-->
-    <div class="floating-banner">
-    <div class="rope"></div>
-    <div class="banner-text">Welcome To Cuisine Elegante</div>
-    </div>
+    <section class="login-section">
+        <div class="banner-wrapper">
+            <div class="swing-container">
+                <div class="login-rope"></div>
+                <div class="login-banner-text">Welcome To Cuisine Élégante</div>
+            </div>
+        </div>
 
-        <div class="container">
+        <div class="login-container">
             <h2>Log In</h2>
-            <form>
-                <label>Email Address</label>
-                <input type="email" placeholder="Enter your email" required>
-
-                <label>Password</label>
-                <input type="password" placeholder="Enter password" required>
-                <p class="forgot-link">
-                    <a href="forgot_password.html">Forgot Password?</a>
-                </p>
-
-                <button type="submit">Log In</button>
+            <form @submit.prevent>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="Enter your email" required />
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter password" required />
+                </div>
+                <div class="forgot-password">
+                    <a href="/forgot-password" class="forgot-link">Forgot Password?</a>
+                </div>
+                <button class="login-btn" type="submit">Log In</button>
             </form>
-
-            <p class="login-link">
-                Don't have an account? <a href="signup.html">Sign Up here</a>
+            <p class="register-link">
+                Don't have an account? <a href="/signup">Register</a>
             </p>
         </div>
     </section>
 </template>
-   <style>
-        .floating-banner {
-        position: absolute;/*sets how the element is positioned in a document*/
-        top: 10%; 
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-       animation: swing 3s ease-in-out infinite alternate;
-       transform-origin: top center;
+
+<script setup lang="ts"></script>
+<style scoped>
+:root {
+    --primary-color: #d35400;
+    --primary-hover: #a04000;
+    --bg-color: #fdfbf7;
+    --card-bg: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #7f8c8d;
+    --rope-color: #5d4037;
 }
 
-       .rope {
-      width: 2px;
-      height: 40px;
-      background-color: #444;
-      margin: 0 auto;
+/* --- Main Section --- */
+.login-section {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fdfbf7;
+    background: radial-gradient(circle at center, #fffefadd 0%, #f0e6d2 100%);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    position: relative;
+    overflow: hidden;
 }
 
-      .banner-text {
-       background-color: #f8e9c4;
-       padding: 8px 18px;
-       border-radius: 8px;
-       font-size: 18px;
-       font-weight: bold;
-       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-       border: 1px solid #c5a676;
-       display: inline-block;
-       transform: rotate(-2deg);
-}
-       @keyframes swing {
-        0% { transform: translateX(-50%) rotate(-5deg); }
-        50% { transform: translateX(-50%) rotate(5deg); }
-         100% { transform: translateX(-50%) rotate(-5deg); }
+/* --- Floating Banner --- */
+.banner-wrapper {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    padding-top: 0;
 }
 
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: lightyellow;
-            font-family: Arial, sans-serif;                                      
-        }
+.swing-container {
+    transform-origin: top center;
+    animation: swing 3.5s ease-in-out infinite alternate;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .container {
-            background:darkorange; /* greyish box */
-            padding: 30px;
-            width: 350px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+.login-rope {
+    width: 3px;
+    height: 120px;
+    /* Rope Length */
+    background: repeating-linear-gradient(45deg,
+            #5d4037,
+            #5d4037 5px,
+            #4e342e 5px,
+            #4e342e 10px);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
 
-        h2 {
-            text-align: center;
-            color: #444;
-            margin-bottom: 20px;
-        }
+.login-banner-text {
+    background: #fff;
+    color: #d35400;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid #d35400;
+    box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+    white-space: nowrap;
+    position: relative;
+    top: -5px;
+}
 
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: #555;
-        }
+/* --- Login Card --- */
+.login-container {
+    background: #ffffff;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    margin-top: 80px;
+    position: relative;
+    z-index: 5;
+}
 
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background: #fafafa;
-        }
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-weight: 800;
+    font-size: 2rem;
+}
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: blue; /* blue button */
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
+/* --- Form Elements --- */
+.input-group {
+    margin-bottom: 20px;
+}
 
-        button:hover {
-            background: #555;
-        }
-        .forgot-link a {
-                color: skyblue ; /* Button blue */
-                text-decoration: none;
-                font-weight: normal;
-            }
-            .forgot-link a:hover {
-                text-decoration: underline;
-            }
-            .forgot-link {
-                display: block;
-                text-align: right;
-                margin-top: -15px; /* Pull it up closer to the input field */
-                margin-bottom: 20px;
-                font-size: 14px;
-            }
-            </style>
-<script>
-    // Your script block remains empty
-</script>
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    /* Ensures padding doesn't break width */
+}
+
+input:focus {
+    border-color: #d35400;
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
+}
+
+/* --- Links & Buttons --- */
+.forgot-password {
+    text-align: right;
+    margin-bottom: 25px;
+}
+
+.forgot-link {
+    color: #7f8c8d;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+}
+
+.forgot-link:hover {
+    color: #d35400;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #d35400, #e67e22);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(211, 84, 0, 0.4);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(211, 84, 0, 0.6);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 25px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.register-link a {
+    color: #d35400;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* --- Animations --- */
+@keyframes swing {
+    0% {
+        transform: rotate(-6deg);
+    }
+
+    100% {
+        transform: rotate(6deg);
+    }
+}
+
+/* --- Responsive Media Queries --- */
+@media (max-width: 480px) {
+    .login-rope {
+        height: 60px;
+    }
+
+    .login-banner-text {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .login-container {
+        padding: 30px 20px;
+        margin-top: 60px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-height: 600px) {
+    .banner-wrapper {
+        display: none;
+    }
+
+    .login-container {
+        margin-top: 0;
+    }
+}
+</style>

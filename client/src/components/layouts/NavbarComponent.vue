@@ -79,7 +79,7 @@ import { ref, defineOptions } from 'vue';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 
 defineOptions({
-  name: "RestaurantNavbar",
+  name: "NavbarComponent",
 });
 
 const isMenuOpen = ref(false);
