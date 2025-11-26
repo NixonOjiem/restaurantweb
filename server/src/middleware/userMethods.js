@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { create } = require("../models/User.model");
 
 /**
  * Applies Mongoose middleware and instance methods to the UserSchema.
@@ -31,7 +32,13 @@ function applyUserMethods(UserSchema) {
   UserSchema.methods.getSignedJwtToken = function () {
     // The payload should contain data that uniquely identifies the user
     return jwt.sign(
-      { id: this._id },
+      {
+        id: this._id,
+        fullName: this.fullName,
+        role: this.role,
+        name: this.userName,
+        createdAt: this.createdAt,
+      },
       process.env.JWT_SECRET, // Should be an environment variable
       { expiresIn: process.env.JWT_EXPIRE } // e.g., '30d'
     );
