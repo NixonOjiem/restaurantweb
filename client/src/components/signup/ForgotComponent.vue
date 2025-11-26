@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="forgot-section">
         <div class="container">
             <h2>Forgot Password</h2>
             <form>
@@ -57,7 +57,7 @@
     }
 }
 
-body {
+.forgot-section {
     margin: 0;
     padding: 0;
     height: 100vh;
