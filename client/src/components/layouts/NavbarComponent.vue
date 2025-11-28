@@ -1,5 +1,5 @@
 <template>
-  <header class="w-full sticky top-0 z-20 flex justify-center p-4">
+  <header class="w-full absolute top-0 z-20 flex justify-center p-5">
     <nav class="bg-white rounded-2xl shadow-xl p-4 w-full max-w-6xl">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
@@ -79,7 +79,7 @@ import { ref, defineOptions } from 'vue';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 
 defineOptions({
-  name: "RestaurantNavbar",
+  name: "NavbarComponent",
 });
 
 const isMenuOpen = ref(false);
