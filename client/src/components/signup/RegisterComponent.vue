@@ -10,34 +10,45 @@
 
         <form @submit.prevent="handleRegister">
 
+          <div v-if="error" class="error-banner">
+            {{ error }}
+          </div>
+
           <div class="input-group">
             <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" placeholder="e.g. Gordon Ramsay" required v-model="fullName">
+            <input type="text" id="fullName" placeholder="e.g. Gordon Ramsay" required v-model="fullName"
+              :disabled="isLoading">
           </div>
 
           <div class="input-group">
             <label for="userName">Username</label>
-            <input type="text" id="userName" placeholder="Pick a username" required v-model="userName">
+            <input type="text" id="userName" placeholder="Pick a username" required v-model="userName"
+              :disabled="isLoading">
           </div>
 
           <div class="input-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" placeholder="name@example.com" required v-model="email">
+            <input type="email" id="email" placeholder="name@example.com" required v-model="email"
+              :disabled="isLoading">
           </div>
 
           <div class="input-group">
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Create a strong password" required v-model="password">
+            <input type="password" id="password" placeholder="Create a strong password" required v-model="password"
+              :disabled="isLoading">
           </div>
 
-          <button type="submit" class="signup-button">Sign Up</button>
+          <button type="submit" class="signup-button" :disabled="isLoading">
+            {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
+          </button>
 
           <div class="divider">
             <span>or continue with</span>
           </div>
 
           <div class="google-btn-wrapper">
-            <div id="google-signin-button"></div>
+            <div id="google-signin-button"
+              :style="{ opacity: isLoading ? 0.5 : 1, pointerEvents: isLoading ? 'none' : 'auto' }"></div>
           </div>
 
         </form>
@@ -63,29 +74,29 @@
 <script setup lang="ts">
 import { defineOptions, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-// import type { CredentialResponse } from 'google-one-tap';
-const ApiBaseurl = import.meta.env.VITE_API_BASE_URL;
-const RegisterUrl = `${ApiBaseurl}/auth/signup`;
-const GoogleAuthUrl = `${ApiBaseurl}/auth/googleauth`;
-const router = useRouter();
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia'; // Essential for reactivity
 
-interface CredentialResponse {
-  credential: string; // The ID Token JWT
-  select_by: string;
-  // Other properties exist, but these are the most crucial.
-}
 defineOptions({
   name: "RegistrationComponent"
 });
 
-// 1. Reactive state
+const router = useRouter();
+const authStore = useAuthStore();
+
+const { isLoading, error } = storeToRefs(authStore);
+
+// Reactive state for form
 const fullName = ref('');
 const userName = ref('');
 const email = ref('');
 const password = ref('');
 
-// 2. Handle standard registration
-const handleRegister = () => {
+// --- Handle Standard Registration ---
+const handleRegister = async () => {
+  // Clear previous errors via store
+  authStore.error = null;
+
   const registrationData = {
     fullName: fullName.value,
     userName: userName.value,
@@ -93,54 +104,36 @@ const handleRegister = () => {
     password: password.value,
   };
 
-  fetch(RegisterUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(registrationData),
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-      router.push('/');
-    })
-    .catch((error) => console.error('Error:', error));
+  // Call the Pinia Action
+  const success = await authStore.signup(registrationData);
+
+  if (success) {
+    console.log('Registration Successful');
+    router.push('/');
+  }
 };
 
-// 3. Handle Google Auth
-const handleGoogleAuthResponse = async (response: CredentialResponse) => {
+// --- Handle Google Auth ---
+const handleGoogleAuthResponse = async (response: any) => {
   const idToken = response.credential;
-  try {
-    const res = await fetch(GoogleAuthUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idToken }),
-    });
 
-    const data = await res.json();
+  // Call the NEW Pinia Action
+  const success = await authStore.googleLogin(idToken);
 
-    if (data.success) {
-      console.log('Google Sign-in Successful', data.user.name);
-      router.push('/');
-    } else {
-      console.error('Google Sign-in failed on backend:', data.message);
-    }
-  } catch (error) {
-    console.error('Error during Google Sign-in fetch:', error);
+  if (success) {
+    console.log('Google Sign-in Successful');
+    router.push('/');
   }
 };
 
 onMounted(() => {
-  // TypeScript now knows that 'window.google' might exist, and what its structure is
   if (window.google) {
     window.google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       callback: handleGoogleAuthResponse
     });
 
-    // You can safely cast the result of getElementById as HTMLElement,
-    // though the '!' non-null assertion is already handling it.
     const buttonElement = document.getElementById("google-signin-button");
-
     if (buttonElement) {
       window.google.accounts.id.renderButton(
         buttonElement,
@@ -149,27 +142,44 @@ onMounted(() => {
     }
   }
 });
-
 </script>
 
 <style scoped>
-/* --- Variables --- */
+/* Include all your previous CSS here */
+/* ... */
+
+/* ADD THIS for the error message */
+.error-banner {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 0.9rem;
+  border: 1px solid #fca5a5;
+}
+
+/* Disabled state for button */
+.signup-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ... Rest of your CSS ... */
 :root {
   --primary-color: #d35400;
-  /* Burnt Orange */
   --bg-color: #fdfbf7;
-  /* Cream */
   --text-main: #2c3e50;
   --text-muted: #7f8c8d;
 }
 
-/* --- Layout --- */
 .signup-section {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Matching the Login Gradient */
   background: radial-gradient(circle at center, #fffefadd 0%, #f0e6d2 100%);
   font-family: 'Helvetica Neue', Arial, sans-serif;
   padding: 20px;
@@ -183,10 +193,8 @@ onMounted(() => {
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  /* Ensures image respects border radius */
 }
 
-/* --- Form Side --- */
 .form-container {
   flex: 1;
   padding: 40px;
@@ -213,7 +221,6 @@ h2 {
   font-size: 0.95rem;
 }
 
-/* --- Inputs --- */
 .input-group {
   margin-bottom: 15px;
 }
@@ -244,7 +251,6 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
 }
 
-/* --- Buttons --- */
 .signup-button {
   width: 100%;
   padding: 14px;
@@ -265,7 +271,6 @@ input:focus {
   box-shadow: 0 6px 15px rgba(211, 84, 0, 0.4);
 }
 
-/* --- Divider & Google --- */
 .divider {
   display: flex;
   align-items: center;
@@ -292,7 +297,6 @@ input:focus {
   width: 100%;
 }
 
-/* --- Login Redirect --- */
 .login-redirect {
   text-align: center;
   margin-top: 25px;
@@ -310,10 +314,8 @@ input:focus {
   text-decoration: underline;
 }
 
-/* --- Image Side (Desktop Only) --- */
 .image-container {
   flex: 1.2;
-  /* Slightly wider than form */
   position: relative;
   display: block;
 }
@@ -325,7 +327,6 @@ input:focus {
   display: block;
 }
 
-/* Dark overlay for text readability */
 .overlay {
   position: absolute;
   top: 0;
@@ -355,14 +356,12 @@ input:focus {
   opacity: 0.9;
 }
 
-/* --- Responsive Media Queries --- */
 @media (max-width: 768px) {
   .signup-card {
     flex-direction: column;
     max-width: 450px;
   }
 
-  /* Hide the image on mobile to save space */
   .image-container {
     display: none;
   }

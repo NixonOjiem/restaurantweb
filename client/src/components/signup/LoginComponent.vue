@@ -40,53 +40,38 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia'; // <--- IMPORT THIS
 
-// --- State ---
+// --- Local State ---
 const email = ref('');
 const password = ref('');
-const isLoading = ref(false);
-const error = ref<string | null>(null);
 
-// --- Router ---
+// --- Pinia and Router ---
 const router = useRouter();
+const authStore = useAuthStore();
 
-// Replace with your actual backend login URL
-const LOGIN_API_URL = import.meta.env.VITE_API_BASE_URL || '/auth/signup';
+// --- FIX: Extract state safely to use in template ---
+// We use storeToRefs for state/getters to keep reactivity.
+// We do NOT use it for actions (functions).
+const { isLoading, error } = storeToRefs(authStore);
 
 // --- Submission Handler ---
 const handleSubmit = async () => {
-  // 1. Reset state
-  error.value = null;
-  isLoading.value = true;
+  // Clear error via the store instance directly
+  authStore.error = null;
 
-  try {
-    const res = await fetch(`${LOGIN_API_URL}/auth/signin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: email.value,
-        password: password.value,
-      }),
-    });
+  const loginDetails = {
+    email: email.value,
+    password: password.value,
+  };
 
-    const data = await res.json();
+  // Call action
+  const success = await authStore.login(loginDetails);
 
-    if (res.ok && data.success) {
-      // Handle successful login (e.g., save token/user data)
-      console.log('Login successful!', data);
-
-      router.push('/');
-    } else {
-      // Handle API errors (e.g., Invalid credentials)
-      error.value = data.message || 'Login failed. Please check your credentials.';
-    }
-  } catch (err) {
-    // Handle network/connection errors
-    console.error('Network Error:', err);
-    error.value = 'A network error occurred. Please try again.';
-  } finally {
-    // Always reset loading state
-    isLoading.value = false;
+  if (success) {
+    console.log('Login successful! Navigating home...');
+    router.push('/');
   }
 };
 </script>
