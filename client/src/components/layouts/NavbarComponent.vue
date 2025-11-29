@@ -24,10 +24,11 @@
             class="px-4 py-2 rounded-full border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors">
             Book Now
           </button>
-          <a href="/login"
+          <a href="/login" v-if="!isAuthenticated"
             class="px-6 py-2 rounded-full bg-[#2C3E50] text-white font-medium hover:bg-[#455566] transition-colors flex items-center">
             Get Started
           </a>
+          <p v-if="isAuthenticated">Hi {{ user?.name }}</p>
         </div>
 
         <button @click="toggleMenu"
@@ -62,7 +63,7 @@
               class="flex-1 px-4 py-3 rounded-lg border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors flex items-center justify-center">
               Call
             </button>
-            <button
+            <button v-if="!isAuthenticated"
               class="flex-1 px-4 py-3 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors flex items-center justify-center">
               Book
             </button>
