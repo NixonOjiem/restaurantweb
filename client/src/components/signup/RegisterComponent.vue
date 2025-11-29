@@ -96,7 +96,7 @@ const handleRegister = () => {
     .then(response => response.json())
     .then(data => {
       console.log('Success:', data);
-      // Add logic here to redirect or show success message
+      router.push('/');
     })
     .catch((error) => console.error('Error:', error));
 };
@@ -138,6 +138,7 @@ onMounted(() => {
     );
   }
 });
+
 </script>
 
 <style scoped>
