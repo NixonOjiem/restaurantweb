@@ -54,8 +54,13 @@ export const useAuthStore = defineStore('auth', () => {
       } else {
         throw new Error(data.message || 'Login failed.')
       }
-    } catch (err: any) {
-      error.value = err.message
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        error.value = err.message
+      } else {
+        // Fallback for non-Error objects (e.g. strings or other types thrown)
+        error.value = 'An unexpected error occurred during login.'
+      }
       return false
     } finally {
       isLoading.value = false
@@ -80,8 +85,13 @@ export const useAuthStore = defineStore('auth', () => {
       } else {
         throw new Error(data.message || 'Signup failed.')
       }
-    } catch (err: any) {
-      error.value = err.message
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        error.value = err.message
+      } else {
+        // Fallback for non-Error objects (e.g. strings or other types thrown)
+        error.value = 'An unexpected error occurred during login.'
+      }
       return false
     } finally {
       isLoading.value = false
@@ -106,8 +116,13 @@ export const useAuthStore = defineStore('auth', () => {
       } else {
         throw new Error(data.message || 'Google login failed.')
       }
-    } catch (err: any) {
-      error.value = err.message
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        error.value = err.message
+      } else {
+        // Fallback for non-Error objects (e.g. strings or other types thrown)
+        error.value = 'An unexpected error occurred during login.'
+      }
       return false
     } finally {
       isLoading.value = false
