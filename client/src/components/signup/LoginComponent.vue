@@ -62,6 +62,7 @@ interface GoogleCredentialResponse {
 // --- Local State ---
 const email = ref('');
 const password = ref('');
+console.log(email)
 
 // --- Pinia and Router ---
 const router = useRouter();
@@ -100,6 +101,7 @@ const handleGoogleAuthResponse = async (response: GoogleCredentialResponse) => {
 
 // --- ADDED: Initialize Google Button on Mount ---
 onMounted(() => {
+
   if (window.google) {
     window.google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,

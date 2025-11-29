@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-
+import { jwtDecode } from 'jwt-decode'
 interface User {
   id: string
   name: string
@@ -20,6 +20,14 @@ interface signupDetails {
   password: string
 }
 
+interface JwtPayload {
+  id: string
+  fullName: string
+  role: string
+  name: string
+  exp: number
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const useAuthStore = defineStore('auth', () => {
@@ -34,6 +42,35 @@ export const useAuthStore = defineStore('auth', () => {
   const setToken = (newToken: string) => {
     token.value = newToken
     localStorage.setItem('authToken', newToken)
+  }
+
+  const initializeStore = () => {
+    // 1. Check if token exists
+    if (!token.value) return
+
+    try {
+      // 2. Decode the token to get the data
+      const decoded: JwtPayload = jwtDecode(token.value)
+
+      // 3. Check if token is expired (exp is in seconds, Date.now is ms)
+      const currentTime = Date.now() / 1000
+      if (decoded.exp < currentTime) {
+        console.warn('Token expired')
+        logout()
+        return
+      }
+
+      // 4. Populate user state directly from token data
+      user.value = {
+        id: decoded.id,
+        name: decoded.name, // or decoded.fullName based on your UI preference
+        email: '', // Note: Your token JSON didn't show email. If needed, add it to backend JWT payload.
+        role: decoded.role,
+      }
+    } catch (error) {
+      console.error('Invalid token format', error)
+      logout()
+    }
   }
 
   const login = async (loginDetails: logindetails) => {
@@ -145,6 +182,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     isAuthenticated,
     login,
+    initializeStore,
     signup,
     googleLogin, // Export the new action
     logout,
