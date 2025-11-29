@@ -63,12 +63,17 @@
 <script setup lang="ts">
 import { defineOptions, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-
+// import type { CredentialResponse } from 'google-one-tap';
 const ApiBaseurl = import.meta.env.VITE_API_BASE_URL;
 const RegisterUrl = `${ApiBaseurl}/auth/signup`;
 const GoogleAuthUrl = `${ApiBaseurl}/auth/googleauth`;
 const router = useRouter();
 
+interface CredentialResponse {
+  credential: string; // The ID Token JWT
+  select_by: string;
+  // Other properties exist, but these are the most crucial.
+}
 defineOptions({
   name: "RegistrationComponent"
 });
@@ -102,7 +107,7 @@ const handleRegister = () => {
 };
 
 // 3. Handle Google Auth
-const handleGoogleAuthResponse = async (response: any) => {
+const handleGoogleAuthResponse = async (response: CredentialResponse) => {
   const idToken = response.credential;
   try {
     const res = await fetch(GoogleAuthUrl, {
@@ -125,17 +130,23 @@ const handleGoogleAuthResponse = async (response: any) => {
 };
 
 onMounted(() => {
-  if ((window as any).google) {
-    (window as any).google.accounts.id.initialize({
+  // TypeScript now knows that 'window.google' might exist, and what its structure is
+  if (window.google) {
+    window.google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       callback: handleGoogleAuthResponse
     });
 
-    // Render the button inside the DIV, not a button tag
-    (window as any).google.accounts.id.renderButton(
-      document.getElementById("google-signin-button")!,
-      { theme: "outline", size: "large", width: "100%" }
-    );
+    // You can safely cast the result of getElementById as HTMLElement,
+    // though the '!' non-null assertion is already handling it.
+    const buttonElement = document.getElementById("google-signin-button");
+
+    if (buttonElement) {
+      window.google.accounts.id.renderButton(
+        buttonElement,
+        { theme: "outline", size: "large", width: "100%" }
+      );
+    }
   }
 });
 
