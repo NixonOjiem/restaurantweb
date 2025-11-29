@@ -29,6 +29,16 @@
         <button class="login-btn" type="submit" :disabled="isLoading">
           {{ isLoading ? 'Logging in...' : 'Log In' }}
         </button>
+
+        <div class="divider">
+          <span>or continue with</span>
+        </div>
+
+        <div class="google-btn-wrapper">
+          <div id="google-login-button"
+            :style="{ opacity: isLoading ? 0.5 : 1, pointerEvents: isLoading ? 'none' : 'auto' }"></div>
+        </div>
+
       </form>
       <p class="register-link">
         Don't have an account? <a href="/signup">Register</a>
@@ -38,10 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue'; // <--- Added onMounted
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { storeToRefs } from 'pinia'; // <--- IMPORT THIS
+import { storeToRefs } from 'pinia';
 
 // --- Local State ---
 const email = ref('');
@@ -50,15 +60,10 @@ const password = ref('');
 // --- Pinia and Router ---
 const router = useRouter();
 const authStore = useAuthStore();
-
-// --- FIX: Extract state safely to use in template ---
-// We use storeToRefs for state/getters to keep reactivity.
-// We do NOT use it for actions (functions).
 const { isLoading, error } = storeToRefs(authStore);
 
-// --- Submission Handler ---
+// --- Standard Login Handler ---
 const handleSubmit = async () => {
-  // Clear error via the store instance directly
   authStore.error = null;
 
   const loginDetails = {
@@ -66,7 +71,6 @@ const handleSubmit = async () => {
     password: password.value,
   };
 
-  // Call action
   const success = await authStore.login(loginDetails);
 
   if (success) {
@@ -74,8 +78,43 @@ const handleSubmit = async () => {
     router.push('/');
   }
 };
+
+// --- ADDED: Google Auth Handler ---
+const handleGoogleAuthResponse = async (response: any) => {
+  const idToken = response.credential;
+
+  // Use the googleLogin action we created in the store previously
+  const success = await authStore.googleLogin(idToken);
+
+  if (success) {
+    console.log('Google Login Successful');
+    router.push('/');
+  }
+};
+
+// --- ADDED: Initialize Google Button on Mount ---
+onMounted(() => {
+  if (window.google) {
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogleAuthResponse
+    });
+
+    // Note: using 'google-login-button' ID here to correspond with template
+    const buttonElement = document.getElementById("google-login-button");
+
+    if (buttonElement) {
+      window.google.accounts.id.renderButton(
+        buttonElement,
+        { theme: "outline", size: "large", width: "100%" }
+      );
+    }
+  }
+});
 </script>
+
 <style scoped>
+/* --- Keep your existing styles --- */
 :root {
   --primary-color: #d35400;
   --primary-hover: #a04000;
@@ -87,10 +126,9 @@ const handleSubmit = async () => {
 }
 
 .error-message {
-  color: var(--color-error, #e53e3e);
-  /* Use a standard error color */
-  background-color: var(--color-error-bg, #fee2e2);
-  border: 1px solid currentColor;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
   padding: 10px;
   margin-bottom: 15px;
   border-radius: 4px;
@@ -103,7 +141,6 @@ const handleSubmit = async () => {
   opacity: 0.7;
 }
 
-/* --- Main Section --- */
 .login-section {
   min-height: 100vh;
   display: flex;
@@ -116,7 +153,7 @@ const handleSubmit = async () => {
   overflow: hidden;
 }
 
-/* --- Floating Banner --- */
+/* ... Floating Banner styles (omitted for brevity, keep your existing ones) ... */
 .banner-wrapper {
   position: absolute;
   top: 0;
@@ -137,12 +174,7 @@ const handleSubmit = async () => {
 .login-rope {
   width: 3px;
   height: 120px;
-  /* Rope Length */
-  background: repeating-linear-gradient(45deg,
-      #5d4037,
-      #5d4037 5px,
-      #4e342e 5px,
-      #4e342e 10px);
+  background: repeating-linear-gradient(45deg, #5d4037, #5d4037 5px, #4e342e 5px, #4e342e 10px);
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -162,7 +194,6 @@ const handleSubmit = async () => {
   top: -5px;
 }
 
-/* --- Login Card --- */
 .login-container {
   background: #ffffff;
   padding: 40px 30px;
@@ -183,7 +214,6 @@ h2 {
   font-size: 2rem;
 }
 
-/* --- Form Elements --- */
 .input-group {
   margin-bottom: 20px;
 }
@@ -207,7 +237,6 @@ input[type="password"] {
   font-size: 1rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  /* Ensures padding doesn't break width */
 }
 
 input:focus {
@@ -217,7 +246,6 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
 }
 
-/* --- Links & Buttons --- */
 .forgot-password {
   text-align: right;
   margin-bottom: 25px;
@@ -274,6 +302,35 @@ input:focus {
   text-decoration: underline;
 }
 
+/* --- ADDED: Divider & Google Button Styles --- */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: #bdc3c7;
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 15px;
+  /* Adds space before register link */
+}
+
 /* --- Animations --- */
 @keyframes swing {
   0% {
@@ -285,7 +342,7 @@ input:focus {
   }
 }
 
-/* --- Responsive Media Queries --- */
+/* --- Media Queries --- */
 @media (max-width: 480px) {
   .login-rope {
     height: 60px;

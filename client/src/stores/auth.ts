@@ -88,9 +88,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  /**
-   * New Action: Handle Google Login via Store
-   */
   const googleLogin = async (idToken: string) => {
     isLoading.value = true
     error.value = null
