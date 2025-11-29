@@ -53,6 +53,12 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
 
+interface GoogleCredentialResponse {
+  credential: string; // The JWT ID token
+  select_by?: string;
+  clientId?: string;
+}
+
 // --- Local State ---
 const email = ref('');
 const password = ref('');
@@ -80,7 +86,7 @@ const handleSubmit = async () => {
 };
 
 // --- ADDED: Google Auth Handler ---
-const handleGoogleAuthResponse = async (response: any) => {
+const handleGoogleAuthResponse = async (response: GoogleCredentialResponse) => {
   const idToken = response.credential;
 
   // Use the googleLogin action we created in the store previously

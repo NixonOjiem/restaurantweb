@@ -77,6 +77,12 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia'; // Essential for reactivity
 
+interface GoogleCredentialResponse {
+  credential: string; // The JWT ID token
+  select_by?: string;
+  clientId?: string;
+}
+
 defineOptions({
   name: "RegistrationComponent"
 });
@@ -114,7 +120,7 @@ const handleRegister = async () => {
 };
 
 // --- Handle Google Auth ---
-const handleGoogleAuthResponse = async (response: any) => {
+const handleGoogleAuthResponse = async (response: GoogleCredentialResponse) => {
   const idToken = response.credential;
 
   // Call the NEW Pinia Action
