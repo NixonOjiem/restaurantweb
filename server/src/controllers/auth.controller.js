@@ -91,7 +91,7 @@ exports.signup = async (req, res, next) => {
 exports.signin = async (req, res, next) => {
   const { email, password } = req.body;
 
-  // 1. Basic validation (existing code)
+  // 1. Basic validation
   if (!email || !password) {
     const error = new Error("Please provide an email and password");
     error.statusCode = 400;
@@ -99,30 +99,37 @@ exports.signin = async (req, res, next) => {
   }
 
   try {
-    // 2. Find user by email, explicitly select password, AND check if deletedAt is NOT set
+    // 2. Find user by email, REGARDLESS of deletedAt status, but select password
     const user = await User.findOne({
       email,
-      deletedAt: { $exists: false }, // Check if the field does NOT exist
-      // OR use: deletedAt: null // If you ensure the field is explicitly set to null by default
-    }).select("+password");
+    }).select("+password +deletedAt"); // Select both password and deletedAt
 
     if (!user) {
-      // This covers both 'user not found' and 'user is soft-deleted' cases.
+      // Handles 'user not found' case
       const error = new Error("Invalid credentials or account is deactivated.");
       error.statusCode = 401;
       return next(error);
     }
 
-    // 3. Check if password matches (existing code)
+    // --- ✅ NEW LOGIC: Check for soft-deletion ---
+    if (user.deletedAt) {
+      const error = new Error("Account is currently deactivated or deleted.");
+      error.statusCode = 401;
+      return next(error);
+    }
+    // ---------------------------------------------
+
+    // 3. Password Matching Logic (uncommented)
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
+      // The same generic message is used here for security (to avoid confirming a valid email)
       const error = new Error("Invalid credentials or account is deactivated.");
       error.statusCode = 401;
       return next(error);
     }
 
-    // 4. If valid, send JWT token response (existing code)
+    // 4. If valid and not deleted, send JWT token response
     sendTokenResponse(user, 200, res);
   } catch (err) {
     next(err);
