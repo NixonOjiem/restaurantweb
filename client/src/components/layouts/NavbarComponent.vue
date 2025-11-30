@@ -75,8 +75,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineOptions } from 'vue';
+import { ref, defineOptions, watchEffect } from 'vue';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
+
+const authStore = useAuthStore();
+// Extract 'user' and 'isAuthenticated' safely
+const { user, isAuthenticated } = storeToRefs(authStore);
+// 3. Console Log
+// We use watchEffect because 'user' might be null at the exact millisecond
+// the component mounts, but 'initializeStore' fills it in a moment later.
+watchEffect(() => {
+  console.log("Current Auth User:", user.value);
+  console.log("Current Auth User Authenticated?:", isAuthenticated.value);
+
+});
+
+console.log({ user })
 
 defineOptions({
   name: "NavbarComponent",
