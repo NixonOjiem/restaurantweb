@@ -11,7 +11,8 @@
 
         <div class="hidden md:flex items-center space-x-8">
           <a href="#" class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Home</a>
-          <a href="#" class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Menu</a>
+          <a href="/menu"
+            class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Menu</a>
           <a href="#" class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">About</a>
           <a href="#"
             class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Reservations</a>
@@ -49,7 +50,7 @@
         <div class="flex flex-col space-y-4">
           <a href="#"
             class="text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 flex items-center hover:underline">Home</a>
-          <a href="#"
+          <a href="/menu"
             class="text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 flex items-center hover:underline">Menu</a>
           <a href="#"
             class="text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 flex items-center hover:underline">About</a>
