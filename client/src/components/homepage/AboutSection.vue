@@ -27,7 +27,7 @@ defineOptions({
                         <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80"
                             alt="Chef plating food"
                             class="w-full h-[500px] lg:h-[600px] object-cover transform transition-transform duration-1000 group-hover:scale-105" />
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent">
+                        <div class="absolute inset-0 bg-linear-to-t from-stone-950/80 via-transparent to-transparent">
                         </div>
 
                         <div
@@ -42,11 +42,11 @@ defineOptions({
                     <div
                         class="bg-stone-900/95 backdrop-blur-xl p-8 md:p-12 rounded-2xl shadow-2xl border border-stone-800/50 relative overflow-hidden">
 
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-700 to-red-900"></div>
+                        <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-red-700 to-red-900"></div>
 
                         <div class="mb-8">
                             <div class="flex items-center gap-4 mb-4">
-                                <span class="w-12 h-[1px] bg-red-600"></span>
+                                <span class="w-12 h-px bg-red-600"></span>
                                 <h5 class="text-red-500 font-bold tracking-[0.25em] uppercase text-xs">Our Philosophy
                                 </h5>
                             </div>
