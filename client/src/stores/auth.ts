@@ -64,7 +64,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = {
         id: decoded.id,
         name: decoded.name, // or decoded.fullName based on your UI preference
-        email: '', // Note: Your token JSON didn't show email. If needed, add it to backend JWT payload.
+        email: '',
         role: decoded.role,
       }
     } catch (error) {
@@ -184,7 +184,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     initializeStore,
     signup,
-    googleLogin, // Export the new action
+    googleLogin,
     logout,
   }
 })
