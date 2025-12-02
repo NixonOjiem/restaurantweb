@@ -108,7 +108,7 @@
             <div
                 class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 opacity-0 animate-fade-in delay-1000">
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.3em]">Scroll</span>
-                <div class="w-[1px] h-12 bg-linear-to-b from-white/0 via-white/40 to-white/0">
+                <div class="w-px h-12 bg-linear-to-b from-white/0 via-white/40 to-white/0">
                     <div class="w-full h-1/2 bg-white/80 animate-scroll-line"></div>
                 </div>
             </div>
