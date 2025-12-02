@@ -3,6 +3,7 @@
     <NavbarComponent />
     <main class="grow">
       <HeroSection />
+      <AboutSection />
     </main>
 
     <FooterComponent />
@@ -12,4 +13,5 @@
 import FooterComponent from '@/components/layouts/FooterComponent.vue';
 import HeroSection from '@/components/homepage/HeroSection.vue';
 import NavbarComponent from '@/components/layouts/NavbarComponent.vue';
+import AboutSection from '@/components/homepage/AboutSection.vue';
 </script>

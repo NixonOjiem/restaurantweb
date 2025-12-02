@@ -1,215 +1,155 @@
 <template>
-    <div class="min-h-screen bg-linear-to-br from-[#0f172a] via-[#1a2633] to-[#2d3748]">
-        <!-- Hero Section -->
-        <section class="relative w-full min-h-screen overflow-hidden flex items-center justify-center pt-6">
-            <!-- Animated Background -->
-            <div class="absolute inset-0 overflow-hidden">
-                <div
-                    class="absolute top-1/4 left-1/4 w-96 h-96 bg-linear-to-r from-orange-500 to-amber-500 rounded-full opacity-20 blur-3xl animate-float-slow">
+    <div class="min-h-screen bg-[#0f172a] overflow-hidden font-sans selection:bg-orange-500 selection:text-white">
+
+        <section class="relative w-full h-screen flex items-center justify-center">
+
+            <div class="absolute inset-0 z-0 w-full h-full overflow-hidden bg-black">
+                <div class="relative w-full h-full animate-subtle-zoom">
+                    <img :src="heroImage" alt="Culinary Masterpiece" class="w-full h-full object-cover opacity-90" />
                 </div>
+
+                <div class="absolute inset-0 bg-radial-gradient from-transparent via-black/40 to-black/80"></div>
+
                 <div
-                    class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-linear-to-r from-amber-400 to-yellow-400 rounded-full opacity-15 blur-3xl animate-float-medium">
+                    class="absolute inset-0 opacity-20 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
                 </div>
-                <div class="absolute inset-0 opacity-[0.02] bg-size-[80px_80px] bg-grid-white"></div>
             </div>
 
-            <!-- Content -->
-            <div class="relative z-10 w-full max-w-7xl mx-auto px-6">
-                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
-                    <!-- Text Content -->
-                    <div class="w-full lg:w-1/2 flex flex-col justify-center space-y-8 text-center lg:text-left">
-                        <!-- Animated Badge -->
-                        <div
-                            class="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 animate-fade-in">
-                            <div class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
-                            <p class="text-orange-300 font-semibold tracking-wider text-sm uppercase">
-                                Premium Culinary Experience
-                            </p>
+            <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-orange-500/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow">
+                </div>
+            </div>
+
+            <div class="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6">
+
+                <div class="group relative overflow-hidden rounded-[2.5rem] p-px">
+                    <div
+                        class="absolute inset-0 bg-linear-to-b from-white/20 via-white/5 to-transparent rounded-[2.5rem]">
+                    </div>
+
+                    <div
+                        class="relative bg-black/40 backdrop-blur-2xl rounded-[2.4rem] p-8 md:p-16 text-center border border-white/5 shadow-2xl shadow-black/50">
+
+                        <div class="flex justify-center mb-8 opacity-0 animate-fade-in-up"
+                            style="animation-delay: 0.1s;">
+                            <div
+                                class="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-5 py-2 backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:scale-105 cursor-default">
+                                <span class="flex h-2 w-2 relative">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                                </span>
+                                <span class="text-orange-200/90 text-xs font-bold uppercase tracking-[0.2em]">Michelin
+                                    Star Experience</span>
+                            </div>
                         </div>
 
-                        <!-- Main Heading -->
-                        <div class="space-y-6">
-                            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tight">
-                                <span class="text-white">Savor</span>
+                        <div class="space-y-6 mb-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
+                            <h1
+                                class="text-5xl sm:text-7xl lg:text-8xl font-serif font-medium tracking-tight text-white drop-shadow-lg">
+                                Savor
                                 <span
-                                    class="block text-transparent bg-clip-text bg-linear-to-r from-orange-400 via-amber-400 to-yellow-400 italic mt-4">
+                                    class="text-transparent bg-clip-text bg-linear-to-r from-orange-200 via-amber-200 to-orange-400 italic pr-2">
                                     Excellence
                                 </span>
                             </h1>
-                            <div class="flex items-center gap-4 justify-center lg:justify-start">
-                                <div class="w-12 h-1 bg-linear-to-r from-orange-500 to-amber-500 rounded-full"></div>
-                                <p class="text-xl text-gray-300 font-light">Every Bite Tells a Story</p>
-                            </div>
+                            <p class="text-lg sm:text-xl text-gray-200/80 font-light max-w-2xl mx-auto leading-relaxed">
+                                A symphony of flavors crafted by master chefs. <br class="hidden sm:block" />
+                                Experience the perfect harmony of aroma and ambiance.
+                            </p>
                         </div>
 
-                        <!-- Description -->
-                        <p class="text-gray-300 text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 font-light">
-                            Where master chefs transform the finest ingredients into unforgettable moments.
-                            Experience the perfect harmony of flavor, aroma, and ambiance in every dish.
-                        </p>
-
-                        <!-- CTA Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-6 pt-8 justify-center lg:justify-start">
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0 animate-fade-in-up"
+                            style="animation-delay: 0.5s;">
                             <button
-                                class="group relative overflow-hidden bg-linear-to-r from-orange-500 to-amber-500 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/25">
-                                <span class="relative z-10 flex items-center gap-3">
+                                class="group relative w-full sm:w-auto overflow-hidden bg-white text-black font-bold py-4 px-10 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
                                     Discover Menu
-                                    <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none"
+                                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>
                                 </span>
                             </button>
 
                             <button
-                                class="group relative overflow-hidden border-2 border-white/30 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-500 hover:border-orange-400 hover:scale-105 backdrop-blur-sm">
-                                <span class="relative z-10 flex items-center gap-3">
-                                    Book Table
-                                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
+                                class="group relative w-full sm:w-auto overflow-hidden text-white font-medium py-4 px-10 rounded-full transition-all duration-300 hover:bg-white/10">
+                                <span
+                                    class="absolute inset-0 border border-white/30 rounded-full group-hover:border-white/60 transition-colors"></span>
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    Watch Video
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
+                                        <svg class="w-3 h-3 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    </div>
                                 </span>
                             </button>
                         </div>
-
-                        <!-- Stats -->
-                        <div class="flex flex-wrap gap-8 pt-12 justify-center lg:justify-start">
-                            <div v-for="stat in stats" :key="stat.label" class="text-center lg:text-left">
-                                <div class="text-2xl font-bold text-white">{{ stat.value }}</div>
-                                <div class="text-gray-400 text-sm">{{ stat.label }}</div>
-                            </div>
-                        </div>
                     </div>
+                </div>
 
-                    <!-- Image Content -->
-                    <div class="w-full lg:w-1/2 relative flex items-center justify-center">
-                        <div class="relative w-full max-w-lg">
-                            <!-- Background Effect -->
-                            <div
-                                class="absolute -inset-8 bg-linear-to-r from-orange-500/20 to-amber-500/20 rounded-3xl blur-xl">
-                            </div>
-
-                            <!-- Main Image -->
-                            <div class="relative rounded-3xl overflow-hidden shadow-2xl group">
-                                <div class="h-120 relative">
-                                    <img :src="heroImage" alt="Culinary Masterpiece"
-                                        class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000" />
-                                    <!-- Overlay Gradient -->
-                                    <div
-                                        class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent">
-                                    </div>
-                                </div>
-                            </div>
+                <div class="mt-12 flex flex-wrap justify-center gap-12 sm:gap-24 opacity-0 animate-fade-in-up"
+                    style="animation-delay: 0.7s;">
+                    <div v-for="stat in stats" :key="stat.label" class="text-center group cursor-default">
+                        <div
+                            class="text-3xl sm:text-4xl font-serif text-white mb-1 group-hover:text-orange-300 transition-colors duration-300">
+                            {{ stat.value }}</div>
+                        <div class="text-xs text-white/40 uppercase tracking-widest font-semibold">{{ stat.label }}
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- Scroll Indicator -->
-            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-                <div class="text-white/60 text-sm uppercase tracking-widest animate-pulse">Scroll to Explore</div>
-                <div class="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center">
-                    <div class="w-1 h-3 bg-white/60 rounded-full mt-2 animate-bounce"></div>
+            <div
+                class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 opacity-0 animate-fade-in delay-1000">
+                <span class="text-[10px] text-white/40 uppercase tracking-[0.3em]">Scroll</span>
+                <div class="w-[1px] h-12 bg-linear-to-b from-white/0 via-white/40 to-white/0">
+                    <div class="w-full h-1/2 bg-white/80 animate-scroll-line"></div>
                 </div>
             </div>
+
         </section>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-
-// Navigation data
-const navItems = [
-    { name: 'Home', href: '#' },
-    { name: 'Menu', href: '#' },
-    { name: 'About', href: '#' },
-    { name: 'Reservations', href: '#' },
-    { name: 'Contact', href: '#' }
-];
+import { ref, onMounted } from 'vue';
 
 const stats = [
-    { value: '50+', label: 'Signature Dishes' },
-    { value: '15+', label: 'Master Chefs' },
-    { value: '25+', label: 'Years Experience' }
+    { value: '3', label: 'Michelin Stars' },
+    { value: '25+', label: 'Years Legacy' },
+    { value: '180', label: 'Wines' }
 ];
 
-// Reactive state
-const isScrolled = ref(false);
-const isMenuOpen = ref(false);
-
-// Scroll handler - fixed to properly detect scroll
-const handleScroll = () => {
-    // Check if user has scrolled more than 10px
-    isScrolled.value = window.scrollY > 10;
-};
-
-// Menu toggle
-const toggleMenu = () => {
-    isMenuOpen.value = !isMenuOpen.value;
-};
-
-// Lifecycle hooks
-onMounted(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initialize scroll state
-    handleScroll();
-});
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
-});
-
-// Props
 defineProps({
     heroImage: {
         type: String,
         default: '/roasted-chicken.png'
-    },
-    logoSvg: {
-        type: String,
-        default: '@/assets/Cuisine-Elegante.svg'
     }
 });
 </script>
 
 <style scoped>
-/* Custom animations */
-@keyframes float-slow {
-
-    0%,
-    100% {
-        transform: translateY(0px) rotate(0deg);
+/* Keyframe Animations */
+@keyframes subtle-zoom {
+    0% {
+        transform: scale(1);
     }
 
-    50% {
-        transform: translateY(-20px) rotate(180deg);
+    100% {
+        transform: scale(1.1);
     }
 }
 
-@keyframes float-medium {
-
-    0%,
-    100% {
-        transform: translateX(0px) translateY(0px);
-    }
-
-    33% {
-        transform: translateX(10px) translateY(-15px);
-    }
-
-    66% {
-        transform: translateX(-5px) translateY(10px);
-    }
-}
-
-@keyframes fade-in {
+@keyframes fade-in-up {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
 
     to {
@@ -218,32 +158,48 @@ defineProps({
     }
 }
 
-.animate-float-slow {
-    animation: float-slow 8s ease-in-out infinite;
+@keyframes scroll-line {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(200%);
+    }
 }
 
-.animate-float-medium {
-    animation: float-medium 6s ease-in-out infinite;
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
 }
 
-.animate-fade-in {
-    animation: fade-in 1s ease-out forwards;
+/* Animation Classes */
+.animate-subtle-zoom {
+    animation: subtle-zoom 20s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite alternate;
 }
 
-/* Grid background pattern */
-.bg-grid-white {
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 80px 80px;
+.animate-fade-in-up {
+    animation: fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Ensure smooth transitions */
-header {
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+.animate-scroll-line {
+    animation: scroll-line 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
 }
 
-nav {
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+.animate-pulse-slow {
+    animation: pulse-slow 8s ease-in-out infinite;
+}
+
+.bg-radial-gradient {
+    background-image: radial-gradient(circle, var(--tw-gradient-from) 0%, var(--tw-gradient-via) 40%, var(--tw-gradient-to) 100%);
 }
 </style>
