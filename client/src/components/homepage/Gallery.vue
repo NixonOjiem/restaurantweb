@@ -68,7 +68,7 @@ const galleryItems = [
                         class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 will-change-transform" />
 
                     <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500">
+                        class="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500">
                     </div>
 
                     <div
