@@ -110,7 +110,7 @@ input[type="password"].input-email {
     cursor: pointer;
 }
 
-button:hover {
+button.forgot-btn:hover {
     background: #555;
 }
 
