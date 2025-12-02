@@ -17,16 +17,16 @@ const quickLinks = [
 </script>
 
 <template>
-    <footer class="bg-gradient-to-b from-gray-900 to-black text-white pt-20 pb-10 px-4 font-sans relative">
+    <footer class="bg-linear-to-b from-gray-900 to-black text-white pt-20 pb-10 px-4 font-sans relative">
         <div class="max-w-7xl mx-auto">
 
             <div
-                class="relative bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl p-8 md:p-10 mb-16 border border-gray-700 shadow-2xl overflow-hidden group">
+                class="relative bg-linear-to-r from-gray-800 to-gray-900 rounded-2xl p-8 md:p-10 mb-16 border border-gray-700 shadow-2xl overflow-hidden group">
 
                 <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div class="text-center md:text-left max-w-lg">
                         <h3
-                            class="text-2xl md:text-3xl font-serif font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                            class="text-2xl md:text-3xl font-serif font-bold mb-2 bg-clip-text text-transparent bg-linear-to-r from-white to-gray-400">
                             Join the Inner Circle
                         </h3>
                         <p class="text-gray-400 text-sm md:text-base leading-relaxed">
@@ -40,7 +40,7 @@ const quickLinks = [
                             <input type="email" placeholder="Enter your email address"
                                 class="w-full pl-6 pr-36 py-4 rounded-full bg-black/50 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-900/30 transition-all shadow-inner backdrop-blur-md">
                             <button
-                                class="absolute right-2 top-2 bottom-2 bg-gradient-to-br from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-semibold px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-red-900/50 text-sm tracking-wide">
+                                class="absolute right-2 top-2 bottom-2 bg-linear-to-br from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-semibold px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-red-900/50 text-sm tracking-wide">
                                 Subscribe
                             </button>
                         </form>
@@ -57,7 +57,7 @@ const quickLinks = [
                 <div class="space-y-6">
                     <div class="flex items-center gap-5">
                         <div
-                            class="w-14 h-14 shrink-0 rounded-full bg-gradient-to-br from-red-500 to-red-900 p-[2px] flex items-center justify-center shadow-lg shadow-red-900/20">
+                            class="w-14 h-14 shrink-0 rounded-full bg-linear-to-br from-red-500 to-red-900 p-0.5 flex items-center justify-center shadow-lg shadow-red-900/20">
                             <div class="w-full h-full bg-black rounded-full flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-red-400" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -137,14 +137,14 @@ const quickLinks = [
                 <div class="flex flex-col h-full min-h-[250px]">
                     <h3 class="text-white font-serif font-bold mb-6 tracking-wide">Find Us</h3>
                     <div
-                        class="flex-grow w-full bg-gray-800 rounded-xl overflow-hidden relative group border border-gray-700 hover:border-red-900/50 transition-colors shadow-lg">
+                        class="grow w-full bg-gray-800 rounded-xl overflow-hidden relative group border border-gray-700 hover:border-red-900/50 transition-colors shadow-lg">
                         <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80"
                             class="w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-110 transition-all duration-1000 grayscale group-hover:grayscale-0"
                             alt="Map">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                        <div class="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent"></div>
                         <div class="absolute bottom-4 left-4 right-4">
                             <button
-                                class="w-full text-sm font-bold text-white bg-red-800/80 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 group-hover:translate-y-0 translate-y-1 transition-transform">
+                                class="w-full text-sm font-bold text-white bg-red-800/80 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg hover:bg-red-700 flex items-center justify-center gap-2 group-hover:translate-y-0 translate-y-1 transition-transform">
                                 Get Directions <span>→</span>
                             </button>
                         </div>
