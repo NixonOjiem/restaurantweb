@@ -3,7 +3,7 @@
         style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80');">
         <div class="absolute inset-0 bg-black/60"></div>
 
-        <div class="relative z-10 container mx-auto px-6 text-center text-white">
+        <div class="relative z-10  mx-auto px-6 text-center text-white">
             <h2 class="text-5xl lg:text-6xl font-bold mb-6">Taste the Experience</h2>
             <p class="text-xl text-stone-200 mb-10 max-w-2xl mx-auto">Whether you're looking for a romantic evening out
                 or a cozy night in.</p>

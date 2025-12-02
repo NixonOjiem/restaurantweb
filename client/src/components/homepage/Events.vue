@@ -1,6 +1,6 @@
 <template>
     <section class="py-20 bg-stone-900 text-stone-100">
-        <div class="container mx-auto px-6">
+        <div class=" mx-auto px-6">
             <div class="flex justify-between items-end mb-12 border-b border-stone-700 pb-4">
                 <h2 class="text-3xl md:text-4xl font-bold">Happenings</h2>
                 <a href="#" class="text-orange-500 hover:text-orange-400">View Calendar &rarr;</a>

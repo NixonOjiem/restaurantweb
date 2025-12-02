@@ -1,6 +1,6 @@
 <template>
-    <footer class="bg-stone-950 text-stone-400 pt-20 pb-10">
-        <div class="container mx-auto px-6">
+    <footer class="bg-stone-950 text-stone-400 pt-20 pb-10  mx-auto px-6">
+        <div class=" mx-auto px-6">
 
             <div
                 class="bg-orange-600 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 text-white mb-20 relative overflow-hidden">

@@ -8,7 +8,7 @@ const dishes = [
 
 <template>
     <section class="py-20 bg-stone-100" id="menu">
-        <div class="container mx-auto px-6">
+        <div class=" mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-stone-900 mb-4">Chef's Selection</h2>
                 <p class="text-stone-500 max-w-xl mx-auto">Hand-picked dishes that define our culinary identity for this
@@ -28,7 +28,7 @@ const dishes = [
                     </div>
                     <div class="p-8">
                         <h3 class="text-2xl font-bold mb-2 group-hover:text-orange-600 transition-colors">{{ dish.name
-                            }}</h3>
+                        }}</h3>
                         <p class="text-stone-500 mb-4">{{ dish.desc }}</p>
                         <button
                             class="text-sm font-bold uppercase tracking-wide text-stone-400 group-hover:text-stone-900 transition-colors">

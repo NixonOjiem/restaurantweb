@@ -1,6 +1,6 @@
 <template>
     <section class="py-20" id="gallery">
-        <div class="container mx-auto px-4">
+        <div class=" mx-auto px-4">
             <h2 class="text-4xl font-bold text-center mb-12">Visual Feast</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-4 h-[600px] md:h-[500px]">
                 <div class="col-span-2 row-span-2 relative group overflow-hidden rounded-2xl">
