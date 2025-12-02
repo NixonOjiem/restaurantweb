@@ -1,40 +1,72 @@
 <template>
-  <section class="section">
-    <div class="signinContainer">
-      <div class="restForm">
-        <div class="signupTitle">
-          <h2>Sign Up</h2>
+  <section class="signup-section">
+    <div class="signup-card">
+
+      <div class="form-container">
+        <div class="signup-header">
+          <h2>Create Account</h2>
+          <p class="subtitle">Join the culinary experience</p>
         </div>
+
         <form @submit.prevent="handleRegister">
 
-          <div class="fullname">
+          <div v-if="error" class="error-banner">
+            {{ error }}
+          </div>
+
+          <div class="input-group">
             <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" placeholder="Enter your full name" required v-model="fullName">
+            <input type="text" id="fullName" placeholder="e.g. Gordon Ramsay" required v-model="fullName"
+              :disabled="isLoading">
           </div>
 
-
-          <div class="username">
-            <label for="userName">User Name </label>
-            <input type="text" id="userName" placeholder="Enter your user name" required v-model="userName">
+          <div class="input-group">
+            <label for="userName">Username</label>
+            <input type="text" id="userName" placeholder="Pick a username" required v-model="userName"
+              :disabled="isLoading">
           </div>
 
-          <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="Enter your email" required v-model="email">
+          <div class="input-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="name@example.com" required v-model="email"
+              :disabled="isLoading">
+          </div>
 
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Enter password" required v-model="password">
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Create a strong password" required v-model="password"
+              :disabled="isLoading">
+          </div>
 
-          <button type="submit" class="signup-button">Create Account</button>
-          <p class="text-center ">or</p>
-          <button type="button" class="signup-button google-signup-button" id="google-signin-button">
-            Signin with google
+          <button type="submit" class="signup-button" :disabled="isLoading">
+            {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
           </button>
+
+          <div class="divider">
+            <span>or continue with</span>
+          </div>
+
+          <div class="google-btn-wrapper">
+            <div id="google-signin-button"
+              :style="{ opacity: isLoading ? 0.5 : 1, pointerEvents: isLoading ? 'none' : 'auto' }"></div>
+          </div>
+
         </form>
+
+        <p class="login-redirect">
+          Already a member? <a href="/login">Log In</a>
+        </p>
       </div>
 
-      <div class="ImageContainer">
-        <img class="imgSignup" src="/KFC food.png" alt="Food">
+      <div class="image-container">
+        <div class="overlay"></div>
+        <img class="img-signup" src="/KFC food.png" alt="Delicious Food">
+        <div class="image-text">
+          <h3>Taste the Extraordinary</h3>
+          <p>Discover recipes from world-class chefs.</p>
+        </div>
       </div>
+
     </div>
   </section>
 </template>
@@ -42,207 +74,310 @@
 <script setup lang="ts">
 import { defineOptions, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-const ApiBaseurl = import.meta.env.VITE_API_BASE_URL;
-const RegisterUrl = `${ApiBaseurl}/auth/signup`;
-const GoogleAuthUrl = `${ApiBaseurl}/auth/googleauth`;
-const router = useRouter();
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia'; // Essential for reactivity
+
+interface GoogleCredentialResponse {
+  credential: string; // The JWT ID token
+  select_by?: string;
+  clientId?: string;
+}
+
 defineOptions({
   name: "RegistrationComponent"
 });
 
-// 1. Reactive state for all form inputs
+const router = useRouter();
+const authStore = useAuthStore();
+
+const { isLoading, error } = storeToRefs(authStore);
+
+// Reactive state for form
 const fullName = ref('');
 const userName = ref('');
 const email = ref('');
 const password = ref('');
 
+// --- Handle Standard Registration ---
+const handleRegister = async () => {
+  // Clear previous errors via store
+  authStore.error = null;
 
-
-// 3. Function to handle form submission
-const handleRegister = () => {
-  // Destructure the required data for clarity
   const registrationData = {
     fullName: fullName.value,
     userName: userName.value,
     email: email.value,
     password: password.value,
-
   };
 
-  fetch(RegisterUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(registrationData),
-  })
-    .then(response => response.json())
-    .then(data => console.log('Success:', data))
-    .catch((error) => console.error('Error:', error));
+  // Call the Pinia Action
+  const success = await authStore.signup(registrationData);
 
+  if (success) {
+    console.log('Registration Successful');
+    router.push('/');
+  }
 };
 
-// --- Google Sign-in Logic ---
-// 1. Function to send the Google ID token to the backend
-const handleGoogleAuthResponse = async (response: any) => {
-  // response.credential contains the Google ID Token
+// --- Handle Google Auth ---
+const handleGoogleAuthResponse = async (response: GoogleCredentialResponse) => {
   const idToken = response.credential;
 
-  try {
-    const res = await fetch(GoogleAuthUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Send the ID token to your backend
-      body: JSON.stringify({ idToken }),
-    });
+  // Call the NEW Pinia Action
+  const success = await authStore.googleLogin(idToken);
 
-    const data = await res.json();
-
-    if (data.success) {
-      console.log('Google Sign-in Successful', data.user.name);
-      // TODO: Handle token storage (if not using httpOnly cookies)
-      router.push('/'); // Redirect user
-    } else {
-      console.error('Google Sign-in failed on backend:', data.message);
-    }
-  } catch (error) {
-    console.error('Error during Google Sign-in fetch:', error);
+  if (success) {
+    console.log('Google Sign-in Successful');
+    router.push('/');
   }
 };
 
-// 2. Initialize Google Sign-in on component mount
 onMounted(() => {
-  // Check if google is available (it should be, due to the script in index.html)
   if (window.google) {
     window.google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID, // YOUR CLIENT ID
-      callback: handleGoogleAuthResponse // The function to call with the token
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogleAuthResponse
     });
 
-    // Render the Google button inside the specified div
-    window.google.accounts.id.renderButton(
-      document.getElementById("google-signin-button"),
-      { theme: "outline", size: "large" } // Customization options
-    );
+    const buttonElement = document.getElementById("google-signin-button");
+    if (buttonElement) {
+      window.google.accounts.id.renderButton(
+        buttonElement,
+        { theme: "outline", size: "large", width: "100%" }
+      );
+    }
   }
 });
-
 </script>
 
 <style scoped>
-/* New styles for the section element to achieve centering */
-.section {
-  /* Makes the section take the full height of the viewport */
-  height: 100vh;
-  /* Enables flexbox alignment */
+/* Include all your previous CSS here */
+/* ... */
+
+/* ADD THIS for the error message */
+.error-banner {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 0.9rem;
+  border: 1px solid #fca5a5;
+}
+
+/* Disabled state for button */
+.signup-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ... Rest of your CSS ... */
+:root {
+  --primary-color: #d35400;
+  --bg-color: #fdfbf7;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
+}
+
+.signup-section {
+  min-height: 100vh;
   display: flex;
-  /* Centers content vertically (on the cross-axis) */
-  align-items: center;
-  /* Centers content horizontally (on the main-axis) */
   justify-content: center;
-  background: skyblue;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  align-items: center;
+  background: radial-gradient(circle at center, #fffefadd 0%, #f0e6d2 100%);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  padding: 20px;
 }
 
-.signupTitle {
-  margin-bottom: 5px;
-  font: bold;
-}
-
-.signupTitle h2 {
-  font-weight: bold;
-  font: bold;
-  text-transform: uppercase;
-  /*makes the signup word capital*/
-}
-
-.restForm {
-  margin-right: 2rem;
-  border: #555 2px;
-}
-
-/* Existing styles for the image container */
-.ImageContainer {
-  flex: 1.2;
-  background-color: pink;
-  /* Added height to ensure the image container doesn't stretch past content */
-  height: auto;
-}
-
-.imgSignup {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-}
-
-/* Existing styles for the main content box */
-.signinContainer {
-  background: #f5f5f5;
+.signup-card {
   display: flex;
-  padding: 30px;
-  flex-direction: row;
-  align-items: stretch;
-  width: 800px;
-  /* margin: auto; is now redundant but harmless with flexbox centering */
-  margin: auto;
-  border-radius: 10px;
+  background: #ffffff;
+  width: 100%;
+  max-width: 900px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.form-container {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 h2 {
-  text-align: center;
-  color: #444;
-  margin-bottom: 20px;
+  color: #2c3e50;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  margin-top: 5px;
+  font-size: 0.95rem;
+}
+
+.input-group {
+  margin-bottom: 15px;
 }
 
 label {
   display: block;
   margin-bottom: 6px;
-  color: #555;
+  color: #34495e;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
+input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #fafafa;
+  padding: 12px 15px;
+  border: 2px solid #ecf0f1;
+  border-radius: 8px;
+  background: #f9f9f9;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+input:focus {
+  border-color: #d35400;
+  background: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
 }
 
 .signup-button {
   width: 100%;
-  padding: 12px;
-  background: skyblue;
+  padding: 14px;
+  background: linear-gradient(135deg, #d35400, #e67e22);
   border: none;
-  border-radius: 6px;
+  border-radius: 50px;
   color: white;
-  font-size: 16px;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
-  margin-top: 5px;
-  /* Added spacing */
+  margin-top: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
 }
 
 .signup-button:hover {
-  background: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(211, 84, 0, 0.4);
 }
 
-.google-signup-button {
-  background: #4285F4;
-  /* Google blue */
-}
-
-.google-signup-button:hover {
-  background: #3c78d8;
-}
-
-.text-center {
+.divider {
+  display: flex;
+  align-items: center;
   text-align: center;
-  margin: 10px 0;
+  margin: 20px 0;
+  color: #bdc3c7;
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.login-redirect {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.login-redirect a {
+  color: #d35400;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-redirect a:hover {
+  text-decoration: underline;
+}
+
+.image-container {
+  flex: 1.2;
+  position: relative;
+  display: block;
+}
+
+.img-signup {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+}
+
+.image-text {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  color: white;
+  z-index: 2;
+}
+
+.image-text h3 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.image-text p {
+  margin: 5px 0 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .signup-card {
+    flex-direction: column;
+    max-width: 450px;
+  }
+
+  .image-container {
+    display: none;
+  }
+
+  .form-container {
+    padding: 30px 20px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
 }
 </style>

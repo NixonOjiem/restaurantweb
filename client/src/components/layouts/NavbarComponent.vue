@@ -1,5 +1,5 @@
 <template>
-  <header class="w-full sticky top-0 z-20 flex justify-center p-4">
+  <header class="w-full absolute top-0 z-20 flex justify-center p-5">
     <nav class="bg-white rounded-2xl shadow-xl p-4 w-full max-w-6xl">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
@@ -11,7 +11,8 @@
 
         <div class="hidden md:flex items-center space-x-8">
           <a href="#" class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Home</a>
-          <a href="#" class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Menu</a>
+          <a href="/menu"
+            class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Menu</a>
           <a href="#" class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">About</a>
           <a href="#"
             class="nav-link-animated text-gray-700 font-medium hover:text-red-600 transition-colors">Reservations</a>
@@ -24,10 +25,11 @@
             class="px-4 py-2 rounded-full border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors">
             Book Now
           </button>
-          <a href="/login"
+          <a href="/login" v-if="!isAuthenticated"
             class="px-6 py-2 rounded-full bg-[#2C3E50] text-white font-medium hover:bg-[#455566] transition-colors flex items-center">
             Get Started
           </a>
+          <p v-if="isAuthenticated">Hi {{ user?.name }}</p>
         </div>
 
         <button @click="toggleMenu"
@@ -48,7 +50,7 @@
         <div class="flex flex-col space-y-4">
           <a href="#"
             class="text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 flex items-center hover:underline">Home</a>
-          <a href="#"
+          <a href="/menu"
             class="text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 flex items-center hover:underline">Menu</a>
           <a href="#"
             class="text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 flex items-center hover:underline">About</a>
@@ -62,7 +64,7 @@
               class="flex-1 px-4 py-3 rounded-lg border border-[#2C3E50] text-[#2C3E50] font-medium hover:bg-[#2C3E50] hover:text-white transition-colors flex items-center justify-center">
               Call
             </button>
-            <button
+            <button v-if="!isAuthenticated"
               class="flex-1 px-4 py-3 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors flex items-center justify-center">
               Book
             </button>
@@ -75,11 +77,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineOptions } from 'vue';
+import { ref, defineOptions, watchEffect } from 'vue';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
+
+const authStore = useAuthStore();
+// Extract 'user' and 'isAuthenticated' safely
+const { user, isAuthenticated } = storeToRefs(authStore);
+// 3. Console Log
+// We use watchEffect because 'user' might be null at the exact millisecond
+// the component mounts, but 'initializeStore' fills it in a moment later.
+watchEffect(() => {
+  console.log("Current Auth User:", user.value);
+  console.log("Current Auth User Authenticated?:", isAuthenticated.value);
+
+});
+
+console.log({ user })
 
 defineOptions({
-  name: "RestaurantNavbar",
+  name: "NavbarComponent",
 });
 
 const isMenuOpen = ref(false);
