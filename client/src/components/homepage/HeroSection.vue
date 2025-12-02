@@ -80,7 +80,7 @@ onMounted(() => {
                 <div class="group relative overflow-hidden rounded-[2.5rem] p-px">
 
                     <div
-                        class="absolute inset-0 bg-gradient-to-b from-white/20 via-white/5 to-transparent rounded-[2.5rem]">
+                        class="absolute inset-0 bg-linear-to-b from-white/20 via-white/5 to-transparent rounded-[2.5rem]">
                     </div>
 
                     <div
@@ -105,7 +105,7 @@ onMounted(() => {
                                 class="text-5xl sm:text-7xl lg:text-8xl font-serif font-medium tracking-tight text-white drop-shadow-lg">
                                 Savor
                                 <span
-                                    class="text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-300 to-amber-500 italic pr-2">
+                                    class="text-transparent bg-clip-text bg-linear-to-r from-amber-100 via-amber-300 to-amber-500 italic pr-2">
                                     Excellence
                                 </span>
                             </h1>
@@ -167,13 +167,13 @@ onMounted(() => {
             </div>
 
             <div
-                class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-stone-950 to-transparent z-10 pointer-events-none">
+                class="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-stone-950 to-transparent z-10 pointer-events-none">
             </div>
 
             <div
                 class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 opacity-0 animate-fade-in delay-1000">
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.3em]">Scroll</span>
-                <div class="w-px h-12 bg-gradient-to-b from-white/0 via-white/40 to-white/0">
+                <div class="w-px h-12 bg-linear-to-b from-white/0 via-white/40 to-white/0">
                     <div class="w-full h-1/2 bg-red-500 animate-scroll-line shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
                 </div>
             </div>
