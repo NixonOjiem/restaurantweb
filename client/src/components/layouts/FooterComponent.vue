@@ -31,14 +31,14 @@ const quickLinks = [
         <div class="relative z-10 pt-24 pb-12 px-6 max-w-7xl mx-auto">
 
             <div
-                class="relative rounded-2xl p-1 mb-20 bg-gradient-to-r from-stone-800 via-red-900/50 to-stone-800 shadow-2xl">
+                class="relative rounded-2xl p-1 mb-20 bg-linear-to-r from-stone-800 via-red-900/50 to-stone-800 shadow-2xl">
                 <div
                     class="bg-stone-900/90 backdrop-blur-xl rounded-xl p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-10">
 
                     <div class="text-center lg:text-left max-w-xl">
                         <h3 class="text-3xl font-serif font-bold text-white mb-2 tracking-wide">
                             Join the <span
-                                class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">Inner
+                                class="text-transparent bg-clip-text bg-linear-to-r from-red-400 to-red-600">Inner
                                 Circle</span>
                         </h3>
                         <p class="text-stone-400 font-light leading-relaxed">
@@ -52,7 +52,7 @@ const quickLinks = [
                             <input type="email" placeholder="Enter your email address"
                                 class="w-full pl-6 pr-40 py-5 rounded-full bg-stone-950/80 border border-stone-700 text-stone-200 placeholder-stone-600 focus:outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-900/20 transition-all shadow-inner">
                             <button
-                                class="absolute right-2 top-2 bottom-2 bg-gradient-to-br from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-red-900/50 text-xs tracking-[0.15em] uppercase">
+                                class="absolute right-2 top-2 bottom-2 bg-linear-to-br from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-red-900/50 text-xs tracking-[0.15em] uppercase">
                                 Subscribe
                             </button>
                         </form>
@@ -70,7 +70,7 @@ const quickLinks = [
                                 class="absolute inset-0 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity duration-500">
                             </div>
                             <div
-                                class="relative w-full h-full bg-gradient-to-br from-stone-800 to-stone-900 rounded-full border border-stone-700 flex items-center justify-center">
+                                class="relative w-full h-full bg-linear-to-br from-stone-800 to-stone-900 rounded-full border border-stone-700 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-red-500" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -106,7 +106,7 @@ const quickLinks = [
 
                 <div>
                     <h3 class="text-stone-100 font-serif font-bold text-lg mb-8 flex items-center gap-3">
-                        <span class="w-8 h-[1px] bg-red-600"></span> Explore
+                        <span class="w-8 h-px bg-red-600"></span> Explore
                     </h3>
                     <ul class="space-y-4">
                         <li v-for="link in quickLinks" :key="link.name">
@@ -115,7 +115,7 @@ const quickLinks = [
                                 <span
                                     class="w-1.5 h-1.5 rounded-full bg-stone-700 group-hover:bg-red-500 transition-colors"></span>
                                 <span class="group-hover:translate-x-1 transition-transform duration-300">{{ link.name
-                                    }}</span>
+                                }}</span>
                             </a>
                         </li>
                     </ul>
@@ -123,7 +123,7 @@ const quickLinks = [
 
                 <div>
                     <h3 class="text-stone-100 font-serif font-bold text-lg mb-8 flex items-center gap-3">
-                        <span class="w-8 h-[1px] bg-red-600"></span> Visit
+                        <span class="w-8 h-px bg-red-600"></span> Visit
                     </h3>
 
                     <ul class="space-y-6 mb-8">
@@ -160,16 +160,16 @@ const quickLinks = [
 
                 <div class="flex flex-col h-full min-h-[260px]">
                     <h3 class="text-stone-100 font-serif font-bold text-lg mb-8 flex items-center gap-3">
-                        <span class="w-8 h-[1px] bg-red-600"></span> Locate
+                        <span class="w-8 h-px bg-red-600"></span> Locate
                     </h3>
 
                     <div
-                        class="flex-grow w-full relative group rounded-2xl overflow-hidden shadow-2xl border border-stone-800">
+                        class="grow w-full relative group rounded-2xl overflow-hidden shadow-2xl border border-stone-800">
                         <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80"
                             class="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-80 group-hover:scale-110 transition-all duration-1000 ease-in-out"
                             alt="Map Location">
 
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent">
+                        <div class="absolute inset-0 bg-linear-to-t from-stone-950 via-stone-950/40 to-transparent">
                         </div>
 
                         <div class="absolute bottom-5 left-5 right-5 z-10">
