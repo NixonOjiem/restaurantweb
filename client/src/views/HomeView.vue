@@ -7,7 +7,6 @@
       <Events />
       <Gallery />
       <ReservationCta />
-      <LocationFooter />
     </main>
 
     <FooterComponent />
@@ -21,5 +20,4 @@ import AboutSection from '@/components/homepage/AboutSection.vue';
 import Events from '@/components/homepage/Events.vue';
 import Gallery from '@/components/homepage/Gallery.vue';
 import ReservationCta from '@/components/homepage/ReservationCta.vue';
-import LocationFooter from '@/components/homepage/LocationFooter.vue';
 </script>

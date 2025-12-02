@@ -8,7 +8,7 @@
         </div>
 
         <div class="login-container">
-            <h2>Log In</h2>
+            <h2 class="login-title">Log In</h2>
             <form @submit.prevent>
                 <div class="input-group">
                     <label>Email Address</label>
@@ -114,7 +114,7 @@
     z-index: 5;
 }
 
-h2 {
+h2.login-title {
     text-align: center;
     color: #2c3e50;
     margin-bottom: 25px;
@@ -135,9 +135,9 @@ label {
     font-size: 0.9rem;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
+input[type="text"].input-group,
+input[type="email"].input-group,
+input[type="password"].input-group {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid #ecf0f1;

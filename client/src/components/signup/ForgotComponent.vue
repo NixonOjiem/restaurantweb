@@ -1,7 +1,7 @@
 <template>
     <section class="forgot-section">
         <div class="container">
-            <h2>Forgot Password</h2>
+            <h2 class="forgot-title">Forgot Password</h2>
             <form>
                 <div class="input-email">
                     <label>Email Address</label>
@@ -76,7 +76,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+h2.forgot-title {
     text-align: center;
     color: #444;
     margin-bottom: 20px;
@@ -88,9 +88,9 @@ label {
     color: #555;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
+input[type="text"].input-email,
+input[type="email"].input-email,
+input[type="password"].input-email {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -128,7 +128,6 @@ button:hover {
     display: block;
     text-align: right;
     margin-top: -15px;
-    /* Pull it up closer to the input field */
     margin-bottom: 20px;
     font-size: 14px;
 }
