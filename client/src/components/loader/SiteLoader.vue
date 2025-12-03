@@ -1,42 +1,113 @@
-<template lang="">
-  <div class= 'loader-container'>
+<template>
+  <div class="loader-container">
     <span class="loader"></span>
+
+    <div class="text-wrapper">
+      <div ref="textRef" class="loading-text">
+        Something is Cooking
+      </div>
+    </div>
   </div>
 </template>
-<script setup lang="ts">
 
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue';
+import gsap from 'gsap';
+import SplitText from 'gsap/SplitText';
+
+const textRef = ref<HTMLElement | null>(null);
+let splitInstance: SplitText | null = null;
+let animContext: gsap.Context | null = null;
+
+onMounted(() => {
+  // --- THE FIX: ADD THIS CHECK ---
+  // If the HTML element hasn't loaded for some reason, stop here.
+  // This satisfies TypeScript that textRef.value is not null below.
+  if (!textRef.value) return;
+
+  gsap.registerPlugin(SplitText);
+
+  // We use gsap.context() for easy cleanup in Vue
+  animContext = gsap.context(() => {
+
+    // 1. Create the SplitText instance
+    // TypeScript now knows textRef.value is definitely an HTMLElement
+    splitInstance = new SplitText(textRef.value as HTMLElement, {
+      type: "chars, words"
+    });
+
+    // 2. Run the "Characters" Animation
+    gsap.from(splitInstance.chars, {
+      x: 100,
+      opacity: 0,
+      duration: 1,
+      ease: "power4.out",
+      stagger: 0.05,
+      delay: 0.2
+    });
+
+  }, textRef.value); // Scope to the text element
+});
+
+onUnmounted(() => {
+  animContext?.revert();
+  splitInstance?.revert();
+});
 </script>
-<style scoped lang="css">
+
+<style scoped>
+/* --- CONTAINER & BACKGROUND --- */
 .loader-container {
   background-image: url('/9575634.png');
   background-color: antiquewhite;
-  /* --- STYLES ADDED/MODIFIED FOR BACKGROUND FIT --- */
-
-  /* Ensures the image covers the entire container, potentially clipping edges */
   background-size: cover;
-
-  /* Prevents the image from tiling if it doesn't perfectly match the container size */
   background-repeat: no-repeat;
-
-  /* Centers the image within the container if 'cover' is used */
   background-position: center;
 
   display: flex;
+  flex-direction: column;
+  /* Stack Pan and Text */
   justify-content: center;
-  /* Centers horizontally */
   align-items: center;
-  /* Centers vertically */
+  gap: 2rem;
+
   min-height: 100vh;
-  /* Ensures the container takes up the full viewport height */
   width: 100vw;
-  /* Ensures the container takes up the full viewport width */
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  /* Prevent scrollbars if letters fly out */
 }
 
+/* --- TEXT STYLES --- */
+.text-wrapper {
+  perspective: 500px;
+  /* Gives depth if you use 3D rotations later */
+  overflow: hidden;
+  /* Ensures text coming from outside isn't visible too early */
+  padding: 10px;
+  /* Buffer for animation movement */
+}
+
+.loading-text {
+  /* Use a nice font for the split text */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 800;
+  font-size: 2.5rem;
+  /* Adjustable size */
+  color: #222;
+  /* Dark grey to match pan */
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* --- FRYING PAN LOADER (Unchanged) --- */
 .loader {
   width: 100px;
   height: 100px;
   display: block;
-  margin: auto;
   position: relative;
   background: #222;
   border-radius: 50%;

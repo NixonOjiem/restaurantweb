@@ -7,27 +7,25 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-// Import your loader component
-import SiteLoader from './components/loader/SiteLoader.vue';// Adjust the path as needed
+import SiteLoader from './components/loader/SiteLoader.vue';
 
 const authStore = useAuthStore();
-// 1. Create a reactive state to track loading
 const isLoading = ref(true);
 
 onMounted(async () => {
   try {
-    // 2. Await the asynchronous initialization of your store
-    // Assuming initializeStore() returns a Promise or is an async function
-    await authStore.initializeStore();
+    // Define the minimum time you want the loader to show (e.g., 2000ms = 2 seconds)
+    const minLoadTime = new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Optional: Load other initial data/resources here
-    // await anotherStore.loadInitialData();
+    // Wait for BOTH the store initialization AND the timer to finish
+    await Promise.all([
+      authStore.initializeStore(),
+      minLoadTime
+    ]);
 
   } catch (error) {
     console.error('Failed to initialize application:', error);
-    // Handle error state if necessary (e.g., redirect to an error page)
   } finally {
-    // 3. Set isLoading to false when initialization is complete (success or failure)
     isLoading.value = false;
   }
 });
