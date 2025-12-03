@@ -28,7 +28,7 @@ const formattedPrice = computed(() => {
     <div
         class="group relative flex w-full flex-col overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
 
-        <div class="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
+        <div class="relative aspect-4/3 w-full overflow-hidden bg-gray-100">
             <img :src="image" :alt="title"
                 class="h-full w-full object-cover object-center transition-transform duration-700 ease-in-out group-hover:scale-105"
                 loading="lazy" />
