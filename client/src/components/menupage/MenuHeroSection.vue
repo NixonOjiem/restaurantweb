@@ -1,21 +1,21 @@
 <template>
-  <section class="w-full p-4 md:p-8 lg:p-12 bg-gradient-to-br from-[#FFFDF5] to-[#FFFAEB]"
+  <section class="w-full p-4 md:p-8 md:mt-8 lg:p-12 bg-linear-to-br from-[#FFFDF5] to-[#FFFAEB]"
     aria-label="Restaurant menu hero section">
 
     <div
-      class="relative flex items-center justify-center w-full h-[75vh] min-h-[600px] md:max-h-[900px] overflow-hidden text-white shadow-2xl rounded-[24px] md:rounded-3xl group">
+      class="relative flex items-center justify-center w-full h-[75vh] min-h-[600px] md:max-h-[900px] overflow-hidden text-white shadow-2xl rounded-3xl md:rounded-3xl group">
 
       <div class="absolute inset-0 z-0 w-full h-full bg-black">
         <div v-for="(img, index) in images" :key="index"
           class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out"
           :class="currentImageIndex === index ? 'opacity-100' : 'opacity-0'">
           <img :src="img.src" :alt="img.alt"
-            class="w-full h-full object-cover object-center transition-transform duration-[2000ms] ease-out will-change-transform"
+            class="w-full h-full object-cover object-center transition-transform duration-2000 ease-out will-change-transform"
             :class="currentImageIndex === index ? 'scale-105 group-hover:scale-110' : 'scale-100'" loading="eager" />
         </div>
 
         <div
-          class="absolute inset-0 z-10 bg-gradient-to-br from-black/70 via-black/40 to-black/20 mix-blend-multiply pointer-events-none">
+          class="absolute inset-0 z-10 bg-linear-to-br from-black/70 via-black/40 to-black/20 mix-blend-multiply pointer-events-none">
         </div>
       </div>
 
@@ -23,12 +23,12 @@
         <div class="animate-fade-in-up">
 
           <span v-if="showSeasonalBadge"
-            class="inline-block px-5 py-2 mb-8 text-sm font-semibold tracking-widest text-white uppercase shadow-sm rounded-full bg-gradient-to-br from-orange-600 to-orange-400 animate-pulse">
+            class="inline-block px-5 py-2 mb-8 text-sm font-semibold tracking-widest text-white uppercase shadow-sm rounded-full bg-linear-to-br from-orange-600 to-orange-400 animate-pulse">
             Seasonal Specials
           </span>
 
           <h1
-            class="mb-4 font-serif text-4xl font-bold leading-tight tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-orange-100 drop-shadow-md md:text-6xl lg:text-7xl">
+            class="mb-4 font-serif text-4xl font-bold leading-tight tracking-wide text-transparent bg-clip-text bg-linear-to-r from-white to-orange-100 drop-shadow-md md:text-6xl lg:text-7xl">
             Our Culinary Journey
           </h1>
 
@@ -39,9 +39,9 @@
 
           <div class="flex flex-col items-center justify-center gap-4 mb-12 sm:flex-row md:gap-6">
             <a href="#menu-details"
-              class="relative inline-flex items-center gap-3 px-8 py-4 overflow-hidden font-semibold text-white transition-all transform rounded-full shadow-lg bg-gradient-to-br from-[#c17a3a] to-[#a0522d] hover:-translate-y-1 hover:shadow-orange-900/30 group/btn">
+              class="relative inline-flex items-center gap-3 px-8 py-4 overflow-hidden font-semibold text-white transition-all transform rounded-full shadow-lg bg-linear-to-br from-[#c17a3a] to-[#a0522d] hover:-translate-y-1 hover:shadow-orange-900/30 group/btn">
               <div
-                class="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-all duration-700 group-hover/btn:left-full">
+                class="absolute top-0 -left-full w-full h-full bg-linear-to-r from-transparent via-white/20 to-transparent transition-all duration-700 group-hover/btn:left-full">
               </div>
 
               <span class="relative">View Our Full Menu</span>
@@ -65,17 +65,17 @@
             class="flex flex-wrap justify-center gap-8 p-6 mx-auto border md:gap-16 max-w-4xl bg-white/10 backdrop-blur-md border-white/20 rounded-2xl md:p-8 mt-16">
             <div class="flex flex-col items-center">
               <span
-                class="mb-2 font-serif text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 md:text-4xl">50+</span>
+                class="mb-2 font-serif text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-yellow-300 to-orange-400 md:text-4xl">50+</span>
               <span class="text-xs tracking-widest uppercase opacity-90">Signature Dishes</span>
             </div>
             <div class="flex flex-col items-center">
               <span
-                class="mb-2 font-serif text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 md:text-4xl">Local</span>
+                class="mb-2 font-serif text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-yellow-300 to-orange-400 md:text-4xl">Local</span>
               <span class="text-xs tracking-widest uppercase opacity-90">Farm Sourced</span>
             </div>
             <div class="flex flex-col items-center">
               <span
-                class="mb-2 font-serif text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 md:text-4xl">4.9★</span>
+                class="mb-2 font-serif text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-yellow-300 to-orange-400 md:text-4xl">4.9★</span>
               <span class="text-xs tracking-widest uppercase opacity-90">Guest Rating</span>
             </div>
           </div>

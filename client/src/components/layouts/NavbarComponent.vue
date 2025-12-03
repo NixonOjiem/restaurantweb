@@ -120,7 +120,7 @@ onUnmounted(() => {
 
               <div v-if="isAuthenticated" class="flex items-center gap-3">
                 <span class="text-sm text-stone-300">Hi, <span class="text-red-400 font-serif italic">{{ user?.name
-                }}</span></span>
+                    }}</span></span>
               </div>
 
               <a href="/login" v-else
@@ -168,8 +168,6 @@ onUnmounted(() => {
         </nav>
       </div>
     </header>
-
-    <div v-if="!isHomePage" class="h-20 w-full"></div>
 
   </div>
 </template>

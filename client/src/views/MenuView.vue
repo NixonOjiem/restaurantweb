@@ -1,12 +1,16 @@
 <template lang="">
   <div>
     <NavbarComponent />
-    <MenuHeroSection />
+    <div class="grow">
+      <MenuHeroSection />
+    </div>
+    <FooterComponent />
   </div>
 </template>
 <script setup lang="ts">
-import MenuHeroSection from '@/components/menupage/MenuHeroSection.vue';
 import NavbarComponent from '@/components/layouts/NavbarComponent.vue';
+import MenuHeroSection from '@/components/menupage/MenuHeroSection.vue';
+import FooterComponent from '@/components/layouts/FooterComponent.vue';
 </script>
 <style lang="">
 
