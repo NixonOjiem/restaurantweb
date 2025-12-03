@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
+import router from '@/router';
 
 defineOptions({
   name: "NavbarComponent",
@@ -28,6 +29,10 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY > 50;
 };
 
+// Go to profile
+const goToProfile = () => {
+  router.push('/profile')
+}
 // 2. CLICK OUTSIDE LOGIC
 const handleClickOutside = (event: MouseEvent) => {
   if (!isMenuOpen.value) return;
@@ -118,7 +123,7 @@ onUnmounted(() => {
               </button>
               <div class="h-4 w-px bg-white/20"></div>
 
-              <div v-if="isAuthenticated" class="flex items-center gap-3">
+              <div v-if="isAuthenticated" class="flex items-center gap-3 cursor-pointer" @click="goToProfile">
                 <span class="text-sm text-stone-300">Hi, <span class="text-red-400 font-serif italic">{{ user?.name
                     }}</span></span>
               </div>
@@ -158,7 +163,7 @@ onUnmounted(() => {
                   class="w-full py-3 rounded-lg bg-red-700 text-white hover:bg-red-600 transition-colors text-xs uppercase tracking-widest font-bold shadow-lg">
                   Sign In
                 </button>
-                <div v-else class="text-center text-stone-400 text-sm py-2">
+                <div v-else class="text-center text-stone-400 text-sm py-2 cursor-pointer" @click="goToProfile">
                   Logged in as <span class="text-white">{{ user?.name }}</span>
                 </div>
               </div>
