@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
+import router from '@/router';
 
 defineOptions({
   name: "NavbarComponent",
@@ -43,6 +44,10 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY > 50;
 };
 
+// Go to profile
+const goToProfile = () => {
+  router.push('/profile')
+}
 // 2. CLICK OUTSIDE LOGIC
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as Node;
