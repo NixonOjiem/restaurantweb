@@ -106,8 +106,7 @@ const handleToggleWishlist = (id: number | string) => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-[#FFF7E0] px-4 py-12 md:px-8 font-sans">
-
+    <div class="min-h-screen bg-linear-to-br from-[#FFFDF5] to-[#FFFAEB] px-4 py-12 md:px-8 font-sans">
         <div class="max-w-7xl mx-auto mb-12 text-center">
             <h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Our Menu</h2>
             <p class="text-gray-600 max-w-2xl mx-auto">
