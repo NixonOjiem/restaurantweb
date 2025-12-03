@@ -1,8 +1,8 @@
-const Menu = require("../models/Menu.model"); // Adjust path if necessary
+const Menu = require("../models/Menu.model");
 
 /**
  * @desc    Create a new menu item
- * @route   POST /restaurant/v1/menu/menu-post
+ * @route   POST /restaurant/v1/menu/add-menu-item
  * @access  Private (Admin/Restaurant Owner)
  */
 exports.postToMenuItems = async (req, res, next) => {
@@ -50,7 +50,7 @@ exports.fetchFromMenuItems = async (req, res, next) => {
 
 /**
  * @desc    Update a menu item
- * @route   PUT /restaurant/v1/menu/menu-update/:id
+ * @route   PUT /restaurant/v1/menu/update-menu-item/:id
  * @access  Private
  */
 exports.updateMenuItem = async (req, res, next) => {
@@ -85,7 +85,7 @@ exports.updateMenuItem = async (req, res, next) => {
 
 /**
  * @desc    Delete a menu item
- * @route   DELETE /restaurant/v1/menu/menu-delete/:id
+ * @route   DELETE /restaurant/v1/menu/delete-menu-item/:id
  * @access  Private
  */
 exports.deleteMenuItem = async (req, res, next) => {
@@ -106,6 +106,34 @@ exports.deleteMenuItem = async (req, res, next) => {
       message: "Menu item deleted successfully",
     });
   } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Get a single menu item by ID
+ * @route   GET /restaurant/v1/menu/fetch-item/:id
+ * @access  Public
+ */
+exports.fetchSingleMenuItem = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const menuItem = await Menu.findById(id);
+
+    if (!menuItem) {
+      const error = new Error(`Menu item not found with id of ${id}`);
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.status(200).json({
+      success: true,
+      data: menuItem,
+    });
+  } catch (err) {
+    // If the ID format is invalid (CastError), Mongoose throws an error.
+    // Usually, your error handler should catch this, or you can check here.
     next(err);
   }
 };

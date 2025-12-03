@@ -77,7 +77,7 @@ const MenuSchema = new mongoose.Schema(
       default: 0,
     },
     badge: {
-      type: [string],
+      type: [String],
       enum: ["Bestseller", "Light Option", "Chef Choice", "Sweet Tooth"],
     },
   },
