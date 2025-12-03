@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, defineOptions, onMounted, onUnmounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router'; // Added useRouter
+import { useRoute, useRouter } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
@@ -16,7 +16,7 @@ const router = useRouter();
 
 // 1. REF FOR CLICK OUTSIDE LOGIC
 const navbarRef = ref<HTMLElement | null>(null);
-const profileDropdownRef = ref<HTMLElement | null>(null); // Added ref for dropdown container
+const profileDropdownRef = ref<HTMLElement | null>(null);
 
 const isHomePage = computed(() => route.path === '/');
 const isMenuOpen = ref(false);
@@ -33,7 +33,6 @@ function toggleProfile() {
 }
 
 function handleLogout() {
-  // console.log("Logging out...");
   authStore.logout();
   isProfileOpen.value = false;
   isMenuOpen.value = false;
@@ -48,25 +47,19 @@ const handleScroll = () => {
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as Node;
 
-  // Close Mobile Menu
   if (isMenuOpen.value && navbarRef.value && !navbarRef.value.contains(target)) {
     isMenuOpen.value = false;
   }
 
-  // Close Desktop Profile Dropdown
   if (isProfileOpen.value && profileDropdownRef.value && !profileDropdownRef.value.contains(target)) {
     isProfileOpen.value = false;
   }
 };
 
 const navbarWrapperClasses = computed(() => {
-  // MOBILE BASE
   let classes = 'bg-stone-950/90 backdrop-blur-xl border border-stone-800 shadow-2xl mx-4 mt-4 rounded-2xl';
-
-  // DESKTOP RESET
   classes += ' md:mx-0 md:mt-0 md:rounded-none md:border-x-0 md:border-t-0';
 
-  // DESKTOP STATE
   if (isHomePage.value && !isScrolled.value) {
     classes += ' md:bg-transparent md:backdrop-blur-none md:shadow-none md:border-b-transparent';
   } else {
@@ -119,19 +112,19 @@ onUnmounted(() => {
             <div class="hidden md:flex items-center space-x-8">
               <router-link to="/"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Home</router-link>
+                active-class="text-white active-link">Home</router-link>
               <router-link to="/menu"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Menu</router-link>
+                active-class="text-white active-link">Menu</router-link>
               <router-link to="/about"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">About</router-link>
+                active-class="text-white active-link">About</router-link>
               <router-link to="/reservations"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Reservations</router-link>
+                active-class="text-white active-link">Reservations</router-link>
               <router-link to="/contact"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Contact</router-link>
+                active-class="text-white active-link">Contact</router-link>
             </div>
 
             <div class="hidden md:flex items-center space-x-6">
@@ -181,7 +174,7 @@ onUnmounted(() => {
               </div>
 
               <router-link to="/login" v-else
-                class="group relative px-5 py-2 rounded-full bg-stone-100 text-stone-950 font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:text-white overflow-hidden shadow-lg">
+                class="group relative px-5 py-2 rounded-full bg-stone-100 text-stone-950 font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:text-white overflow-hidden shadow-lg flex items-center justify-center">
                 <span class="relative z-10 uppercase tracking-wide">Login</span>
               </router-link>
             </div>
@@ -234,19 +227,23 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
+
         </nav>
       </div>
     </header>
+
   </div>
 </template>
 
 <style scoped>
+/* Desktop Link Hover & Active State */
 .nav-link {
   position: relative;
   display: inline-block;
   padding-bottom: 4px;
 }
 
+/* This creates the red line */
 .nav-link::after {
   content: '';
   position: absolute;
@@ -256,16 +253,22 @@ onUnmounted(() => {
   bottom: 0;
   left: 0;
   background-color: #dc2626;
+  /* red-600 */
   transform-origin: bottom right;
   transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+/* Combined selector:
+   1. Hover state
+   2. Active state (using the custom class 'active-link' we added to the router-link active-class prop)
+*/
 .nav-link:hover::after,
-.nav-link.router-link-active::after {
+.nav-link.active-link::after {
   transform: scaleX(1);
   transform-origin: bottom left;
 }
 
+/* Mobile Link Styling */
 .mobile-link {
   display: block;
   padding: 12px 16px;
