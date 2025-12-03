@@ -4,7 +4,7 @@
 
       <div class="form-container">
         <div class="signup-header">
-          <h2>Create Account</h2>
+          <h2 class="register-title">Create Account</h2>
           <p class="subtitle">Join the culinary experience</p>
         </div>
 
@@ -214,7 +214,7 @@ onMounted(() => {
   margin-bottom: 25px;
 }
 
-h2 {
+h2.register-title {
   color: #2c3e50;
   margin: 0;
   font-size: 2rem;
@@ -376,7 +376,7 @@ input:focus {
     padding: 30px 20px;
   }
 
-  h2 {
+  h2.register-title {
     font-size: 1.8rem;
   }
 }

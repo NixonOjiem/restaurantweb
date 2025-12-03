@@ -1,168 +1,203 @@
-<template>
-    <footer class="bg-linear-to-b from-gray-900 to-black text-white pt-16 pb-8 px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 pb-12 border-b border-gray-700">
-                <div class="lg:col-span-1">
-                    <div class="flex items-center mb-6">
-                        <div class="w-10 h-10 bg-linear-to-r rounded-full mr-3 flex items-center justify-center">
-                            <img :src="logoSvg" alt="Bistro Elegante Logo"
-                                class="w-14 h-14 text-white object-contain" />
-                        </div>
-                        <h2 class="text-3xl font-serif font-bold tracking-wider">Cuisine
-                            <span class="text-red-400">Elegante</span>
-                        </h2>
-                    </div>
-                    <p class="text-gray-300 mb-6 max-w-md">
-                        Experience the art of fine dining at Cuisine Elegante, where culinary excellence meets
-                        sophisticated ambiance.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-red-500 transition-all duration-300 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                            </svg>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-red-500 transition-all duration-300 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                            </svg>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-red-500 transition-all duration-300 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-1">
-                    <h3 class="text-xl font-serif font-semibold mb-6 relative inline-block">
-                        Quick Links
-                        <span class="absolute bottom-0 left-0 w-1/2 h-0.5 bg-red-400"></span>
-                    </h3>
-                    <ul class="space-y-4">
-                        <li v-for="link in quickLinks" :key="link.name">
-                            <a :href="link.href"
-                                class="text-gray-300 hover:text-red-400 transition-colors duration-300 flex items-center group">
-                                <span
-                                    class="w-2 h-2 bg-red-400 rounded-full mr-3 transform scale-0 group-hover:scale-100 transition-transform duration-300"></span>
-                                {{ link.name }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="lg:col-span-1">
-                    <h3 class="text-xl font-serif font-semibold mb-6 relative inline-block">
-                        Contact Us
-                        <span class="absolute bottom-0 left-0 w-1/2 h-0.5 bg-red-400"></span>
-                    </h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-red-400 mt-1 mr-3 shrink-0" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span class="text-gray-300">123 Gourmet Avenue, Culinary District, CD 10101</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-red-400 mt-1 mr-3 shrink-0" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                            <span class="text-gray-300">+1 (555) 123-4567</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-red-400 mt-1 mr-3 shrink-0" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            <span class="text-gray-300">reservations@cuisineelegante.com</span>
-                        </li>
-                    </ul>
-
-                    <div class="mt-8">
-                        <h4 class="text-lg font-serif font-semibold mb-3">Opening Hours</h4>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-gray-300">
-                                <span>Monday - Thursday</span>
-                                <span>5:00 PM - 10:00 PM</span>
-                            </div>
-                            <div class="flex justify-between text-gray-300">
-                                <span>Friday - Saturday</span>
-                                <span>5:00 PM - 11:00 PM</span>
-                            </div>
-                            <div class="flex justify-between text-gray-300">
-                                <span>Sunday</span>
-                                <span>4:00 PM - 9:00 PM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-8 flex flex-col md:flex-row justify-between items-center">
-                <div class="text-gray-400 text-sm mb-4 md:mb-0">
-                    &copy; {{ currentYear }} Cuisine Elegante. All rights reserved.
-                </div>
-                <div class="flex space-x-6 text-sm">
-                    <a href="#" class="text-gray-400 hover:text-red-400 transition-colors duration-300">Privacy
-                        Policy</a>
-                    <a href="#" class="text-gray-400 hover:text-red-400 transition-colors duration-300">Terms of
-                        Service</a>
-                    <a href="#" class="text-gray-400 hover:text-red-400 transition-colors duration-300">Sitemap</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-</template>
-
 <script setup lang="ts">
-import { defineOptions, ref } from 'vue';
-import logoSvg from '@/assets/Cuisine-Elegante.svg';
+import { defineOptions, computed } from 'vue';
 
 defineOptions({
     name: 'RestaurantFooter'
 });
 
-const currentYear = ref(new Date().getFullYear());
+const currentYear = computed(() => new Date().getFullYear());
+
 const quickLinks = [
     { name: 'Our Menu', href: '#' },
     { name: 'Reservations', href: '#' },
     { name: 'Private Events', href: '#' },
-    { name: 'About Us', href: '#' },
     { name: 'Gift Cards', href: '#' },
     { name: 'Careers', href: '#' }
 ];
 </script>
 
-<style scoped>
-/* Custom scrollbar for webkit browsers */
-::-webkit-scrollbar {
-    width: 6px;
-}
+<template>
+    <footer class="relative bg-stone-950 text-stone-300 font-sans overflow-hidden">
 
-::-webkit-scrollbar-track {
-    background: #1f2937;
-}
+        <div class="absolute inset-0 opacity-[0.03]"
+            style="background-image: url('https://www.transparenttextures.com/patterns/stardust.png');"></div>
+        <div
+            class="absolute -top-20 -left-20 w-[600px] h-[600px] bg-red-900/5 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-stone-800/20 rounded-full blur-3xl pointer-events-none">
+        </div>
 
-::-webkit-scrollbar-thumb {
-    background: #f59e0b;
-    border-radius: 3px;
-}
+        <div class="relative z-10 pt-24 pb-12 px-6 max-w-7xl mx-auto">
 
-::-webkit-scrollbar-thumb:hover {
-    background: #d97706;
-}
-</style>
+            <div
+                class="relative rounded-2xl p-1 mb-20 bg-linear-to-r from-stone-800 via-red-900/50 to-stone-800 shadow-2xl">
+                <div
+                    class="bg-stone-900/90 backdrop-blur-xl rounded-xl p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-10">
+
+                    <div class="text-center lg:text-left max-w-xl">
+                        <h3 class="text-3xl font-serif font-bold text-white mb-2 tracking-wide">
+                            Join the <span
+                                class="text-transparent bg-clip-text bg-linear-to-r from-red-400 to-red-600">Inner
+                                Circle</span>
+                        </h3>
+                        <p class="text-stone-400 font-light leading-relaxed">
+                            Unlock the cellar. Receive invitation-only event details, secret menu drops, and exclusive
+                            sommelier selections.
+                        </p>
+                    </div>
+
+                    <div class="w-full lg:w-auto min-w-[350px]">
+                        <form class="relative group" @submit.prevent>
+                            <input type="email" placeholder="Enter your email address"
+                                class="w-full pl-6 pr-40 py-5 rounded-full bg-stone-950/80 border border-stone-700 text-stone-200 placeholder-stone-600 focus:outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-900/20 transition-all shadow-inner">
+                            <button
+                                class="absolute right-2 top-2 bottom-2 bg-linear-to-br from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-red-900/50 text-xs tracking-[0.15em] uppercase">
+                                Subscribe
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16 border-b border-stone-800/50">
+
+                <div class="space-y-8">
+                    <div class="flex items-center gap-5 group cursor-default">
+                        <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                            <div
+                                class="absolute inset-0 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                            </div>
+                            <div
+                                class="relative w-full h-full bg-linear-to-br from-stone-800 to-stone-900 rounded-full border border-stone-700 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-red-500" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                                    <path d="M7 2v20" />
+                                    <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <h2 class="text-3xl font-serif font-bold text-stone-100 leading-none tracking-wider">
+                                Cuisine
+                            </h2>
+                            <span
+                                class="text-xs text-red-500 font-bold tracking-[0.3em] uppercase mt-2 border-t border-red-900/50 pt-1">
+                                Elegante
+                            </span>
+                        </div>
+                    </div>
+
+                    <p class="text-stone-400 text-sm leading-relaxed font-light pl-2 border-l-2 border-stone-800">
+                        Where culinary art meets atmosphere. An experience designed for the senses.
+                    </p>
+
+                    <div class="flex space-x-4">
+                        <a v-for="icon in ['IG', 'FB', 'YT']" :key="icon" href="#"
+                            class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-500 hover:text-white hover:border-red-600 hover:bg-red-600/10 transition-all duration-300">
+                            <span class="text-[10px] font-bold">{{ icon }}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-stone-100 font-serif font-bold text-lg mb-8 flex items-center gap-3">
+                        <span class="w-8 h-px bg-red-600"></span> Explore
+                    </h3>
+                    <ul class="space-y-4">
+                        <li v-for="link in quickLinks" :key="link.name">
+                            <a :href="link.href"
+                                class="group flex items-center gap-3 text-stone-400 hover:text-white transition-colors text-sm">
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-stone-700 group-hover:bg-red-500 transition-colors"></span>
+                                <span class="group-hover:translate-x-1 transition-transform duration-300">{{ link.name
+                                }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-stone-100 font-serif font-bold text-lg mb-8 flex items-center gap-3">
+                        <span class="w-8 h-px bg-red-600"></span> Visit
+                    </h3>
+
+                    <ul class="space-y-6 mb-8">
+                        <li class="flex items-start group">
+                            <span
+                                class="text-red-500/80 mt-1 mr-4 text-lg group-hover:scale-110 transition-transform">📍</span>
+                            <span
+                                class="text-stone-400 text-sm font-light leading-relaxed group-hover:text-stone-200 transition-colors">
+                                123 Gourmet Avenue,<br>Culinary District, CD 10101
+                            </span>
+                        </li>
+                        <li class="flex items-start group">
+                            <span
+                                class="text-red-500/80 mt-1 mr-4 text-lg group-hover:scale-110 transition-transform">📞</span>
+                            <span
+                                class="text-stone-400 text-sm font-light group-hover:text-stone-200 transition-colors cursor-pointer">
+                                +1 (555) 123-4567
+                            </span>
+                        </li>
+                    </ul>
+
+                    <div class="p-4 rounded-xl bg-stone-900/50 border border-stone-800">
+                        <div class="flex justify-between text-xs text-stone-500 uppercase tracking-widest mb-2">
+                            <span>Dinner Service</span>
+                        </div>
+                        <div class="space-y-2 text-sm text-stone-300">
+                            <div class="flex justify-between"><span>Mon-Thu</span> <span>5pm - 10pm</span></div>
+                            <div class="flex justify-between font-medium text-white"><span>Fri-Sat</span> <span
+                                    class="text-red-400">5pm - 11pm</span></div>
+                            <div class="flex justify-between"><span>Sun</span> <span>4pm - 9pm</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col h-full min-h-[260px]">
+                    <h3 class="text-stone-100 font-serif font-bold text-lg mb-8 flex items-center gap-3">
+                        <span class="w-8 h-px bg-red-600"></span> Locate
+                    </h3>
+
+                    <div
+                        class="grow w-full relative group rounded-2xl overflow-hidden shadow-2xl border border-stone-800">
+                        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80"
+                            class="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-80 group-hover:scale-110 transition-all duration-1000 ease-in-out"
+                            alt="Map Location">
+
+                        <div class="absolute inset-0 bg-linear-to-t from-stone-950 via-stone-950/40 to-transparent">
+                        </div>
+
+                        <div class="absolute bottom-5 left-5 right-5 z-10">
+                            <button
+                                class="w-full bg-stone-100/10 backdrop-blur-md border border-white/20 text-white font-bold text-sm py-3 rounded-xl hover:bg-red-700 hover:border-red-600 transition-all duration-300 flex items-center justify-center gap-2 group-hover:translate-y-0 translate-y-1">
+                                Get Directions
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-600">
+                <p>&copy; {{ currentYear }} Cuisine Elegante. Crafted with <span class="text-red-800">♥</span> for food
+                    lovers.</p>
+                <div class="flex gap-8">
+                    <a href="#" class="hover:text-stone-300 transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-stone-300 transition-colors">Terms</a>
+                    <a href="#" class="hover:text-stone-300 transition-colors">Sitemap</a>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+</template>
