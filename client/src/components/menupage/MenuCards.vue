@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { ProductProps } from '@/types'
-import ProductCard from './ProductCard.vue'; // Check this path matches your folder structure
+import type { ProductProps } from '@/types'; // Assuming you have this type definition
+// Adjust these paths to match your actual folder structure
+import ProductCard from './ProductCard.vue';
+import ProductQuickView from './ProductView.vue';
 
-// 2. APPLY THE TYPE TO THE REF <Product[]>
+// 1. State for the Modal
+const isModalOpen = ref(false);
+const selectedProduct = ref<any>(null);
+
+// 2. Your Product Data
 const products = ref<ProductProps[]>([
     {
         id: 1,
@@ -25,7 +31,6 @@ const products = ref<ProductProps[]>([
         rating: 5,
         reviewCount: 84,
         isWishlisted: true
-        // No badge here, but TypeScript is now okay with it because of the interface
     },
     {
         id: 3,
@@ -93,8 +98,10 @@ const products = ref<ProductProps[]>([
     }
 ]);
 
-const handleAddToCart = (id: number | string) => {
-    console.log(`Added product ${id} to cart`);
+// 3. Handlers
+const handleAddToCart = (payload: any) => {
+    // Logic handles both Card click (id only) and Modal click (full object)
+    console.log('Added to cart:', payload);
 };
 
 const handleToggleWishlist = (id: number | string) => {
@@ -102,6 +109,19 @@ const handleToggleWishlist = (id: number | string) => {
     if (product) {
         product.isWishlisted = !product.isWishlisted;
     }
+};
+
+// 4. Open Modal Logic
+const openProductModal = (product: ProductProps) => {
+    // We need to format the data because the Modal expects an 'images' array
+    // but your card data only has a single 'image' string.
+    selectedProduct.value = {
+        ...product,
+        sku: 'CE-' + product.id, // Generate dummy SKU if missing
+        category: 'Main Course', // Default category
+        images: [product.image, product.image] // Duplicate image to simulate gallery
+    };
+    isModalOpen.value = true;
 };
 </script>
 
@@ -116,18 +136,24 @@ const handleToggleWishlist = (id: number | string) => {
 
         <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
 
-            <ProductCard v-for="product in products" :key="product.id" :id="product.id" :title="product.title"
-                :description="product.description" :price="product.price" :image="product.image"
-                :rating="product.rating" :review-count="product.reviewCount" :is-wishlisted="product.isWishlisted"
-                @add-to-cart="handleAddToCart" @toggle-wishlist="handleToggleWishlist">
-                <template #badge v-if="product.badge">
-                    <div
-                        class="absolute top-2 left-2 bg-stone-900/90 backdrop-blur-sm text-white text-[10px] uppercase font-bold px-2 py-1 rounded shadow-lg z-10 tracking-widest">
-                        {{ product.badge }}
-                    </div>
-                </template>
-            </ProductCard>
+            <div v-for="product in products" :key="product.id" @click="openProductModal(product)"
+                class="cursor-pointer">
+                <ProductCard :id="product.id" :title="product.title" :description="product.description"
+                    :price="product.price" :image="product.image" :rating="product.rating"
+                    :review-count="product.reviewCount" :is-wishlisted="product.isWishlisted"
+                    @add-to-cart="handleAddToCart" @toggle-wishlist="handleToggleWishlist">
+                    <template #badge v-if="product.badge">
+                        <div
+                            class="absolute top-2 left-2 bg-stone-900/90 backdrop-blur-sm text-white text-[10px] uppercase font-bold px-2 py-1 rounded shadow-lg z-10 tracking-widest">
+                            {{ product.badge }}
+                        </div>
+                    </template>
+                </ProductCard>
+            </div>
 
         </div>
+
+        <ProductQuickView :isOpen="isModalOpen" :product="selectedProduct" @close="isModalOpen = false"
+            @addToCart="handleAddToCart" />
     </div>
 </template>
