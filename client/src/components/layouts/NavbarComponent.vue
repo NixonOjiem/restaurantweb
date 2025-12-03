@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, defineOptions, onMounted, onUnmounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
@@ -13,16 +13,31 @@ defineOptions({
 const authStore = useAuthStore();
 const { user, isAuthenticated } = storeToRefs(authStore);
 const route = useRoute();
+const router = useRouter();
 
 // 1. REF FOR CLICK OUTSIDE LOGIC
 const navbarRef = ref<HTMLElement | null>(null);
+const profileDropdownRef = ref<HTMLElement | null>(null);
 
 const isHomePage = computed(() => route.path === '/');
 const isMenuOpen = ref(false);
+const isProfileOpen = ref(false);
 const isScrolled = ref(false);
 
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value;
+  if (isMenuOpen.value) isProfileOpen.value = false;
+}
+
+function toggleProfile() {
+  isProfileOpen.value = !isProfileOpen.value;
+}
+
+function handleLogout() {
+  authStore.logout();
+  isProfileOpen.value = false;
+  isMenuOpen.value = false;
+  router.push('/');
 }
 
 const handleScroll = () => {
@@ -35,20 +50,21 @@ const goToProfile = () => {
 }
 // 2. CLICK OUTSIDE LOGIC
 const handleClickOutside = (event: MouseEvent) => {
-  if (!isMenuOpen.value) return;
-  if (navbarRef.value && !navbarRef.value.contains(event.target as Node)) {
+  const target = event.target as Node;
+
+  if (isMenuOpen.value && navbarRef.value && !navbarRef.value.contains(target)) {
     isMenuOpen.value = false;
+  }
+
+  if (isProfileOpen.value && profileDropdownRef.value && !profileDropdownRef.value.contains(target)) {
+    isProfileOpen.value = false;
   }
 };
 
 const navbarWrapperClasses = computed(() => {
-  // MOBILE BASE: Darker background (90%) for readability, Floating Card style
   let classes = 'bg-stone-950/90 backdrop-blur-xl border border-stone-800 shadow-2xl mx-4 mt-4 rounded-2xl';
-
-  // DESKTOP RESET: Remove margins and rounded corners
   classes += ' md:mx-0 md:mt-0 md:rounded-none md:border-x-0 md:border-t-0';
 
-  // DESKTOP STATE
   if (isHomePage.value && !isScrolled.value) {
     classes += ' md:bg-transparent md:backdrop-blur-none md:shadow-none md:border-b-transparent';
   } else {
@@ -74,7 +90,7 @@ onUnmounted(() => {
 
     <header class="fixed top-0 left-0 w-full transition-all duration-500 ease-in-out font-sans">
 
-      <div ref="navbarRef" class="relative transition-all duration-300 ease-in-out overflow-hidden"
+      <div ref="navbarRef" class="relative transition-all duration-300 ease-in-out overflow-hidden md:overflow-visible"
         :class="navbarWrapperClasses">
         <nav class="max-w-7xl mx-auto px-6">
 
@@ -101,19 +117,19 @@ onUnmounted(() => {
             <div class="hidden md:flex items-center space-x-8">
               <router-link to="/"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Home</router-link>
+                active-class="text-white active-link">Home</router-link>
               <router-link to="/menu"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Menu</router-link>
+                active-class="text-white active-link">Menu</router-link>
               <router-link to="/about"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">About</router-link>
+                active-class="text-white active-link">About</router-link>
               <router-link to="/reservations"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Reservations</router-link>
+                active-class="text-white active-link">Reservations</router-link>
               <router-link to="/contact"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white">Contact</router-link>
+                active-class="text-white active-link">Contact</router-link>
             </div>
 
             <div class="hidden md:flex items-center space-x-6">
@@ -123,15 +139,49 @@ onUnmounted(() => {
               </button>
               <div class="h-4 w-px bg-white/20"></div>
 
-              <div v-if="isAuthenticated" class="flex items-center gap-3 cursor-pointer" @click="goToProfile">
-                <span class="text-sm text-stone-300">Hi, <span class="text-red-400 font-serif italic">{{ user?.name
-                    }}</span></span>
+              <div v-if="isAuthenticated" class="relative" ref="profileDropdownRef">
+
+                <button @click="toggleProfile"
+                  class="flex items-center gap-2 text-sm text-stone-300 hover:text-white transition-colors focus:outline-none">
+                  <span>Hi, <span class="text-red-400 font-serif italic">{{ user?.name }}</span></span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200"
+                    :class="isProfileOpen ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </button>
+
+                <transition enter-active-class="transition ease-out duration-100"
+                  enter-from-class="opacity-0 translate-y-2" enter-to-class="opacity-100 translate-y-0"
+                  leave-active-class="transition ease-in duration-75" leave-from-class="opacity-100 translate-y-0"
+                  leave-to-class="opacity-0 translate-y-2">
+                  <div v-if="isProfileOpen"
+                    class="absolute right-0 mt-4 w-48 bg-stone-950 border border-stone-800 rounded-xl shadow-xl py-2 overflow-hidden z-50">
+                    <router-link to="/profile"
+                      class="block px-4 py-2 text-sm text-stone-300 hover:bg-stone-800 hover:text-white transition-colors"
+                      @click="isProfileOpen = false">
+                      My Profile
+                    </router-link>
+                    <router-link to="/orders"
+                      class="block px-4 py-2 text-sm text-stone-300 hover:bg-stone-800 hover:text-white transition-colors"
+                      @click="isProfileOpen = false">
+                      My Orders
+                    </router-link>
+                    <div class="h-px bg-stone-800 my-2"></div>
+                    <button @click="handleLogout"
+                      class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-stone-800 hover:text-red-300 transition-colors">
+                      Sign Out
+                    </button>
+                  </div>
+                </transition>
+
               </div>
 
-              <a href="/login" v-else
-                class="group relative px-5 py-2 rounded-full bg-stone-100 text-stone-950 font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:text-white overflow-hidden shadow-lg">
+              <router-link to="/login" v-else
+                class="group relative px-5 py-2 rounded-full bg-stone-100 text-stone-950 font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:text-white overflow-hidden shadow-lg flex items-center justify-center">
                 <span class="relative z-10 uppercase tracking-wide">Login</span>
-              </a>
+              </router-link>
             </div>
 
             <button @click="toggleMenu"
@@ -146,25 +196,38 @@ onUnmounted(() => {
           </div>
 
           <div class="md:hidden overflow-hidden transition-all duration-500 ease-in-out"
-            :class="[isMenuOpen ? 'max-h-[500px] opacity-100 pb-6 border-t border-white/10 mt-2' : 'max-h-0 opacity-0 mt-0']">
+            :class="[isMenuOpen ? 'max-h-[600px] opacity-100 pb-6 border-t border-white/10 mt-2' : 'max-h-0 opacity-0 mt-0']">
             <div class="flex flex-col space-y-1 pt-4">
               <router-link to="/" class="mobile-link" @click="isMenuOpen = false">Home</router-link>
               <router-link to="/menu" class="mobile-link" @click="isMenuOpen = false">Menu</router-link>
               <router-link to="/about" class="mobile-link" @click="isMenuOpen = false">About</router-link>
               <router-link to="/reservations" class="mobile-link" @click="isMenuOpen = false">Reservations</router-link>
-              <router-link to="/contact" class="mobile-link" @click="isMenuOpen = false">Contact</router-link>
+              <router-link to="/contact" class="mobile-link border-b border-stone-800 pb-4 mb-2"
+                @click="isMenuOpen = false">Contact</router-link>
 
               <div class="pt-4 mt-2 flex flex-col gap-3 border-t border-white/5 mx-2">
                 <button
                   class="w-full py-3 rounded-lg border border-white/10 text-stone-300 hover:border-red-500 hover:text-red-400 transition-colors text-xs uppercase tracking-widest font-bold">
                   Call Us
                 </button>
-                <button v-if="!isAuthenticated"
-                  class="w-full py-3 rounded-lg bg-red-700 text-white hover:bg-red-600 transition-colors text-xs uppercase tracking-widest font-bold shadow-lg">
+
+                <router-link to="/login" v-if="!isAuthenticated"
+                  class="w-full py-3 rounded-lg bg-red-700 text-white hover:bg-red-600 transition-colors text-xs uppercase tracking-widest font-bold shadow-lg flex items-center justify-center">
                   Sign In
-                </button>
-                <div v-else class="text-center text-stone-400 text-sm py-2 cursor-pointer" @click="goToProfile">
-                  Logged in as <span class="text-white">{{ user?.name }}</span>
+                </router-link>
+
+                <div v-else class="flex flex-col gap-2">
+                  <div class="text-center text-stone-500 text-xs uppercase tracking-widest mb-1">
+                    Logged in as <span class="text-white font-bold">{{ user?.name }}</span>
+                  </div>
+                  <router-link to="/profile" @click="isMenuOpen = false"
+                    class="w-full py-3 rounded-lg bg-stone-800 text-stone-300 hover:bg-stone-700 hover:text-white transition-colors text-sm text-center font-bold uppercase tracking-wider">
+                    My Profile
+                  </router-link>
+                  <button @click="handleLogout"
+                    class="w-full py-3 rounded-lg border border-red-900/50 text-red-400 hover:bg-red-900/20 transition-colors text-sm font-bold uppercase tracking-wider">
+                    Sign Out
+                  </button>
                 </div>
               </div>
             </div>
@@ -178,13 +241,14 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* Desktop Link Hover Animation */
+/* Desktop Link Hover & Active State */
 .nav-link {
   position: relative;
   display: inline-block;
   padding-bottom: 4px;
 }
 
+/* This creates the red line */
 .nav-link::after {
   content: '';
   position: absolute;
@@ -199,8 +263,12 @@ onUnmounted(() => {
   transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+/* Combined selector:
+   1. Hover state
+   2. Active state (using the custom class 'active-link' we added to the router-link active-class prop)
+*/
 .nav-link:hover::after,
-.nav-link.router-link-active::after {
+.nav-link.active-link::after {
   transform: scaleX(1);
   transform-origin: bottom left;
 }
@@ -210,7 +278,6 @@ onUnmounted(() => {
   display: block;
   padding: 12px 16px;
   color: #d6d3d1;
-  /* stone-300 */
   font-weight: 500;
   border-radius: 8px;
   transition: all 0.3s ease;
@@ -220,7 +287,6 @@ onUnmounted(() => {
 .mobile-link.router-link-active {
   background-color: rgba(255, 255, 255, 0.05);
   color: #ef4444;
-  /* red-500 */
   padding-left: 24px;
 }
 </style>
