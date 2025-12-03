@@ -4,7 +4,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import LoaderComponent from '@/components/loader/LoaderComponent.vue';
+import LoaderComponent from '@/components/loader/SiteLoader.vue';
 </script>
 <style lang="">
 

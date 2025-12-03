@@ -8,6 +8,19 @@
 </script>
 <style scoped lang="css">
 .loader-container {
+  background-image: url('/9575634.png');
+  background-color: antiquewhite;
+  /* --- STYLES ADDED/MODIFIED FOR BACKGROUND FIT --- */
+
+  /* Ensures the image covers the entire container, potentially clipping edges */
+  background-size: cover;
+
+  /* Prevents the image from tiling if it doesn't perfectly match the container size */
+  background-repeat: no-repeat;
+
+  /* Centers the image within the container if 'cover' is used */
+  background-position: center;
+
   display: flex;
   justify-content: center;
   /* Centers horizontally */
