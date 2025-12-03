@@ -1,23 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-// Assuming your previous component is saved as ProductCard.vue
-import ProductCard from './ProductCard.vue';
+import type { ProductProps } from '@/types'
+import ProductCard from './ProductCard.vue'; // Check this path matches your folder structure
 
-// Data Interface
-interface Product {
-    id: number;
-    title: string;
-    description: string;
-    price: number;
-    image: string;
-    rating: number;
-    reviewCount: number;
-    isWishlisted: boolean;
-    badge?: string; // Optional badge text
-}
-
-// 10 Gourmet Food Items
-const products = ref<Product[]>([
+// 2. APPLY THE TYPE TO THE REF <Product[]>
+const products = ref<ProductProps[]>([
     {
         id: 1,
         title: 'Wagyu Truffle Burger',
@@ -38,29 +25,21 @@ const products = ref<Product[]>([
         rating: 5,
         reviewCount: 84,
         isWishlisted: true
+        // No badge here, but TypeScript is now okay with it because of the interface
     },
     {
         id: 3,
-        title: 'Lobster Thermidor',
-        description: 'Whole Maine lobster stuffed with a rich, creamy cognac mixture, mustard, and melted parmesan.',
-        price: 65.00,
-        image: 'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&q=80&w=800',
-        rating: 4,
-        reviewCount: 42,
-        isWishlisted: false
-    },
-    {
-        id: 4,
         title: 'Smoked Duck Salad',
         description: 'Thinly sliced smoked duck breast, pomegranate seeds, walnuts, and mixed greens with orange vinaigrette.',
         price: 24.00,
         image: 'https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?auto=format&fit=crop&q=80&w=800',
         rating: 4,
         reviewCount: 36,
-        isWishlisted: false
+        isWishlisted: false,
+        badge: 'Light Option'
     },
     {
-        id: 5,
+        id: 4,
         title: 'Filet Mignon 8oz',
         description: 'Tenderloin steak cooked to perfection, served with garlic mashed potatoes and red wine reduction.',
         price: 48.00,
@@ -71,7 +50,7 @@ const products = ref<Product[]>([
         badge: 'Chef Choice'
     },
     {
-        id: 6,
+        id: 5,
         title: 'Squid Ink Linguine',
         description: 'Handmade black pasta with clams, mussels, shrimp, and cherry tomatoes in a white wine sauce.',
         price: 29.00,
@@ -81,27 +60,18 @@ const products = ref<Product[]>([
         isWishlisted: false
     },
     {
-        id: 7,
+        id: 6,
         title: 'Molten Lava Cake',
         description: 'Warm dark chocolate cake with a liquid fudge center, served with Madagascar vanilla bean ice cream.',
         price: 14.00,
         image: 'https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&q=80&w=800',
         rating: 5,
         reviewCount: 340,
-        isWishlisted: true
+        isWishlisted: true,
+        badge: 'Sweet Tooth'
     },
     {
-        id: 8,
-        title: 'Artisan Cheese Board',
-        description: 'Curated selection of imported cheeses, honeycomb, marcona almonds, figs, and rustic crackers.',
-        price: 26.00,
-        image: 'https://images.unsplash.com/photo-1631379578550-7038263db699?auto=format&fit=crop&q=80&w=800',
-        rating: 4,
-        reviewCount: 22,
-        isWishlisted: false
-    },
-    {
-        id: 9,
+        id: 7,
         title: 'Matcha Tiramisu',
         description: 'A Japanese twist on the classic Italian dessert, featuring matcha-soaked ladyfingers and mascarpone.',
         price: 12.00,
@@ -111,21 +81,20 @@ const products = ref<Product[]>([
         isWishlisted: false
     },
     {
-        id: 10,
+        id: 8,
         title: 'Mediterranean Mezze',
         description: 'Hummus, baba ghanoush, falafel, stuffed grape leaves, and warm pita bread.',
         price: 22.00,
         image: 'https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&q=80&w=800',
         rating: 5,
         reviewCount: 67,
-        isWishlisted: false
+        isWishlisted: false,
+        badge: 'Vegetarian'
     }
 ]);
 
-// Handlers
 const handleAddToCart = (id: number | string) => {
     console.log(`Added product ${id} to cart`);
-    // Add your cart logic here (e.g., Pinia store action)
 };
 
 const handleToggleWishlist = (id: number | string) => {
@@ -154,7 +123,7 @@ const handleToggleWishlist = (id: number | string) => {
                 @add-to-cart="handleAddToCart" @toggle-wishlist="handleToggleWishlist">
                 <template #badge v-if="product.badge">
                     <div
-                        class="absolute top-3 left-3 bg-black/80 backdrop-blur-sm text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-lg">
+                        class="absolute top-2 left-2 bg-stone-900/90 backdrop-blur-sm text-white text-[10px] uppercase font-bold px-2 py-1 rounded shadow-lg z-10 tracking-widest">
                         {{ product.badge }}
                     </div>
                 </template>

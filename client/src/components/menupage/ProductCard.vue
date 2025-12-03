@@ -1,20 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-
-// 1. Define Props
-interface Props {
-    id: number | string;
-    title: string;
-    description: string;
-    price: number;
-    image: string;
-    rating?: number;
-    reviewCount?: number;
-    isWishlisted?: boolean;
-}
+import type { ProductProps } from '@/types'
 
 // 2. Set Default Values
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ProductProps>(), {
     rating: 5,
     reviewCount: 0,
     isWishlisted: false,
@@ -37,66 +26,57 @@ const formattedPrice = computed(() => {
 
 <template>
     <div
-        class="group relative flex w-full flex-col overflow-hidden rounded-[24px] bg-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
+        class="group relative flex w-full flex-col overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
 
-        <div class="relative aspect-square w-full overflow-hidden bg-gray-100">
+        <div class="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
             <img :src="image" :alt="title"
-                class="h-full w-full object-cover object-center transition-transform duration-700 ease-in-out group-hover:scale-110"
+                class="h-full w-full object-cover object-center transition-transform duration-700 ease-in-out group-hover:scale-105"
                 loading="lazy" />
 
             <slot name="badge"></slot>
+
+            <button @click.stop="$emit('toggle-wishlist', id)"
+                class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition-transform active:scale-90 hover:bg-white"
+                :class="isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
+                aria-label="Add to wishlist">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" :fill="isWishlisted ? 'currentColor' : 'none'"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+            </button>
         </div>
 
-        <div class="flex flex-1 flex-col p-5 sm:p-6">
+        <div class="flex flex-col p-3.5">
 
-            <div class="mb-3 flex items-start justify-between gap-3">
+            <div class="mb-1 flex justify-between items-start gap-2">
                 <h3
-                    class="text-lg font-bold text-gray-900 leading-tight transition-colors group-hover:text-orange-600 line-clamp-2">
+                    class="text-base font-bold text-gray-900 leading-tight line-clamp-1 group-hover:text-red-600 transition-colors">
                     {{ title }}
                 </h3>
 
-                <button @click="$emit('toggle-wishlist', id)"
-                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-red-50 focus:outline-none"
-                    :class="isWishlisted ? 'text-red-500 bg-red-50' : 'text-gray-300 hover:text-red-500'"
-                    aria-label="Add to wishlist">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform active:scale-75"
-                        :fill="isWishlisted ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                </button>
-            </div>
-
-            <div class="mb-3 flex items-center space-x-1">
-                <div class="flex text-yellow-400 text-sm">
-                    <span v-for="i in 5" :key="i">
-                        {{ i <= rating ? '★' : '☆' }} </span>
+                <div v-if="rating > 0"
+                    class="flex items-center gap-1 shrink-0 bg-gray-100 px-1.5 py-0.5 rounded text-[10px] font-bold text-gray-700">
+                    <span>{{ rating }}</span>
+                    <span class="text-yellow-500 text-xs">★</span>
                 </div>
-                <span class="text-xs text-gray-400 font-medium" v-if="reviewCount > 0">
-                    ({{ reviewCount }} reviews)
-                </span>
             </div>
 
-            <p class="mb-6 line-clamp-2 text-sm leading-relaxed text-gray-500">
+            <p class="text-xs text-gray-500 line-clamp-1 mb-3">
                 {{ description }}
             </p>
 
-            <div class="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
+            <div class="flex items-center justify-between mt-auto">
 
-                <div class="flex flex-col">
-                    <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Price</span>
-                    <span class="text-xl font-extrabold text-gray-900">{{ formattedPrice }}</span>
-                </div>
+                <span class="text-lg font-extrabold text-gray-900">{{ formattedPrice }}</span>
 
                 <button @click="$emit('add-to-cart', id)"
-                    class="flex items-center gap-2 rounded-full border border-gray-900 bg-white px-5 py-2 text-sm font-bold text-gray-900 transition-all hover:bg-gray-900 hover:text-white focus:ring-2 focus:ring-gray-900 focus:ring-offset-1 active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    class="flex items-center justify-center gap-1.5 rounded-full bg-stone-900 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-red-600 active:scale-95 shadow-md shadow-stone-900/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
-                    <span>Add</span>
+                    Add
                 </button>
 
             </div>
