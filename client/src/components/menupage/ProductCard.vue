@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { ProductProps } from '@/types'
+import type { ProductProps } from '@/types';
 
 // 2. Set Default Values
 const props = withDefaults(defineProps<ProductProps>(), {
@@ -14,6 +14,23 @@ const emit = defineEmits<{
   (e: 'add-to-cart', id: number | string): void;
   (e: 'toggle-wishlist', id: number | string): void;
 }>();
+
+// --- NEW HANDLER FUNCTIONS ---
+// These solve the "unused emit" error and the "undefined" type error
+
+const onToggleWishlist = () => {
+  // We check if props.id exists to satisfy TypeScript
+  if (props.id) {
+    emit('toggle-wishlist', props.id);
+  }
+};
+
+const onAddToCart = () => {
+  if (props.id) {
+    emit('add-to-cart', props.id);
+  }
+};
+// -----------------------------
 
 // 4. Price Formatter
 const formattedPrice = computed(() => {
@@ -35,7 +52,7 @@ const formattedPrice = computed(() => {
 
       <slot name="badge"></slot>
 
-      <button @click.stop="$emit('toggle-wishlist', id)"
+      <button @click.stop="onToggleWishlist"
         class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition-transform active:scale-90 hover:bg-white"
         :class="isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'" aria-label="Add to wishlist">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" :fill="isWishlisted ? 'currentColor' : 'none'"
@@ -69,7 +86,7 @@ const formattedPrice = computed(() => {
 
         <span class="text-lg font-extrabold text-gray-900">{{ formattedPrice }}</span>
 
-        <button @click="$emit('add-to-cart', id)"
+        <button @click.stop="onAddToCart"
           class="flex items-center justify-center gap-1.5 rounded-full bg-stone-900 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-red-600 active:scale-95 shadow-md shadow-stone-900/10">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="3">

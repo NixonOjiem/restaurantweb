@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import type { ProductProps } from '@/types';
 import ProductCard from './ProductCard.vue';
 import ProductQuickView from './ProductView.vue';
-
+import type { ModalProduct } from '@/types'
 // 1. Configuration
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 const productsURL = `${baseURL}/menu/menu-fetch`;
@@ -15,7 +15,7 @@ const error = ref<string | null>(null);
 
 // 3. Modal State
 const isModalOpen = ref(false);
-const selectedProduct = ref<any>(null);
+const selectedProduct = ref<ModalProduct | null>(null);
 
 // 4. Fetch Function (Async)
 const fetchProducts = async () => {
@@ -32,9 +32,15 @@ const fetchProducts = async () => {
     // Assign the data from the API response
     products.value = result.data;
 
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error fetching products:', err);
-    error.value = err.message;
+    // 2. Check if 'err' is actually an Error object before accessing .message
+    if (err instanceof Error) {
+      error.value = err.message;
+    } else {
+      // Fallback for weird errors (like if a library throws a plain string)
+      error.value = 'An unknown error occurred';
+    }
   } finally {
     isLoading.value = false;
   }
@@ -46,7 +52,7 @@ onMounted(() => {
 });
 
 // 6. Handlers
-const handleAddToCart = (payload: any) => {
+const handleAddToCart = (payload: ProductProps | string | number) => {
   // Logic handles both Card click (id only) and Modal click (full object)
   console.log('Added to cart:', payload);
 };
@@ -60,16 +66,21 @@ const handleToggleWishlist = (id: number | string) => {
 };
 
 // 7. Open Modal Logic
-const openProductModal = (product: any) => {
-  // We need to format the data because the Modal expects an 'images' array
-  // but your card data only has a single 'image' string.
+const openProductModal = (product: ProductProps) => {
+  // 1. Safely extract the ID (prioritize _id, fallback to id, final fallback to empty string)
+  const rawId = product._id || product.id || '';
+
+  // 2. Ensure it is a string
+  const safeId = rawId.toString();
+
   selectedProduct.value = {
     ...product,
-    // If your Mongo ID is '_id', mapped it to 'id' here for the frontend if needed
-    id: product._id || product.id,
-    sku: 'CE-' + (product._id || product.id).toString().slice(-6), // Generate dummy SKU
+    // Use the safe ID we calculated
+    id: safeId,
+    // Now safeId is guaranteed to be a string, so slice works fine
+    sku: 'CE-' + safeId.slice(-6).toUpperCase(),
     category: product.category || 'Main Course',
-    images: product.image ? [product.image, product.image] : [] // Duplicate image to simulate gallery
+    images: product.image ? [product.image, product.image] : []
   };
   isModalOpen.value = true;
 };
@@ -86,15 +97,13 @@ const openProductModal = (product: any) => {
 
     <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
 
-      <div v-for="product in products" :key="product.id" @click="openProductModal(product)" class="cursor-pointer">
-        <ProductCard :id="product.id" :title="product.title" :description="product.description" :price="product.price"
-          :image="product.image" :rating="product.rating" :review-count="product.reviewCount"
-          :is-wishlisted="product.isWishlisted" @add-to-cart="handleAddToCart" @toggle-wishlist="handleToggleWishlist">
-          <template #badge v-if="product.badge">
+      <div v-for="product in products" :key="product._id" @click="openProductModal(product)" class="cursor-pointer">
+        <ProductCard v-bind="product" :id="product._id" @add-to-cart="handleAddToCart"
+          @toggle-wishlist="handleToggleWishlist">
+          <template #badge v-if="product.badge && product.badge.length">
             <div
               class="absolute top-2 left-2 bg-stone-900/90 backdrop-blur-sm text-white text-[10px] uppercase font-bold px-2 py-1 rounded shadow-lg z-10 tracking-widest">
-              {{ product.badge }}
-            </div>
+              {{ product.badge[0] }} </div>
           </template>
         </ProductCard>
       </div>
