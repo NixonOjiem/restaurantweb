@@ -13,7 +13,7 @@ defineOptions({
 const authStore = useAuthStore();
 const { user, isAuthenticated } = storeToRefs(authStore);
 const route = useRoute();
-const router = useRouter();
+const routers = useRouter();
 
 // 1. REF FOR CLICK OUTSIDE LOGIC
 const navbarRef = ref<HTMLElement | null>(null);
@@ -37,7 +37,7 @@ function handleLogout() {
   authStore.logout();
   isProfileOpen.value = false;
   isMenuOpen.value = false;
-  router.push('/');
+  routers.push('/');
 }
 
 const handleScroll = () => {
