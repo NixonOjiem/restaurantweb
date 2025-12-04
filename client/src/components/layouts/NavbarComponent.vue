@@ -5,7 +5,8 @@ import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
 import router from '@/router';
-
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBasketShopping } from '@fortawesome/free-solid-svg-icons/faBasketShopping';
 defineOptions({
   name: "NavbarComponent",
 });
@@ -132,7 +133,11 @@ onUnmounted(() => {
                 class="text-stone-300 hover:text-white text-sm font-bold uppercase tracking-wider transition-colors">
                 Book Now
               </button>
-              <div class="h-4 w-px bg-white/20"></div>
+              <font-awesome-icon :icon="faBasketShopping"
+                class="text-red-400 text-2xl hover:text-red-700 transition-colors duration-200 cursor-pointer"
+                v-if="isAuthenticated" />
+              <div class="h-4 w-px bg-white/20">
+              </div>
 
               <div v-if="isAuthenticated" class="relative" ref="profileDropdownRef">
 
@@ -189,6 +194,8 @@ onUnmounted(() => {
                 :class="isMenuOpen ? 'w-6 -rotate-45 -translate-y-2.5 bg-red-500' : 'w-3 group-hover:w-6'"></span>
             </button>
           </div>
+
+          <!-- Mobile navigation startts here -->
 
           <div class="md:hidden overflow-hidden transition-all duration-500 ease-in-out"
             :class="[isMenuOpen ? 'max-h-[600px] opacity-100 pb-6 border-t border-white/10 mt-2' : 'max-h-0 opacity-0 mt-0']">
