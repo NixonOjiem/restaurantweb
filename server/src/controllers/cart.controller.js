@@ -5,10 +5,12 @@ const Menu = require("../models/Menu.model");
 // @route   GET /restaurant/v1/cart
 // @access  Private
 exports.getCart = async (req, res) => {
+  // 2. Get User ID safely (Handles both 'id' from JWT and '_id' from Mongoose)
+  const userId = req.user.id || req.user._id;
   try {
     // Find the active cart for the logged-in user
     let cart = await Cart.findOne({
-      user: req.user._id,
+      user: userId,
       status: "active",
     }).populate("items.menuItem", "title image price slug category"); // Populate specific fields to save bandwidth
 
@@ -128,9 +130,10 @@ exports.addToCart = async (req, res) => {
 exports.updateCartItem = async (req, res) => {
   const { itemId } = req.params; // This is the _id of the *item inside the array*, not the menuId
   const { quantity } = req.body;
+  const userId = req.user.id || req.user._id;
 
   try {
-    const cart = await Cart.findOne({ user: req.user._id, status: "active" });
+    const cart = await Cart.findOne({ user: userId, status: "active" });
 
     if (!cart) {
       return res
@@ -174,9 +177,9 @@ exports.updateCartItem = async (req, res) => {
 // @access  Private
 exports.removeFromCart = async (req, res) => {
   const { itemId } = req.params;
-
+  const userId = req.user.id || req.user._id;
   try {
-    const cart = await Cart.findOne({ user: req.user._id, status: "active" });
+    const cart = await Cart.findOne({ user: userId, status: "active" });
 
     if (!cart) {
       return res
@@ -203,8 +206,9 @@ exports.removeFromCart = async (req, res) => {
 // @route   DELETE /restaurant/v1/cart/clear-cart
 // @access  Private
 exports.clearCart = async (req, res) => {
+  const userId = req.user.id || req.user._id;
   try {
-    const cart = await Cart.findOne({ user: req.user._id, status: "active" });
+    const cart = await Cart.findOne({ user: userId, status: "active" });
 
     if (cart) {
       cart.items = [];
