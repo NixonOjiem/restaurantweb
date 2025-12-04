@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, defineOptions, onMounted, onUnmounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
@@ -13,7 +13,10 @@ defineOptions({
 const authStore = useAuthStore();
 const { user, isAuthenticated } = storeToRefs(authStore);
 const route = useRoute();
+<<<<<<< HEAD
 const routers = useRouter();
+=======
+>>>>>>> 81cf9e944ca1efcb17fb68bdf59c9b2379a98555
 
 // 1. REF FOR CLICK OUTSIDE LOGIC
 const navbarRef = ref<HTMLElement | null>(null);
@@ -44,10 +47,6 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY > 50;
 };
 
-// Go to profile
-const goToProfile = () => {
-  router.push('/profile')
-}
 // 2. CLICK OUTSIDE LOGIC
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as Node;
