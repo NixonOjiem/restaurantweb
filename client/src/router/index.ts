@@ -7,6 +7,7 @@ import ForgotView from '@/views/ForgotView.vue'
 import MenuView from '@/views/MenuView.vue'
 import TestView from '@/views/TestView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import EditProfileView from '@/views/EditProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,12 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile/edit',
+      name: 'EditProfile',
+      component: EditProfileView,
       meta: { requiresAuth: true },
     },
     {
