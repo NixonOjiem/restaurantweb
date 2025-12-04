@@ -37,13 +37,15 @@ exports.getCart = async (req, res) => {
 // @route   POST /restaurant/v1/cart/add-cart
 // @access  Private
 exports.addToCart = async (req, res) => {
+  // 1. Extract inputs
   const { menuItemId, quantity, instructions } = req.body;
-
-  // Default quantity to 1 if not provided
   const qty = quantity ? parseInt(quantity) : 1;
 
+  // 2. Get User ID safely (Handles both 'id' from JWT and '_id' from Mongoose)
+  const userId = req.user.id || req.user._id;
+
   try {
-    // 1. Validate the Menu Item exists
+    // 3. Validate the Menu Item exists
     const menuItem = await Menu.findById(menuItemId);
     if (!menuItem) {
       return res
@@ -51,15 +53,14 @@ exports.addToCart = async (req, res) => {
         .json({ success: false, message: "Menu item not found" });
     }
 
-    // 2. Determine the price (Snapshot Strategy)
-    // Use discountPrice if it exists, otherwise regular price
+    // 4. Determine the price (Snapshot Strategy)
     const currentPrice = menuItem.discountPrice || menuItem.price;
 
-    // 3. Find the user's active cart
-    let cart = await Cart.findOne({ user: req.user._id, status: "active" });
+    // 5. Find the user's active cart using the userId variable defined above
+    let cart = await Cart.findOne({ user: userId, status: "active" });
 
     if (cart) {
-      // --- SCENARIO A: Cart Exists ---
+      // --- SCENARIO A: Cart Exists (Update it) ---
 
       // Check if this specific item is already in the cart
       const itemIndex = cart.items.findIndex(
@@ -70,24 +71,28 @@ exports.addToCart = async (req, res) => {
         // A1. Item exists: Update quantity
         cart.items[itemIndex].quantity += qty;
 
-        // Optional: Update instructions if new ones are provided
+        // Update instructions only if new ones are provided
         if (instructions) {
           cart.items[itemIndex].instructions = instructions;
         }
       } else {
-        // A2. Item does not exist: Push new item
+        // A2. Item does not exist in this cart: Push new item
         cart.items.push({
           menuItem: menuItemId,
           quantity: qty,
-          price: currentPrice, // Saving the snapshot
+          price: currentPrice,
           instructions: instructions || "",
-          total: currentPrice * qty, // Initial total calculation
+          total: currentPrice * qty,
         });
       }
     } else {
       // --- SCENARIO B: No Cart Exists (Create New) ---
+
+      // THIS IS WHERE YOUR ERROR WAS HAPPENING
+      // We must explicitly pass the 'user' field here.
       cart = await Cart.create({
-        user: req.user._id,
+        user: userId, // <--- The Fix: associating the cart with the user ID
+        status: "active",
         items: [
           {
             menuItem: menuItemId,
@@ -100,12 +105,10 @@ exports.addToCart = async (req, res) => {
       });
     }
 
-    // 4. Save the cart
-    // The pre('save') hook in your Model will automatically calculate
-    // totalQuantity and totalPrice
+    // 6. Save the cart
     await cart.save();
 
-    // 5. Return the cart (populate it so frontend can update UI immediately)
+    // 7. Return the cart (populated)
     await cart.populate("items.menuItem", "title image price slug");
 
     res.status(200).json({
@@ -114,6 +117,7 @@ exports.addToCart = async (req, res) => {
       data: cart,
     });
   } catch (error) {
+    console.error("Add to cart error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

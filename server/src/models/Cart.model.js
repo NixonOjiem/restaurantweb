@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const CartItemSchema = new mongoose.Schema({
   menuItem: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Menu", // Links to your Menu model
+    ref: "Menu",
     required: true,
   },
   quantity: {
@@ -13,18 +13,14 @@ const CartItemSchema = new mongoose.Schema({
     min: [1, "Quantity can not be less than 1."],
     default: 1,
   },
-  // CRITICAL: We store the price HERE as a snapshot.
-  // If the restaurant changes the menu price later, this cart item remains accurate.
   price: {
     type: Number,
     required: true,
   },
-  // Allows users to add notes like "No onions" or "Extra spicy"
   instructions: {
     type: String,
     maxlength: [100, "Instructions cannot be more than 100 characters"],
   },
-  // The line total for this specific item (price * quantity)
   total: {
     type: Number,
     required: true,
@@ -36,7 +32,7 @@ const CartSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Links to your User model
+      ref: "User",
       required: true,
     },
     items: [CartItemSchema],
@@ -48,7 +44,6 @@ const CartSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // distinct statuses help you track abandoned carts vs active ones
     status: {
       type: String,
       enum: ["active", "completed", "abandoned"],
@@ -56,25 +51,37 @@ const CartSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Useful for Cron jobs (e.g., delete carts older than 30 days)
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
 
 // 3. Middleware: Auto-Calculate Totals
-// This runs automatically before .save() is called in your controller
-CartSchema.pre("save", function (next) {
+// FIX APPLIED: Changed to 'async function()' and removed 'next'
+CartSchema.pre("save", async function () {
+  // Optional optimization: Only recalculate if items have changed
+  // if (!this.isModified('items')) return;
+
   // A. Calculate line totals (Price * Qty)
-  this.items.forEach((item) => {
-    item.total = item.price * item.quantity;
-  });
+  if (this.items && this.items.length > 0) {
+    this.items.forEach((item) => {
+      item.total = item.price * item.quantity;
+    });
 
-  // B. Calculate Grand Totals
-  this.totalQuantity = this.items.reduce((acc, item) => acc + item.quantity, 0);
-  this.totalPrice = this.items.reduce((acc, item) => acc + item.total, 0);
+    // B. Calculate Grand Totals
+    this.totalQuantity = this.items.reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    );
+    this.totalPrice = this.items.reduce((acc, item) => acc + item.total, 0);
+  } else {
+    // Handle empty cart case
+    this.totalQuantity = 0;
+    this.totalPrice = 0;
+  }
 
-  next();
+  // No next() call is needed with async functions
 });
 
 module.exports = mongoose.model("Cart", CartSchema);

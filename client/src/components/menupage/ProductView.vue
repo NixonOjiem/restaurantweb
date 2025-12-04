@@ -81,6 +81,12 @@
                   <p>SKU: <span class="text-stone-700 font-bold">{{ product?.sku }}</span></p>
                   <p>Cat: <span class="text-stone-700 font-bold">{{ product?.category }}</span></p>
                 </div>
+
+                <div class="mb-4 md:mb-6 mt-4 md:mt-6">
+                  <label class="text-xs uppercase tracking-widest font-bold text-stone-400 mb-3">Instructions</label>
+                  <input type="text" v-model="instructions" placeholder="e.g. No onions, sauce on the side..."
+                    class="w-full bg-stone-50 text-stone-800 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-stone-500 focus:bg-white transition-all duration-200 placeholder-stone-400" />
+                </div>
               </div>
 
               <div class="p-4 sm:p-6 md:p-8 bg-white/60 backdrop-blur-md border-t border-stone-200/60 shrink-0 z-10">
@@ -123,16 +129,25 @@
 //import type { ProductProps } from '@/types';
 import type { ModalProduct } from '@/types';
 import { ref, watch } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+const authStore = useAuthStore();
+
+
+const user = authStore.user;
+const token = authStore.token;
+// console.log('is user:', user)
 
 const props = defineProps<{
   isOpen: boolean;
   product: ModalProduct | null;
 }>();
+console.log('product is:', props.product)
 
 const emit = defineEmits(['close', 'add-to-cart']);
 
 const currentImageIndex = ref(0);
 const quantity = ref(1);
+const instructions = ref('')
 
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
@@ -148,13 +163,60 @@ const closeModal = () => emit('close');
 const incrementQty = () => quantity.value++;
 const decrementQty = () => { if (quantity.value > 1) quantity.value--; };
 
-const addToCart = () => {
-  if (!props.product) return;
-  emit('add-to-cart', {
-    ...props.product,
-    quantity: quantity.value
-  });
-  closeModal();
+const addToCart = async () => {
+  // 1. Check Auth (Return early to stop execution if not logged in)
+  if (!user) {
+    alert("Please log in to add items to cart");
+    return;
+  }
+
+  const payload = {
+    menuItemId: props.product?._id,
+    quantity: 1, // If you add a quantity counter later, replace '1' with that variable
+    instructions: instructions.value
+  };
+
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+  try {
+    // 2. Make the API Request
+    const response = await fetch(`${baseURL}/cart/add-cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Authorization header is critical for your 'protect' middleware
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    // 3. Handle Errors (e.g., 401 Unauthorized, 404 Item not found)
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to add item to cart");
+    }
+
+    // 4. Success State
+    console.log("Success:",);
+    alert("added your item to the cart")
+    // console.log("Success:", data);
+    // Optional: Trigger a toast notification here
+    instructions.value = ""; // Clear the input
+    closeModal();
+
+    // Tip: If you have a global store (Pinia/Vuex), refresh the cart count here
+    // userStore.fetchCart();
+
+  } catch (error: unknown) {
+    console.error("Error adding to cart:", error);
+    if (error instanceof Error) {
+      alert(error.message);
+    } else {
+      alert("An unexpected error occurred");
+    }
+  }
+
 };
 </script>
 
