@@ -15,7 +15,7 @@ const stats = reactive([
 defineProps({
     heroImage: {
         type: String,
-        default: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80'
+        default: '/assets/cuisine-elegante.jpg'
     }
 });
 
@@ -64,8 +64,7 @@ onMounted(() => {
                 </div>
                 <div class="absolute inset-0 bg-radial-gradient from-stone-900/20 via-stone-950/60 to-stone-950/90">
                 </div>
-                <div
-                    class="absolute inset-0 opacity-20 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+                <div class="absolute inset-0 opacity-20 mix-blend-overlay bg-[url('/assets/noise.svg')]">
                 </div>
             </div>
 

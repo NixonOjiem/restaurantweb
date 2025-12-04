@@ -10,28 +10,28 @@ const galleryItems = [
         id: 1,
         title: 'The Grand Dining Room',
         category: 'Interior',
-        image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80',
+        image: '/assets/cuisine-elegante.jpg',
         class: 'md:col-span-2 md:row-span-2 h-64 md:h-auto' // Large Main Image
     },
     {
         id: 2,
         title: 'Chef\'s Finishing Touch',
         category: 'Culinary Art',
-        image: 'https://images.unsplash.com/photo-1556910103-1c02745a30bf?auto=format&fit=crop&q=80',
+        image: '/assets/chef-cooking.jpg',
         class: 'md:col-span-1 md:row-span-2 h-64 md:h-auto' // Tall Vertical Image
     },
     {
         id: 3,
         title: 'Wagyu & Truffle',
         category: 'Signature Dish',
-        image: 'https://images.unsplash.com/photo-1544025162-d76690b67f14?auto=format&fit=crop&q=80',
+        image: '/assets/fries-and-steak.jpg',
         class: 'md:col-span-1 md:row-span-1 h-64 md:h-80' // Small Square
     },
     {
         id: 4,
         title: 'Smoked Old Fashioned',
         category: 'Mixology',
-        image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80',
+        image: '/assets/glass-mocktail.jpg',
         class: 'md:col-span-1 md:row-span-1 h-64 md:h-80' // Small Square
     }
 ];
