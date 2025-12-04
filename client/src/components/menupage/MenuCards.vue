@@ -53,8 +53,27 @@ onMounted(() => {
 
 // 6. Handlers
 const handleAddToCart = (payload: ProductProps | string | number) => {
-  // Logic handles both Card click (id only) and Modal click (full object)
-  console.log('Added to cart:', payload);
+  let productToOpen: ProductProps | undefined;
+
+  // Scenario A: payload is already the full Product object
+  if (typeof payload === 'object' && payload !== null) {
+    productToOpen = payload;
+  }
+  // Scenario B: payload is just an ID (string or number)
+  else {
+    // We must find the full object from our 'products' list
+    productToOpen = products.value.find(
+      (p) => p._id === payload || p.id === payload
+    );
+  }
+
+  // Only open modal if we found a valid product object
+  if (productToOpen) {
+    openProductModal(productToOpen);
+    console.log('Opened modal for:', productToOpen.title);
+  } else {
+    console.error('Could not find product details for payload:', payload);
+  }
 };
 
 const handleToggleWishlist = (id: number | string) => {
