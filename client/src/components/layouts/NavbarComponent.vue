@@ -10,6 +10,9 @@ import { faBasketShopping } from '@fortawesome/free-solid-svg-icons/faBasketShop
 defineOptions({
   name: "NavbarComponent",
 });
+const goToCart = () => {
+  router.push('/cart')
+}
 
 const authStore = useAuthStore();
 const { user, isAuthenticated } = storeToRefs(authStore);
@@ -135,7 +138,7 @@ onUnmounted(() => {
               </button>
               <font-awesome-icon :icon="faBasketShopping"
                 class="text-red-400 text-2xl hover:text-red-700 transition-colors duration-200 cursor-pointer"
-                v-if="isAuthenticated" />
+                v-if="isAuthenticated" @click="goToCart" />
               <div class="h-4 w-px bg-white/20">
               </div>
 

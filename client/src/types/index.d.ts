@@ -25,3 +25,35 @@ export type ModalProduct = ProductProps & {
   sku: string
   images: string[]
 }
+
+export interface MenuItem {
+  _id: string
+  title: string
+  slug: string
+  price: number
+  category: string
+  image: string
+  id: string
+}
+
+export interface CartItem {
+  _id: string
+  menuItem: MenuItem
+  quantity: number
+  price: number
+  instructions: string
+  total: number
+}
+
+export interface CartData {
+  _id: string
+  user: string
+  items: CartItem[]
+  totalQuantity: number
+  totalPrice: number
+  status: string
+  createdAt: Date | string
+  updatedAt: Date | string
+  __v: number
+  id: string
+}
