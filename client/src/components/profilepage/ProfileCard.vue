@@ -2,7 +2,7 @@
   <div class="w-full relative mb-6 md:mb-12">
 
     <div class="h-56 md:h-64 w-full relative overflow-hidden bg-neutral-900 transition-all duration-300">
-      <div class="absolute inset-0 bg-gradient-to-r from-stone-900 to-neutral-800"></div>
+      <div class="absolute inset-0 bg-linear-to-r from-stone-900 to-neutral-800"></div>
       <div
         class="absolute -top-24 -right-24 w-64 h-64 md:w-96 md:h-96 bg-yellow-600/20 blur-3xl rounded-full pointer-events-none">
       </div>
@@ -34,7 +34,7 @@
 
             <div class="relative mb-4 group">
               <div
-                class="w-28 h-28 md:w-32 md:h-32 rounded-full p-1 bg-gradient-to-tr from-yellow-400 via-yellow-100 to-yellow-500 shadow-xl transition-all duration-300">
+                class="w-28 h-28 md:w-32 md:h-32 rounded-full p-1 bg-linear-to-tr from-yellow-400 via-yellow-100 to-yellow-500 shadow-xl transition-all duration-300">
                 <div
                   class="w-full h-full rounded-full bg-stone-900 text-white flex items-center justify-center overflow-hidden border-4 border-white">
                   <span v-if="user?.name" class="font-serif text-4xl font-bold pt-1">
@@ -135,11 +135,9 @@ const authStore = useAuthStore();
 const router = useRouter();
 const { user } = storeToRefs(authStore);
 
-// --- 1. EMAIL FIX ---
 const displayEmail = computed(() => {
   const u = user.value as any;
   if (!u) return 'Sign in to view email';
-  // Safe check for email property
   if (u.email && u.email.length > 0) {
     return u.email;
   }
