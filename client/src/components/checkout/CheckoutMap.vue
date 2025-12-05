@@ -58,9 +58,8 @@
     <FooterComponent />
   </section>
 </template>
-
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, shallowRef } from 'vue'; // Added shallowRef
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -76,9 +75,11 @@ const emit = defineEmits<{
   (e: 'location-confirmed', coords: { lat: number; lng: number }): void
 }>();
 
-const map = ref<L.Map | null>(null);
+// USE shallowRef for Leaflet instances to avoid Proxy/Type errors
+const map = shallowRef<L.Map | null>(null);
+const marker = shallowRef<L.Marker | null>(null);
+
 const selectedLocation = ref<{ lat: number; lng: number } | null>(null);
-const marker = ref<L.Marker | null>(null);
 const isLoading = ref(false);
 
 const defaultCenter = { lat: -1.286389, lng: 36.817223 };
@@ -89,7 +90,9 @@ onMounted(() => {
 });
 
 const fixLeafletIcons = () => {
-  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  // Cast to 'unknown' first, then to 'Record' to delete the property safely
+  delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
+
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: markerIcon2x,
     iconUrl: markerIcon,
@@ -100,6 +103,7 @@ const fixLeafletIcons = () => {
 const initMap = () => {
   // Wait for DOM updates to ensure container has width
   setTimeout(() => {
+    // map.value is now a raw L.Map object, satisfying TypeScript
     map.value = L.map('map').setView([defaultCenter.lat, defaultCenter.lng], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -121,9 +125,12 @@ const updateMarker = (lat: number, lng: number) => {
 
   if (marker.value) {
     marker.value.setLatLng([lat, lng]);
-  } else {
-    marker.value = L.marker([lat, lng]).addTo(map.value!);
+  } else if (map.value) {
+    // Added check for map.value to ensure it exists before adding layer
+    marker.value = L.marker([lat, lng]).addTo(map.value);
   }
+
+  // Optional: Pan map to new marker
   map.value?.panTo([lat, lng]);
 };
 

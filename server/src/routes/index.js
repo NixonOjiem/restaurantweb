@@ -7,6 +7,7 @@ const testRoutes = require("./test.route");
 const userRoutes = require("./user.route");
 const menuRoutes = require("./menu.route");
 const cartRoutes = require("./cart.route");
+const orderRoutes = require("./order.routes");
 
 // 2. Mount the routers onto the mainRouter with specific prefixes
 
@@ -25,5 +26,8 @@ mainRouter.use("/profile", userRoutes);
 
 // cart routes
 mainRouter.use("/cart", cartRoutes);
+
+// orders route
+mainRouter.use("/orders", orderRoutes);
 
 module.exports = mainRouter;
