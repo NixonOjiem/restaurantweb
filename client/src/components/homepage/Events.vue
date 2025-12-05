@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { defineOptions } from 'vue';
+
+defineOptions({
+    name: 'RestaurantEvents'
+});
 
 const events = [
     {
@@ -65,7 +70,7 @@ const events = [
                         <div
                             class="w-full sm:w-32 bg-stone-950/60 border-b sm:border-b-0 sm:border-r border-stone-800 flex flex-row sm:flex-col items-center justify-between sm:justify-center p-6 sm:p-0 gap-1 shrink-0 group-hover:bg-red-950/20 transition-colors duration-500">
                             <span class="text-red-500 font-bold text-sm tracking-[0.2em] uppercase">{{ event.month
-                                }}</span>
+                            }}</span>
                             <span class="text-4xl md:text-5xl font-serif font-bold text-white">{{ event.day }}</span>
                             <span
                                 class="sm:hidden text-[10px] text-stone-400 font-bold border border-stone-700 px-2 py-1 rounded uppercase tracking-wider">{{

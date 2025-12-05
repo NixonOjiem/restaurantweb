@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { defineOptions } from 'vue';
+
+defineOptions({
+    name: 'AboutSection'
+});
+</script>
 
 <template>
     <section class="relative py-24 lg:py-32 overflow-hidden bg-stone-950" id="about">
