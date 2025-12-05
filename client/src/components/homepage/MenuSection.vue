@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { defineOptions } from 'vue';
-
-defineOptions({
-    name: 'MenuHighlights'
-});
-
 const dishes = [
     {
         id: 1,

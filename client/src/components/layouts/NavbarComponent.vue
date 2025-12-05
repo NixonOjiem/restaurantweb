@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineOptions, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
@@ -7,9 +7,6 @@ import { storeToRefs } from 'pinia';
 import router from '@/router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faBasketShopping } from '@fortawesome/free-solid-svg-icons/faBasketShopping';
-defineOptions({
-  name: "NavbarComponent",
-});
 
 const authStore = useAuthStore();
 const { user, isAuthenticated } = storeToRefs(authStore);

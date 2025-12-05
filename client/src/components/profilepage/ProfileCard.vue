@@ -49,7 +49,7 @@
             </div>
 
             <h2 class="text-3xl font-serif font-bold text-stone-900 tracking-tight mb-1">
-              {{ user?.name || 'Guest User' }}
+              {{ user?.name }}
             </h2>
 
             <p class="text-stone-500 font-medium text-sm mb-4">{{ displayEmail }}</p>
@@ -129,21 +129,33 @@
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
-const { user } = storeToRefs(authStore);
+const { user, isLoading } = storeToRefs(authStore);
+
+onMounted(async () => {
+  await authStore.fetchProfile();
+});
 
 const displayEmail = computed(() => {
   const u = user.value as any;
+
+  // 1. If no user data at all
   if (!u) return 'Sign in to view email';
-  if (u.email && u.email.length > 0) {
+
+  // 2. If we have an email, return it
+  if (u.email && u.email.trim() !== '') {
     return u.email;
   }
+  // 3. If loading, indicate that
+  if (isLoading.value) {
+    return 'Loading email...';
+  }
+
   return 'No email connected';
 });
-
 
 const handleEdit = () => {
   router.push('/profile/edit');

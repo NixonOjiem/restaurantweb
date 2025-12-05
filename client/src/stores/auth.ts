@@ -1,19 +1,21 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { jwtDecode } from 'jwt-decode'
+
 interface User {
   id: string
   name: string
   email: string
   role: string
+  createdAt?: string
 }
 
-interface logindetails {
+interface Logindetails {
   email: string
   password: string
 }
 
-interface signupDetails {
+interface SignupDetails {
   fullName: string
   userName: string
   email: string
@@ -44,27 +46,30 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('authToken', newToken)
   }
 
+  const logout = () => {
+    token.value = null
+    user.value = null
+    localStorage.removeItem('authToken')
+  }
+
   const initializeStore = () => {
-    // 1. Check if token exists
     if (!token.value) return
 
     try {
-      // 2. Decode the token to get the data
       const decoded: JwtPayload = jwtDecode(token.value)
-
-      // 3. Check if token is expired (exp is in seconds, Date.now is ms)
       const currentTime = Date.now() / 1000
+
       if (decoded.exp < currentTime) {
         console.warn('Token expired')
         logout()
         return
       }
 
-      // 4. Populate user state directly from token data
+      // Populate basic user data from token first
       user.value = {
         id: decoded.id,
-        name: decoded.name, // or decoded.fullName based on your UI preference
-        email: '',
+        name: decoded.name || decoded.fullName,
+        email: '', // Placeholder until fetchProfile runs
         role: decoded.role,
       }
     } catch (error) {
@@ -73,7 +78,38 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const login = async (loginDetails: logindetails) => {
+  // --- FETCH PROFILE ACTION ---
+  const fetchProfile = async () => {
+    if (!token.value) return
+
+    isLoading.value = true
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/me`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token.value}`
+        },
+      })
+
+      const data = await response.json()
+      if (response.ok && data.success) {
+        user.value = {
+          id: data.data.id,
+          name: data.data.userName,
+          email: data.data.email,
+          role: data.data.role,
+          createdAt: data.data.createdAt
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch profile', err)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  const login = async (loginDetails: Logindetails) => {
     isLoading.value = true
     error.value = null
     try {
@@ -86,25 +122,20 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (response.ok && data.success) {
         setToken(data.token)
-        user.value = data.user as User
+        await fetchProfile() // Fetch full details immediately after login
         return true
       } else {
         throw new Error(data.message || 'Login failed.')
       }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        error.value = err.message
-      } else {
-        // Fallback for non-Error objects (e.g. strings or other types thrown)
-        error.value = 'An unexpected error occurred during login.'
-      }
+      error.value = err instanceof Error ? err.message : 'An unexpected error occurred.'
       return false
     } finally {
       isLoading.value = false
     }
   }
 
-  const signup = async (signupDetails: signupDetails) => {
+  const signup = async (signupDetails: SignupDetails) => {
     isLoading.value = true
     error.value = null
     try {
@@ -117,18 +148,13 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (response.ok && data.success) {
         setToken(data.token)
-        user.value = data.user as User
+        await fetchProfile()
         return true
       } else {
         throw new Error(data.message || 'Signup failed.')
       }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        error.value = err.message
-      } else {
-        // Fallback for non-Error objects (e.g. strings or other types thrown)
-        error.value = 'An unexpected error occurred during login.'
-      }
+      error.value = err instanceof Error ? err.message : 'An unexpected error occurred.'
       return false
     } finally {
       isLoading.value = false
@@ -148,28 +174,17 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (response.ok && data.success) {
         setToken(data.token)
-        user.value = data.user as User
+        await fetchProfile()
         return true
       } else {
         throw new Error(data.message || 'Google login failed.')
       }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        error.value = err.message
-      } else {
-        // Fallback for non-Error objects (e.g. strings or other types thrown)
-        error.value = 'An unexpected error occurred during login.'
-      }
+      error.value = err instanceof Error ? err.message : 'An unexpected error occurred.'
       return false
     } finally {
       isLoading.value = false
     }
-  }
-
-  const logout = () => {
-    token.value = null
-    user.value = null
-    localStorage.removeItem('authToken')
   }
 
   // --- Getters ---
@@ -186,5 +201,6 @@ export const useAuthStore = defineStore('auth', () => {
     signup,
     googleLogin,
     logout,
+    fetchProfile,
   }
 })
