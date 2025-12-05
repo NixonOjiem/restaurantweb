@@ -96,12 +96,9 @@ const formatCurrency = (value: number) => {
 
 // Helper: Handle Image URLs
 const getImageUrl = (path: string) => {
-  if (!path) return '/placeholder-food.jpg';
+  if (!path) return '/489.jpg';
   if (path.startsWith('http')) return path;
-  // Adjust this based on where your backend serves images
-  // If your VITE_API_BASE_URL is http://localhost:3000/api/v1
-  // You might need to strip the /api/v1 or point to a specific asset bucket
-  return `${baseUrl.replace('/api', '')}${path}`;
+  return `${path}`;
 };
 
 const handleImageError = (e: Event) => {
