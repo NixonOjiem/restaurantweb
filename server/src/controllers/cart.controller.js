@@ -129,7 +129,7 @@ exports.addToCart = async (req, res) => {
 // @access  Private
 exports.updateCartItem = async (req, res) => {
   const { itemId } = req.params; // This is the _id of the *item inside the array*, not the menuId
-  const { quantity } = req.body;
+  const { quantity, instructions } = req.body;
   const userId = req.user.id || req.user._id;
 
   try {
@@ -157,7 +157,9 @@ exports.updateCartItem = async (req, res) => {
       cart.items.splice(itemIndex, 1);
     } else {
       // Update quantity
-      cart.items[itemIndex].quantity = quantity;
+      if (quantity !== undefined) cart.items[itemIndex].quantity = quantity;
+      if (instructions !== undefined)
+        cart.items[itemIndex].instructions = instructions;
     }
 
     await cart.save(); // Triggers recalculation
