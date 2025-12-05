@@ -1,67 +1,77 @@
 <template>
-  <div class="cart-container">
-    <h1 class="page-title">Your Cart</h1>
+  <div class="max-w-7xl mx-auto p-8 font-sans text-gray-800">
+    <h1 class="text-3xl font-bold mb-8 text-gray-900 mt-9">Your Cart</h1>
 
-    <div v-if="isLoading" class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading delicious items...</p>
+    <div v-if="isLoading" class="text-center p-16 bg-gray-50 rounded-xl">
+      <div class="w-10 h-10 border-4 border-gray-100 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-gray-600">Loading delicious items...</p>
     </div>
 
-    <div v-else-if="error" class="error-state">
-      <p>{{ error }}</p>
-      <button @click="fetchCart" class="retry-btn">Try Again</button>
+    <div v-else-if="error" class="text-center p-16 bg-gray-50 rounded-xl">
+      <p class="text-red-500 mb-4">{{ error }}</p>
+      <button @click="fetchCart" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+        Try Again
+      </button>
     </div>
 
-    <div v-else-if="!cart || cart.items.length === 0" class="empty-state">
-      <p>Your cart is empty.</p>
-      <router-link to="/menu" class="browse-btn">Browse Menu</router-link>
+    <div v-else-if="!cart || cart.items.length === 0" class="text-center p-16 bg-gray-50 rounded-xl">
+      <p class="text-gray-600 mb-4">Your cart is empty.</p>
+      <router-link to="/menu"
+        class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        Browse Menu
+      </router-link>
     </div>
 
-    <div v-else class="cart-layout">
+    <div v-else class="grid grid-cols-1 md:grid-cols-[1fr_350px] gap-8">
 
-      <div class="cart-items">
-        <div v-for="item in cart.items" :key="item._id" class="item-card">
+      <div class="flex flex-col gap-6">
+        <div v-for="item in cart.items" :key="item._id"
+          class="flex flex-col md:flex-row bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
 
-          <div class="item-image">
-            <img :src="getImageUrl(item.menuItem.image)" :alt="item.menuItem.title" @error="handleImageError" />
+          <div class="w-full h-[200px] md:w-[150px] md:h-[150px] shrink-0">
+            <img :src="getImageUrl(item.menuItem.image)" :alt="item.menuItem.title" @error="handleImageError"
+              class="w-full h-full object-cover" />
           </div>
 
-          <div class="item-details">
-            <div class="header-row">
-              <h3>{{ item.menuItem.title }}</h3>
-              <span class="item-total">{{ formatCurrency(item.total) }}</span>
+          <div class="flex-1 p-5 flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold text-gray-900 m-0">{{ item.menuItem.title }}</h3>
+              <span class="font-bold text-lg text-slate-700">{{ formatCurrency(item.total) }}</span>
             </div>
 
-            <p class="category">{{ item.menuItem.category }}</p>
+            <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">{{ item.menuItem.category }}</p>
 
-            <div v-if="item.instructions" class="instructions">
-              <span class="note-label">Note:</span> {{ item.instructions }}
+            <div v-if="item.instructions" class="bg-gray-50 p-2 rounded-md text-sm text-gray-600 mb-4">
+              <span class="font-semibold text-amber-600">Note:</span> {{ item.instructions }}
             </div>
 
-            <div class="controls-row">
-              <span class="price-per-unit">{{ formatCurrency(item.price) }} each</span>
-              <div class="quantity-badge">x {{ item.quantity }}</div>
+            <div class="flex justify-between items-center mt-auto">
+              <span class="text-sm text-gray-500">{{ formatCurrency(item.price) }} each</span>
+              <div class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-semibold text-sm">
+                x {{ item.quantity }}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="cart-summary">
-        <h2>Order Summary</h2>
+      <div class="bg-white p-6 rounded-xl border border-gray-100 h-fit sticky top-5">
+        <h2 class="text-xl font-bold mb-6 text-gray-900">Order Summary</h2>
 
-        <div class="summary-row">
+        <div class="flex justify-between mb-4 text-gray-600">
           <span>Total Items</span>
           <span>{{ cart.totalQuantity }}</span>
         </div>
 
-        <div class="divider"></div>
+        <div class="h-px bg-gray-200 my-4"></div>
 
-        <div class="summary-row total">
+        <div class="flex justify-between text-xl font-bold text-gray-900 mt-4 mb-6">
           <span>Total</span>
           <span>{{ formatCurrency(cart.totalPrice) }}</span>
         </div>
 
-        <button class="checkout-btn">
+        <button
+          class="w-full bg-emerald-500 text-white p-4 rounded-lg text-base font-semibold hover:bg-emerald-600 transition-colors">
           Proceed to Checkout
         </button>
       </div>
@@ -73,6 +83,8 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import type { CartData } from '@/types';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
 
 const useAuth = useAuthStore();
 const token = useAuth.token;
@@ -83,7 +95,7 @@ const cart = ref<CartData | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL; // e.g. http://localhost:3000
+const baseUrl = import.meta.env.VITE_API_BASE_URL; //
 const cartUrl = `${baseUrl}/cart`;
 
 // Helper: Format Numbers to Currency
@@ -96,13 +108,13 @@ const formatCurrency = (value: number) => {
 
 // Helper: Handle Image URLs
 const getImageUrl = (path: string) => {
-  if (!path) return '/489.jpg';
+  if (!path) return '/foodplacehoder.jpg';
   if (path.startsWith('http')) return path;
   return `${path}`;
 };
 
 const handleImageError = (e: Event) => {
-  (e.target as HTMLImageElement).src = '/placeholder-food.jpg';
+  (e.target as HTMLImageElement).src = '/foodplacehoder.jpg';
 };
 
 // Fetch Logic
@@ -123,16 +135,16 @@ const fetchCart = async () => {
 
     const apiData = await response.json();
 
-    console.log("🔥 API RESPONSE:", apiData);
+    // console.log("🔥 API RESPONSE:", apiData);
 
     if (apiData.success && apiData.data) {
-      // Direct assignment because apiData.data IS the object
+
       cart.value = apiData.data;
     } else {
       throw new Error('Invalid data format received');
     }
 
-  } catch (err: unkown) {
+  } catch (err: unknown) {
     console.error(err);
     // error.value = err.message || 'Could not load cart';
   } finally {
@@ -146,231 +158,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Container & Layout */
-.cart-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Inter', sans-serif;
-  color: #333;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: #1a1a1a;
-}
-
-.cart-layout {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 2rem;
-}
-
-/* Items Column */
-.cart-items {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.item-card {
-  display: flex;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  border: 1px solid #eee;
-  transition: transform 0.2s;
-}
-
-.item-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.item-image {
-  width: 150px;
-  height: 150px;
-  flex-shrink: 0;
-}
-
-.item-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.item-details {
-  flex: 1;
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.5rem;
-}
-
-.header-row h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.item-total {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #2c3e50;
-}
-
-.category {
-  font-size: 0.85rem;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-}
-
-.instructions {
-  background-color: #f9fafb;
-  padding: 0.5rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1rem;
-}
-
-.note-label {
-  font-weight: 600;
-  color: #d97706;
-  /* Amber color */
-}
-
-.controls-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-}
-
-.price-per-unit {
-  font-size: 0.9rem;
-  color: #888;
-}
-
-.quantity-badge {
-  background-color: #eff6ff;
-  color: #2563eb;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-/* Summary Column */
-.cart-summary {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid #eee;
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-}
-
-.cart-summary h2 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
-}
-
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  color: #555;
-}
-
-.summary-row.total {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.divider {
-  height: 1px;
-  background-color: #e5e7eb;
-  margin: 1rem 0;
-}
-
-.checkout-btn {
-  width: 100%;
-  background-color: #10b981;
-  color: white;
-  padding: 1rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.checkout-btn:hover {
-  background-color: #059669;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .cart-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .item-card {
-    flex-direction: column;
-  }
-
-  .item-image {
-    width: 100%;
-    height: 200px;
-  }
-}
-
-/* Loading/Error States */
-.loading-state,
-.error-state,
-.empty-state {
-  text-align: center;
-  padding: 4rem;
-  background: #f9fafb;
-  border-radius: 12px;
-}
-
-.spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
+/* No styles needed - Tailwind handles everything */
 </style>
