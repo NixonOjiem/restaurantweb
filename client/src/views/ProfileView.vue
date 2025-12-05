@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <div class="flex flex-col min-h-screen bg-[#FFFAEB]">
     <NavbarComponent />
 
