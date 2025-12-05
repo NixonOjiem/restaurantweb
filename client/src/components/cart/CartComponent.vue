@@ -2,13 +2,11 @@
   <div class="max-w-7xl mx-auto p-8 font-sans text-gray-800 bg-[#FFFDF4]">
     <h1 class="text-3xl font-bold mb-8 text-gray-900 mt-9">Your Cart</h1>
 
-    <!-- Loading state -->
     <div v-if="isLoading" class="text-center p-16 bg-gray-50 rounded-xl">
       <div class="w-10 h-10 border-4 border-gray-100 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
       <p class="text-gray-600">Loading delicious items...</p>
     </div>
 
-    <!-- Error state -->
     <div v-else-if="error" class="text-center p-16 bg-gray-50 rounded-xl">
       <p class="text-red-500 mb-4">{{ error }}</p>
       <button @click="fetchCart" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
@@ -16,7 +14,6 @@
       </button>
     </div>
 
-    <!-- When cart is empty -->
     <div v-else-if="!cart || cart.items.length === 0" class="text-center p-16 bg-gray-50 rounded-xl">
       <p class="text-gray-600 mb-4">Your cart is empty.</p>
       <router-link to="/menu"
@@ -25,7 +22,6 @@
       </router-link>
     </div>
 
-    <!-- when cart has items -->
     <div v-else class="grid grid-cols-1 md:grid-cols-[1fr_350px] gap-8">
       <div class="flex flex-col gap-6">
         <div v-for="item in cart.items" :key="item._id"
@@ -44,8 +40,14 @@
 
             <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">{{ item.menuItem.category }}</p>
 
-            <div v-if="item.instructions" class="bg-gray-50 p-2 rounded-md text-sm text-gray-600 mb-4">
-              <span class="font-semibold text-amber-600">Note:</span> {{ item.instructions }}
+            <div class="mb-4">
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+                Special Instructions
+              </label>
+              <textarea v-model="item.instructions" rows="1"
+                class="w-full text-sm bg-gray-50 border border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none transition-shadow"
+                placeholder="Add notes (e.g. no onions)..."
+                @change="updateCartItem(item._id, item.quantity, item.instructions)"></textarea>
             </div>
 
             <div class="flex justify-between items-center mt-auto">
@@ -58,7 +60,8 @@
                   <button
                     class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors cursor-pointer pb-0.5"
                     :class="{ 'opacity-50 cursor-not-allowed': item.quantity <= 1 }"
-                    @click="updateCartItemQuantity(item._id, item.quantity - 1)" :disabled="item.quantity <= 1">
+                    @click="updateCartItem(item._id, item.quantity - 1, item.instructions)"
+                    :disabled="item.quantity <= 1">
                     -
                   </button>
 
@@ -66,14 +69,14 @@
 
                   <button
                     class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors cursor-pointer pb-0.5"
-                    @click="updateCartItemQuantity(item._id, item.quantity + 1)">
+                    @click="updateCartItem(item._id, item.quantity + 1, item.instructions)">
                     +
                   </button>
                 </div>
 
                 <font-awesome-icon :icon="faTrashCan"
                   class="text-red-500 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-125 hover:text-red-700 cursor-pointer"
-                  @click="deleteitemFromCart(item._id)" />
+                  @click="deleteItemFromCart(item._id)" />
 
               </div>
             </div>
@@ -81,7 +84,6 @@
         </div>
       </div>
 
-      <!-- Order summary floating on the right -->
       <div class="bg-white p-6 rounded-xl border border-gray-100 h-fit sticky top-5">
         <h2 class="text-xl font-bold mb-6 text-gray-900">Order Summary</h2>
 
@@ -110,25 +112,25 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import type { CartData } from '@/types';
+import type { CartData } from '@/types'; // Ensure this type matches your API response
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 const useAuth = useAuthStore();
 const token = useAuth.token;
 
 // State
-// NOTE: We initialize as null because we are fetching an Object, not an Array
 const cart = ref<CartData | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL; //
+// API URLs
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const cartUrl = `${baseUrl}/cart`;
-const deleteCartItemUrl = `${baseUrl}/cart/remove-item/`;
-const updateCartUrl = `${baseUrl}/cart`;
+const deleteCartItemUrl = `${baseUrl}/cart/remove-item/`; // Expects ID appended
+const updateCartUrl = `${baseUrl}/cart`; // Expects ID appended
 
-// Helper: Format Numbers to Currency
+// --- Helpers ---
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-KE', {
     style: 'currency',
@@ -136,7 +138,6 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-// Helper: Handle Image URLs
 const getImageUrl = (path: string) => {
   if (!path) return '/foodplacehoder.jpg';
   if (path.startsWith('http')) return path;
@@ -147,8 +148,13 @@ const handleImageError = (e: Event) => {
   (e.target as HTMLImageElement).src = '/foodplacehoder.jpg';
 };
 
-const deleteitemFromCart = async (itemId: string) => {
+// --- Actions ---
+
+// 1. DELETE ITEM
+const deleteItemFromCart = async (itemId: string) => {
   if (!itemId) return;
+
+  // Optional: confirm('Are you sure you want to remove this item?');
 
   try {
     const response = await fetch(`${deleteCartItemUrl}${itemId}`, {
@@ -161,25 +167,20 @@ const deleteitemFromCart = async (itemId: string) => {
 
     const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to delete item');
-    }
+    if (!response.ok) throw new Error(result.message || 'Failed to delete item');
 
     if (result.success && result.data) {
-      // ✅ Update the local cart variable with the fresh data from the backend
-      // This will automatically recalculate the total price and remove the item from the list
-      cart.value = result.data;
+      cart.value = result.data; // Update UI immediately
     }
-
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('Error deleting item:', err);
-    // Optional: Add a toast notification here to tell the user it failed
-    alert('Could not delete item. Please try again.');
+    alert('Could not delete item.');
   }
 };
 
-const updateCartItemQuantity = async (itemId: string, newQuantity: number) => {
-  // 1. Don't allow quantity to go below 1 (since you have a delete button for that)
+// 2. UPDATE QUANTITY & INSTRUCTIONS
+const updateCartItem = async (itemId: string, newQuantity: number, newInstructions: string) => {
+  // Prevent quantity < 1
   if (newQuantity < 1) return;
 
   try {
@@ -189,27 +190,27 @@ const updateCartItemQuantity = async (itemId: string, newQuantity: number) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ quantity: newQuantity })
+      // Pass both quantity and instructions so nothing gets lost
+      body: JSON.stringify({
+        quantity: newQuantity,
+        instructions: newInstructions
+      })
     });
 
     const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to update cart');
-    }
+    if (!response.ok) throw new Error(result.message || 'Failed to update cart');
 
     if (result.success && result.data) {
-      // Update local cart with the server response (this recalculates totals automatically)
-      cart.value = result.data;
+      cart.value = result.data; // Update UI immediately
     }
-
   } catch (err) {
-    console.error('Error updating quantity:', err);
-    // Optional: revert the optimistic UI change or show error
+    console.error('Error updating item:', err);
+    // Optional: Add toast notification for error
   }
 };
 
-// Fetch Logic
+// 3. FETCH CART
 const fetchCart = async () => {
   isLoading.value = true;
   error.value = null;
@@ -227,10 +228,7 @@ const fetchCart = async () => {
 
     const apiData = await response.json();
 
-    // console.log("🔥 API RESPONSE:", apiData);
-
     if (apiData.success && apiData.data) {
-
       cart.value = apiData.data;
     } else {
       throw new Error('Invalid data format received');
@@ -248,7 +246,3 @@ onMounted(() => {
   fetchCart();
 });
 </script>
-
-<style scoped>
-/* No styles needed - Tailwind handles everything */
-</style>
