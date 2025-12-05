@@ -9,8 +9,7 @@ defineOptions({
 <template>
     <section class="relative py-24 lg:py-32 overflow-hidden bg-stone-950" id="about">
 
-        <div class="absolute inset-0 opacity-[0.03]"
-            style="background-image: url('https://www.transparenttextures.com/patterns/stardust.png');"></div>
+        <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('/assets/stardust.png');"></div>
         <div
             class="absolute top-1/2 left-0 w-[500px] h-[500px] bg-red-900/10 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none">
         </div>
@@ -24,8 +23,7 @@ defineOptions({
                     </div>
 
                     <div class="relative z-10 rounded-xl overflow-hidden shadow-2xl shadow-black/50">
-                        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80"
-                            alt="Chef plating food"
+                        <img src="/assets/beach-restuarant.jpg" alt="Chef plating food"
                             class="w-full h-[500px] lg:h-[600px] object-cover transform transition-transform duration-1000 group-hover:scale-105" />
                         <div class="absolute inset-0 bg-linear-to-t from-stone-950/80 via-transparent to-transparent">
                         </div>
