@@ -70,7 +70,8 @@
                 </div>
 
                 <font-awesome-icon :icon="faTrashCan"
-                  class="text-red-500 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-125 hover:text-red-700 cursor-pointer" />
+                  class="text-red-500 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-125 hover:text-red-700 cursor-pointer"
+                  @click="deleteitemFromCart(item._id)" />
 
               </div>
             </div>
@@ -122,6 +123,7 @@ const error = ref<string | null>(null);
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL; //
 const cartUrl = `${baseUrl}/cart`;
+const deleteCartItemUrl = `${baseUrl}/cart/remove-item/`;
 
 // Helper: Format Numbers to Currency
 const formatCurrency = (value: number) => {
@@ -140,6 +142,37 @@ const getImageUrl = (path: string) => {
 
 const handleImageError = (e: Event) => {
   (e.target as HTMLImageElement).src = '/foodplacehoder.jpg';
+};
+
+const deleteitemFromCart = async (itemId: string) => {
+  if (!itemId) return;
+
+  try {
+    const response = await fetch(`${deleteCartItemUrl}${itemId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to delete item');
+    }
+
+    if (result.success && result.data) {
+      // ✅ Update the local cart variable with the fresh data from the backend
+      // This will automatically recalculate the total price and remove the item from the list
+      cart.value = result.data;
+    }
+
+  } catch (err) {
+    console.error('Error deleting item:', err);
+    // Optional: Add a toast notification here to tell the user it failed
+    alert('Could not delete item. Please try again.');
+  }
 };
 
 // Fetch Logic
