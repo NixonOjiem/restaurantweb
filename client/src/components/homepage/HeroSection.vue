@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { defineOptions, defineProps, reactive, onMounted } from 'vue';
-
-defineOptions({
-    name: 'HeroSection'
-});
+import { defineProps, reactive, onMounted } from 'vue';
 
 // Reactive state for stats to handle animation
 const stats = reactive([

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineOptions, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';

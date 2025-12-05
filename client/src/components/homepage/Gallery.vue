@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { defineOptions } from 'vue';
-
-defineOptions({
-    name: 'RestaurantGallery'
-});
-
 const galleryItems = [
     {
         id: 1,
