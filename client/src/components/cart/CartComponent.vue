@@ -99,10 +99,12 @@
           <span>{{ formatCurrency(cart.totalPrice) }}</span>
         </div>
 
-        <button
-          class="w-full bg-emerald-500 text-white p-4 rounded-lg text-base font-semibold hover:bg-emerald-600 transition-colors">
-          Proceed to Checkout
-        </button>
+        <router-link to="/checkout">
+          <button
+            class="w-full bg-emerald-500 text-white p-4 rounded-lg text-base font-semibold hover:bg-emerald-600 transition-colors">
+            Proceed to Checkout
+          </button>
+        </router-link>
       </div>
 
     </div>
@@ -115,6 +117,7 @@ import { useAuthStore } from '@/stores/auth';
 import type { CartData } from '@/types'; // Ensure this type matches your API response
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+
 
 const useAuth = useAuthStore();
 const token = useAuth.token;
