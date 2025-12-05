@@ -58,6 +58,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+const useAuth = useAuthStore();
+const token = useAuth.token
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // 1. Define the props to accept data from Handler
 const props = defineProps<{
@@ -75,27 +79,53 @@ const props = defineProps<{
 const mpesaNumber = ref('');
 const contactNumber = ref('');
 
-const processPayment = () => {
+const processPayment = async () => {
   if (!mpesaNumber.value) {
     alert("Please enter an M-Pesa number");
     return;
   }
 
-  // 2. Capture all data (Props + Local Inputs)
-  const allOrderDetails = {
-    location: props.deliveryDetails.location,
-    buildingInfo: {
-      buildingName: props.deliveryDetails.building,
-      doorNumber: props.deliveryDetails.doorNumber,
-      instructions: props.deliveryDetails.instructions
-    },
-    contactInfo: {
+  // 1. Prepare Payload
+  const payload = {
+    ...props.deliveryDetails,
+    payment: {
+      method: 'MPESA',
       mpesaNumber: mpesaNumber.value,
       contactNumber: contactNumber.value || mpesaNumber.value
     }
   };
 
-  // 3. Console Log it
-  console.log("🚀 FULL ORDER DETAILS:", allOrderDetails);
+  try {
+    // 2. Make the Request
+    const response = await fetch(`${baseUrl}/orders/checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Get the token from storage (adjust key name 'token' if you saved it differently)
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload) // You must stringify the body manually with fetch
+    });
+
+    // 3. Manual Error Handling (Fetch doesn't throw on 400/500 errors automatically)
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Payment failed');
+    }
+
+    // 4. Success Handling
+    const data = await response.json(); // You must parse JSON manually
+
+    console.log("Order Created:", data);
+    alert("Success! Check your phone for the M-Pesa PIN.");
+
+    // Redirect or clear state here
+    // router.push('/order-success');
+
+  } catch (error: unknown) {
+    console.error("Checkout Error:", error);
+    // alert(error.message || "Something went wrong processing your order.");
+    alert("An Error Occurred")
+  }
 };
 </script>

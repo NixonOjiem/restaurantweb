@@ -11,7 +11,11 @@ const orderSchema = new mongoose.Schema(
     // this order record remains historically accurate.
     items: [
       {
-        product: { type: mongoose.Schema.Types.ObjectId, ref: "Menu" },
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Menu",
+          required: true,
+        },
         name: String,
         quantity: Number,
         price: Number,
