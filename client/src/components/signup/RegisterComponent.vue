@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { defineOptions, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia'; // Essential for reactivity
@@ -82,6 +82,10 @@ interface GoogleCredentialResponse {
   select_by?: string;
   clientId?: string;
 }
+
+defineOptions({
+  name: "RegistrationComponent"
+});
 
 const router = useRouter();
 const authStore = useAuthStore();

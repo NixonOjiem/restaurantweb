@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { defineOptions, computed } from 'vue';
+
+defineOptions({
+  name: 'RestaurantFooter'
+});
 
 const currentYear = computed(() => new Date().getFullYear());
 
@@ -106,7 +110,7 @@ const quickLinks = [
                 class="group flex items-center gap-3 text-stone-400 hover:text-white transition-colors text-sm">
                 <span class="w-1.5 h-1.5 rounded-full bg-stone-700 group-hover:bg-red-500 transition-colors"></span>
                 <span class="group-hover:translate-x-1 transition-transform duration-300">{{ link.name
-                  }}</span>
+                }}</span>
               </a>
             </li>
           </ul>

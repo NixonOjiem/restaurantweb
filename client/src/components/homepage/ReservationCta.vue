@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { defineOptions } from 'vue';
+
+defineOptions({
+    name: 'ReservationCta'
+});
+</script>
 
 <template>
     <section class="relative py-32 lg:py-40 flex items-center justify-center overflow-hidden">
