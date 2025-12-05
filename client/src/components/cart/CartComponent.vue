@@ -54,9 +54,11 @@
               <div class="flex items-center gap-3">
 
                 <div class="flex items-center bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-semibold text-sm">
+
                   <button
                     class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors cursor-pointer pb-0.5"
-                    @click="item.quantity > 1 ? item.quantity-- : null">
+                    :class="{ 'opacity-50 cursor-not-allowed': item.quantity <= 1 }"
+                    @click="updateCartItemQuantity(item._id, item.quantity - 1)" :disabled="item.quantity <= 1">
                     -
                   </button>
 
@@ -64,7 +66,7 @@
 
                   <button
                     class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors cursor-pointer pb-0.5"
-                    @click="item.quantity++">
+                    @click="updateCartItemQuantity(item._id, item.quantity + 1)">
                     +
                   </button>
                 </div>
@@ -124,6 +126,7 @@ const error = ref<string | null>(null);
 const baseUrl = import.meta.env.VITE_API_BASE_URL; //
 const cartUrl = `${baseUrl}/cart`;
 const deleteCartItemUrl = `${baseUrl}/cart/remove-item/`;
+const updateCartUrl = `${baseUrl}/cart`;
 
 // Helper: Format Numbers to Currency
 const formatCurrency = (value: number) => {
@@ -172,6 +175,37 @@ const deleteitemFromCart = async (itemId: string) => {
     console.error('Error deleting item:', err);
     // Optional: Add a toast notification here to tell the user it failed
     alert('Could not delete item. Please try again.');
+  }
+};
+
+const updateCartItemQuantity = async (itemId: string, newQuantity: number) => {
+  // 1. Don't allow quantity to go below 1 (since you have a delete button for that)
+  if (newQuantity < 1) return;
+
+  try {
+    const response = await fetch(`${updateCartUrl}/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ quantity: newQuantity })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to update cart');
+    }
+
+    if (result.success && result.data) {
+      // Update local cart with the server response (this recalculates totals automatically)
+      cart.value = result.data;
+    }
+
+  } catch (err) {
+    console.error('Error updating quantity:', err);
+    // Optional: revert the optimistic UI change or show error
   }
 };
 
