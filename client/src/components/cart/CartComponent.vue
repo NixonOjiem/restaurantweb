@@ -1,12 +1,14 @@
 <template>
-  <div class="max-w-7xl mx-auto p-8 font-sans text-gray-800">
+  <div class="max-w-7xl mx-auto p-8 font-sans text-gray-800 bg-[#FFFDF4]">
     <h1 class="text-3xl font-bold mb-8 text-gray-900 mt-9">Your Cart</h1>
 
+    <!-- Loading state -->
     <div v-if="isLoading" class="text-center p-16 bg-gray-50 rounded-xl">
       <div class="w-10 h-10 border-4 border-gray-100 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
       <p class="text-gray-600">Loading delicious items...</p>
     </div>
 
+    <!-- Error state -->
     <div v-else-if="error" class="text-center p-16 bg-gray-50 rounded-xl">
       <p class="text-red-500 mb-4">{{ error }}</p>
       <button @click="fetchCart" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
@@ -14,16 +16,17 @@
       </button>
     </div>
 
+    <!-- When cart is empty -->
     <div v-else-if="!cart || cart.items.length === 0" class="text-center p-16 bg-gray-50 rounded-xl">
       <p class="text-gray-600 mb-4">Your cart is empty.</p>
       <router-link to="/menu"
         class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-        Browse Menu
+        Browse Our Menu
       </router-link>
     </div>
 
+    <!-- when cart has items -->
     <div v-else class="grid grid-cols-1 md:grid-cols-[1fr_350px] gap-8">
-
       <div class="flex flex-col gap-6">
         <div v-for="item in cart.items" :key="item._id"
           class="flex flex-col md:flex-row bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
@@ -47,14 +50,35 @@
 
             <div class="flex justify-between items-center mt-auto">
               <span class="text-sm text-gray-500">{{ formatCurrency(item.price) }} each</span>
-              <div class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-semibold text-sm">
-                x {{ item.quantity }}
+
+              <div class="flex items-center gap-3">
+
+                <div class="flex items-center bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-semibold text-sm">
+                  <button
+                    class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors cursor-pointer pb-0.5"
+                    @click="item.quantity > 1 ? item.quantity-- : null">
+                    -
+                  </button>
+
+                  <span class="mx-2 w-4 text-center">{{ item.quantity }}</span>
+
+                  <button
+                    class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors cursor-pointer pb-0.5"
+                    @click="item.quantity++">
+                    +
+                  </button>
+                </div>
+
+                <font-awesome-icon :icon="faTrashCan"
+                  class="text-red-500 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-125 hover:text-red-700 cursor-pointer" />
+
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Order summary floating on the right -->
       <div class="bg-white p-6 rounded-xl border border-gray-100 h-fit sticky top-5">
         <h2 class="text-xl font-bold mb-6 text-gray-900">Order Summary</h2>
 
@@ -75,6 +99,7 @@
           Proceed to Checkout
         </button>
       </div>
+
     </div>
   </div>
 </template>
