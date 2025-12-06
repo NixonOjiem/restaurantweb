@@ -49,7 +49,7 @@
                       {{ product?.title }}
                     </h2>
                     <div class="text-xl md:text-3xl font-bold text-amber-600 shrink-0">
-                      ${{ product?.price }}
+                      KES {{ product?.price }}
                     </div>
                   </div>
 
