@@ -1,6 +1,6 @@
 @import "tailwindcss";
 body{
-    background: #FFF7E0;
+    /* background: #FFF7E0; */
     margin: 0;
     padding: 0;
     height: 100vh;
@@ -8,6 +8,6 @@ body{
     scroll-behavior: smooth;
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     scroll-behavior: smooth;
-}
+} */
