@@ -17,7 +17,7 @@
     <div v-else-if="!cart || cart.items.length === 0" class="text-center p-16 bg-gray-50 rounded-xl">
       <p class="text-gray-600 mb-4">Your cart is empty.</p>
       <router-link to="/menu"
-        class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        class="inline-block px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
         Browse Our Menu
       </router-link>
     </div>

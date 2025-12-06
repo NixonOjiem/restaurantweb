@@ -10,6 +10,7 @@ import ProfileView from '@/views/ProfileView.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import CartView from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
+import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -60,6 +61,12 @@ const router = createRouter({
       path: '/checkout',
       name: 'checkout',
       component: CheckoutView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/my-orders-reservations',
+      name: 'OrdersReservations',
+      component: MyOrdersReservations,
       meta: { requiresAuth: true },
     },
     {
