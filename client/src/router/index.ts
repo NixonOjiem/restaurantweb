@@ -4,6 +4,7 @@ import HomeView from '@/views/HomeView.vue'
 import SignupView from '@/views/SignupView.vue'
 import ForgotView from '@/views/ForgotView.vue'
 import MenuView from '@/views/MenuView.vue'
+import ResetPasswwordView from '@/views/ResetPasswwordView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -31,6 +32,11 @@ const router = createRouter({
       path: '/menu',
       name: 'Menu',
       component: MenuView,
+    },
+    {
+      path: '/reset-password',
+      name: 'resetpasswordpage',
+      component: ResetPasswwordView,
     },
   ],
 })
