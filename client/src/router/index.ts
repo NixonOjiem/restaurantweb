@@ -1,10 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import LoginView from '@/views/LoginView.vue'
 import HomeView from '@/views/HomeView.vue'
 import SignupView from '@/views/SignupView.vue'
 import ForgotView from '@/views/ForgotView.vue'
 import MenuView from '@/views/MenuView.vue'
-import ResetPasswwordView from '@/views/ResetPasswwordView.vue'
+import TestView from '@/views/TestView.vue'
+import ProfileView from '@/views/ProfileView.vue'
+import EditProfileView from '@/views/EditProfileView.vue'
+import CartView from '@/views/CartView.vue'
+import CheckoutView from '@/views/CheckoutView.vue'
+import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -34,11 +40,56 @@ const router = createRouter({
       component: MenuView,
     },
     {
-      path: '/reset-password',
-      name: 'resetpasswordpage',
-      component: ResetPasswwordView,
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: CartView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile/edit',
+      name: 'EditProfile',
+      component: EditProfileView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/checkout',
+      name: 'checkout',
+      component: CheckoutView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/my-orders-reservations',
+      name: 'OrdersReservations',
+      component: MyOrdersReservations,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: TestView,
     },
   ],
+})
+
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+  if (!authStore.user && localStorage.getItem('token')) {
+    await authStore.initializeStore()
+  }
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    // User is NOT logged in, redirect to Login
+    // We add a query param so we can redirect them back after they login
+    next({ name: 'login', query: { redirect: to.fullPath } })
+  } else {
+    // User is logged in OR route is public
+    next()
+  }
 })
 
 export default router

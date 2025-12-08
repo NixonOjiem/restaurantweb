@@ -214,7 +214,7 @@ onMounted(() => {
   z-index: 5;
 }
 
-h2 {
+h2.login-title {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 25px;
@@ -234,9 +234,9 @@ label {
   font-size: 0.9rem;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="password"] {
   width: 100%;
   padding: 12px 15px;
   border: 2px solid #ecf0f1;
@@ -245,6 +245,7 @@ input[type="password"] {
   font-size: 1rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
+  /* Ensures padding doesn't break width */
 }
 
 input:focus {
