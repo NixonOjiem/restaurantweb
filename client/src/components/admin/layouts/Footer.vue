@@ -1,8 +1,7 @@
 <template>
     <footer class="relative mt-auto w-full z-10">
 
-        <div
-            class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent">
+        <div class="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-indigo-500/20 to-transparent">
         </div>
 
         <div class="bg-slate-900/40 backdrop-blur-md border-t border-white/5 py-6 px-8">
