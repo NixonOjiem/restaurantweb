@@ -68,16 +68,18 @@ const router = createRouter({
       path: '/my-orders-reservations',
       name: 'OrdersReservations',
       component: MyOrdersReservations,
-      path: '/admin',
-      name: 'AdminDashboard',
-      component: AdminView,
-      meta: { requiresAuth: true },
+      // meta: { requiresAuth: true },
     },
     {
       path: '/test',
       name: 'test',
       component: TestView,
     },
+    {
+       path: '/admin',
+      name: 'AdminDashboard',
+      component: AdminView,
+    }
   ],
 })
 
