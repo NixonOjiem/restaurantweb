@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-stone-50 to-orange-50 p-4 md:p-8 font-sans text-slate-700">
-    <MenuHeroSection />
-    <div class=" text-center">
-      <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Dining History</h1>
-      <p class="text-slate-500 text-lg">View your orders and reservations</p>
+  <div class="min-h-screen bg-gradient-to-br from-stone-50 to-orange-50 p-4 md:p-8 font-sans text-slate-700 mt-10">
+
+    <div class="max-w-6xl mx-auto mb-8 bg-white p-8 rounded-3xl shadow-sm border border-stone-100 text-center">
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">My Dining History</h1>
+      <p class="text-slate-500 text-lg">View your past orders and upcoming reservations</p>
     </div>
 
     <div class="max-w-6xl mx-auto">
@@ -14,7 +14,8 @@
           :class="activeTab === tab
             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30 transform scale-[1.02]'
             : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'">
-          <span class="text-xl">{{ tab === 'orders' ? '🍽️' : '📅' }}</span>
+          <font-awesome-icon :icon="tab === 'orders' ? faPlateWheat : faCalendar" class="text-xl" />
+
           <span class="capitalize">{{ tab === 'orders' ? 'My Orders' : 'Reservations' }}</span>
           <span class="ml-2 text-xs py-0.5 px-2 rounded-full"
             :class="activeTab === tab ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'">
@@ -87,7 +88,8 @@
 
           <div v-if="orders.length === 0"
             class="text-center py-20 bg-white rounded-3xl border border-slate-100 border-dashed">
-            <div class="text-6xl mb-4 opacity-50">🍽️</div>
+            <font-awesome-icon :icon="faPlateWheat" class="text-6xl text-orange-400 mx-auto my-6" />
+
             <h3 class="text-xl font-bold text-slate-800">No orders yet</h3>
             <p class="text-slate-500 mb-6">Your order history will appear here.</p>
             <button
@@ -124,13 +126,13 @@
                   <div>
                     <span class="text-xs text-slate-500 block mb-1">Date & Time</span>
                     <span class="font-semibold text-slate-800 flex items-center gap-1">
-                      📅 {{ formatDateTime(reservation.date, reservation.time) }}
+                      <span>📅</span> {{ formatDateTime(reservation.date, reservation.time) }}
                     </span>
                   </div>
                   <div>
                     <span class="text-xs text-slate-500 block mb-1">Guests</span>
                     <span class="font-semibold text-slate-800 flex items-center gap-1">
-                      👥 {{ reservation.guests }} People
+                      <span>👥</span> {{ reservation.guests }} People
                     </span>
                   </div>
                   <div>
@@ -160,6 +162,7 @@
 
             <div v-if="upcomingReservations.length === 0"
               class="text-center py-12 bg-white rounded-2xl border border-slate-100 border-dashed">
+              <font-awesome-icon :icon="faCalendar" class="text-4xl text-slate-300 mx-auto mb-4" />
               <p class="text-slate-500">No upcoming reservations.</p>
               <button
                 class="mt-4 px-5 py-2 text-orange-500 font-semibold hover:bg-orange-50 rounded-lg transition-colors">
@@ -202,7 +205,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import MenuHeroSection from '../menupage/MenuHeroSection.vue'
+
+// --- Imports for FontAwesome ---
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faPlateWheat, faCalendar } from '@fortawesome/free-solid-svg-icons'
 
 // Active tab state
 const activeTab = ref<'orders' | 'reservations'>('orders')
