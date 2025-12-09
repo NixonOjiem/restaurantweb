@@ -1,4 +1,8 @@
 <template lang="html">
-  <div>Admin bro</div>
+  <div>
+    <Sidebar/>
+  </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Sidebar from '@/components/admin/layouts/Sidebar.vue';
+</script>
