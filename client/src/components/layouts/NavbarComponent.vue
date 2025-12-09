@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineOptions, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { useAuthStore } from '@/stores/auth';
@@ -7,9 +7,7 @@ import { storeToRefs } from 'pinia';
 import router from '@/router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faBasketShopping } from '@fortawesome/free-solid-svg-icons/faBasketShopping';
-defineOptions({
-  name: "NavbarComponent",
-});
+
 const goToCart = () => {
   router.push('/cart')
 }
@@ -126,9 +124,9 @@ onUnmounted(() => {
               <router-link to="/reservations"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
                 active-class="text-white active-link">Reservations</router-link>
-              <router-link to="/contact"
+              <router-link to="/my-orders-reservations"
                 class="nav-link text-stone-300 hover:text-white text-sm font-medium tracking-wide transition-colors"
-                active-class="text-white active-link">Contact</router-link>
+                active-class="text-white active-link" v-if="isAuthenticated">Orders/Reservations</router-link>
             </div>
 
             <div class="hidden md:flex items-center space-x-6">
@@ -207,8 +205,8 @@ onUnmounted(() => {
               <router-link to="/menu" class="mobile-link" @click="isMenuOpen = false">Menu</router-link>
               <router-link to="/about" class="mobile-link" @click="isMenuOpen = false">About</router-link>
               <router-link to="/reservations" class="mobile-link" @click="isMenuOpen = false">Reservations</router-link>
-              <router-link to="/contact" class="mobile-link border-b border-stone-800 pb-4 mb-2"
-                @click="isMenuOpen = false">Contact</router-link>
+              <router-link to="/my-orders-reservations" class="mobile-link border-b border-stone-800 pb-4 mb-2"
+                @click="isMenuOpen = false" v-if="isAuthenticated">Orders/Reservation</router-link>
 
               <div class="pt-4 mt-2 flex flex-col gap-3 border-t border-white/5 mx-2">
                 <button
