@@ -68,9 +68,6 @@ const router = createRouter({
       path: '/my-orders-reservations',
       name: 'OrdersReservations',
       component: MyOrdersReservations,
-      path: '/admin',
-      name: 'AdminDashboard',
-      component: AdminView,
       // meta: { requiresAuth: true },
     },
     {
@@ -78,6 +75,11 @@ const router = createRouter({
       name: 'test',
       component: TestView,
     },
+    {
+       path: '/admin',
+      name: 'AdminDashboard',
+      component: AdminView,
+    }
   ],
 })
 
