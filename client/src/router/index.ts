@@ -14,6 +14,10 @@ import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
 import AdminView from '@/views/AdminView.vue'
 import DashboardView from '@/views/admin/DashboardView.vue'
 import OrdersView from '@/views/admin/OrdersView.vue'
+import UsersView from '@/views/admin/UsersView.vue'
+import CartsView from '@/views/admin/CartsView.vue'
+import SettingsView from '@/views/admin/SettingsView.vue'
+import MenuItemsView from '@/views/admin/MenuItemsView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -100,22 +104,22 @@ const router = createRouter({
         {
           path:'menu-items',
           name:'menu-items',
-          component:MenuView
+          component:MenuItemsView
         },
         {
           path:'users',
           name:'users',
-          component:MenuView
+          component:UsersView
         },
         {
           path:'carts',
           name:'carts',
-          component:MenuView
+          component:CartsView
         },
         {
           path:'settings',
           name:'settings',
-          component:MenuView
+          component:SettingsView
         },
 
 
