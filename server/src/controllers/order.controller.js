@@ -83,3 +83,100 @@ exports.initiateCheckout = async (req, res) => {
       .json({ message: "Internal Server Error", error: error.message });
   }
 };
+
+// @desc    Get logged in user orders
+// @route   GET /restaurant/orders/myorders
+// @access  Private
+exports.getUserOrders = async (req, res) => {
+  try {
+    // Find orders where 'user' field matches the logged-in user's ID
+    const orders = await Order.find({ user: req.user.id }).sort({
+      createdAt: -1,
+    }); // Sort by newest first
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get User Orders Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Get all orders (Admin only)
+// @route   GET /restaurant/orders/admin/all
+// @access  Private/Admin
+exports.getAllOrders = async (req, res) => {
+  try {
+    // Fetch all orders
+    const orders = await Order.find()
+      .populate("user", "name email phoneNumber") // Populating user details is crucial for Admin to know WHO ordered
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Admin Get All Orders Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Update order status (Admin only)
+// @route   PUT /restaurant/orders/admin/:id/status
+// @access  Private/Admin
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    // Validate status against your Enum in the model
+    const validStatuses = [
+      "RECEIVED",
+      "PREPARING",
+      "ON_THE_WAY",
+      "DELIVERED",
+      "CANCELLED",
+    ];
+    if (!validStatuses.includes(status)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status" });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { orderStatus: status },
+      { new: true } // Return the updated document
+    );
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Order status updated to ${status}`,
+      order,
+    });
+  } catch (error) {
+    console.error("Update Status Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server Error", error: error.message });
+  }
+};
