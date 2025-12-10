@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-stone-50 to-orange-50 p-4 md:p-8 font-sans text-slate-700 mt-10">
+  <div class="min-h-screen  p-4 md:p-8 font-sans text-slate-700 mt-10">
 
-    <div class="max-w-6xl mx-auto mb-8 bg-white p-8 rounded-3xl shadow-sm border border-stone-100 text-center">
+    <div class="max-w-6xl mx-auto mb-8 text-center">
       <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">My Dining History</h1>
       <p class="text-slate-500 text-lg">View your past orders and upcoming reservations</p>
     </div>
@@ -27,7 +27,7 @@
       <transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0 translate-y-4"
         enter-to-class="opacity-100 translate-y-0">
         <div v-if="activeTab === 'orders'" class="space-y-6">
-          <div class="flex items-center gap-4 pb-2 border-b-2 border-orange-100">
+          <div class="flex items-center gap-4 pb-2 pt-4 border-b-2 border-orange-100">
             <h2 class="text-2xl font-bold text-slate-800">Order History</h2>
           </div>
 
@@ -105,7 +105,7 @@
         <div v-if="activeTab === 'reservations'" class="space-y-8">
 
           <div>
-            <div class="flex items-center gap-4 mb-6 pb-2 border-b-2 border-orange-100">
+            <div class="flex items-center gap-4 mb-6 pb-2 pt-4 border-b-2 border-orange-100">
               <h2 class="text-2xl font-bold text-slate-800">Upcoming Reservations</h2>
             </div>
 
