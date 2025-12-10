@@ -1,8 +1,12 @@
 <template lang="html">
-  <div>
-    <Sidebar/>
+  <!-- <HeaderComponent /> -->
+  <div class="">
+    <SidebarComponent/>
+    <router-view />
   </div>
 </template>
 <script setup lang="ts">
-import Sidebar from '@/components/admin/layouts/Sidebar.vue';
+// import  HeaderComponent from '@/components/admin/layouts/HeaderComponent.vue';
+import  SidebarComponent from '@/components/admin/layouts/SidebarComponent.vue';
+
 </script>
