@@ -182,7 +182,10 @@ import { useAuthStore } from '@/stores/auth';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlateWheat, faCalendar } from '@fortawesome/free-solid-svg-icons'
 import type { FrontendOrder, BackendOrder, OrderItem } from '@/types';
-
+interface MenuProduct {
+  title: string;
+  image?: string;
+}
 // 1. Setup Auth and Config
 const useAuth = useAuthStore();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -235,13 +238,14 @@ const fetchOrders = async () => {
 // --- Helper Functions ---
 
 // Safely retrieve item name handling both historical 'name' and populated 'product.title'
-const getItemName = (item: OrderItem) => {
-  // 1. If the saved name exists (historically accurate), use it
+const getItemName = (item: OrderItem): string => {
+  // 1. If the saved name exists, use it
   if (item.name) return item.name;
 
-  // 2. If product is populated (object) and has a title, use that
-  if (item.product && typeof item.product === 'object' && 'title' in item.product) {
-    return (item.product as OrderItem).title;
+  // 2. Check if product is an object (populated)
+  if (typeof item.product === 'object' && item.product !== null) {
+    // FIX: Cast item.product to 'MenuProduct', NOT 'OrderItem'
+    return (item.product as MenuProduct).title;
   }
 
   // 3. Fallback
@@ -309,15 +313,15 @@ const upcomingReservations = computed(() =>
   reservations.value.filter(r => r.status === 'Confirmed')
 )
 
-const pastReservations = computed(() =>
-  reservations.value.filter(r => r.status === 'Completed')
-)
+// const pastReservations = computed(() =>
+//   reservations.value.filter(r => r.status === 'Completed')
+// )
 
 const reorder = (orderId: string) => console.log('Reorder:', orderId)
 const viewOrderDetails = (orderId: string) => console.log('View order details:', orderId)
-const modifyReservation = (reservationId: string) => console.log('Modify reservation:', reservationId)
-const cancelReservation = (reservationId: string) => console.log('Cancel reservation:', reservationId)
-const viewReservationDetails = (reservationId: string) => console.log('View reservation details:', reservationId)
+// const modifyReservation = (reservationId: string) => console.log('Modify reservation:', reservationId)
+// const cancelReservation = (reservationId: string) => console.log('Cancel reservation:', reservationId)
+// const viewReservationDetails = (reservationId: string) => console.log('View reservation details:', reservationId)
 
 // Load orders on mount
 onMounted(() => {
