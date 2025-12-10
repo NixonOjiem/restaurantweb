@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    // We embed items directly so if product price changes later,
+    // Embed items directly so if product price changes later,
     // this order record remains historically accurate.
     items: [
       {
