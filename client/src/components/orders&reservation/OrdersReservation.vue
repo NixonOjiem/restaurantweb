@@ -205,13 +205,16 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const myOrdersUrl = `${baseUrl}/orders/my-orders`;
 
 // --- Imports for FontAwesome ---
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlateWheat, faCalendar } from '@fortawesome/free-solid-svg-icons'
 
 // Active tab state
-const activeTab = ref<'orders' | 'reservations'>('orders')
+const activeTab = ref<'orders' | 'reservations'>('orders');
+
 
 // Dummy data for orders
 const orders = ref([
