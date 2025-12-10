@@ -130,10 +130,10 @@ onUnmounted(() => {
             </div>
 
             <div class="hidden md:flex items-center space-x-6">
-              <button
+              <!-- <button
                 class="text-stone-300 hover:text-white text-sm font-bold uppercase tracking-wider transition-colors">
                 Book Now
-              </button>
+              </button> -->
               <font-awesome-icon :icon="faBasketShopping"
                 class="text-red-400 text-2xl hover:text-red-700 transition-colors duration-200 cursor-pointer"
                 v-if="isAuthenticated" @click="goToCart" />
