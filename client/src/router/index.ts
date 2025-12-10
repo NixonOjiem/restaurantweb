@@ -11,6 +11,7 @@ import EditProfileView from '@/views/EditProfileView.vue'
 import CartView from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
+import AdminView from '@/views/AdminView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -67,6 +68,9 @@ const router = createRouter({
       path: '/my-orders-reservations',
       name: 'OrdersReservations',
       component: MyOrdersReservations,
+      path: '/admin',
+      name: 'AdminDashboard',
+      component: AdminView,
       meta: { requiresAuth: true },
     },
     {
