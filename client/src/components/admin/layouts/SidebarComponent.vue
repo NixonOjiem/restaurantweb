@@ -1,11 +1,12 @@
 <template>
-    <aside class="h-screen py-6 pl-6 pr-4 sticky top-0 flex flex-col transition-all duration-300 ease-in-out"
+    <aside class="float-start h-screen py-6 pl-6 pr-4 sticky top-0 flex flex-col transition-all duration-300 ease-in-out"
         :class="isCollapsed ? 'w-[100px]' : 'w-72'">
         <div
             class="h-full flex flex-col bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
 
             <div class="absolute top-0 left-0 w-full h-32 bg-indigo-500/10 blur-3xl pointer-events-none"></div>
 
+            <!-- Sidenav Header -->
             <div class="flex items-center justify-between p-6 z-10">
                 <div class="flex items-center gap-3 overflow-hidden" :class="{ 'w-0 opacity-0': isCollapsed }">
                     <div
@@ -15,8 +16,9 @@
                                 d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <span class="font-bold text-xl text-white tracking-wide whitespace-nowrap">Nexus<span
-                            class="text-indigo-400">Admin</span></span>
+                    <span class="font-bold text-xl text-indigo-400 tracking-wide whitespace-nowrap">
+                      Admin
+                    </span>
                 </div>
 
                 <button @click="toggleSidebar"
@@ -29,6 +31,7 @@
                 </button>
             </div>
 
+            <!-- Navlinks -->
             <nav class="flex-1 px-4 space-y-2 overflow-y-auto z-10 custom-scrollbar">
 
                 <div v-for="(category, index) in menuStructure" :key="index" class="mb-6">
@@ -143,7 +146,7 @@ const toggleSidebar = () => {
 </script>
 
 <style scoped>
-/* Custom scrollbar for the nav area 
+/* Custom scrollbar for the nav area
   Keeps it sleek and hidden until hovered/needed
 */
 .custom-scrollbar::-webkit-scrollbar {
