@@ -64,22 +64,29 @@
               </div>
 
               <div class="p-5">
-                <div class="space-y-3 mb-6">
+                <div class="space-y-4 mb-6">
                   <div v-for="item in order.items" :key="item._id" class="flex justify-between items-center text-sm">
                     <div class="flex items-center gap-3">
+
+                      <img :src="item.image" alt="Product"
+                        class="w-12 h-12 rounded-lg object-cover border border-slate-100 shadow-sm bg-slate-50" />
+
                       <span
-                        class="font-bold text-orange-500 bg-orange-50 w-6 h-6 flex items-center justify-center rounded-md">{{
-                          item.quantity }}</span>
-                      <span class="text-slate-700 truncate max-w-[150px]">{{ item.name }}</span>
+                        class="font-bold text-orange-500 bg-orange-50 w-6 h-6 flex items-center justify-center rounded-md shrink-0">
+                        {{ item.quantity }}
+                      </span>
+                      <span class="text-slate-700 font-medium truncate max-w-[120px]" :title="item.name">
+                        {{ item.name || 'Product' }}
+                      </span>
                     </div>
-                    <span class="font-medium text-slate-900">${{ item.price.toFixed(2) }}</span>
+                    <span class="font-semibold text-slate-900 shrink-0">KES {{ item.price.toFixed(2) }}</span>
                   </div>
                 </div>
 
                 <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
                   <div>
                     <span class="text-xs text-slate-400 uppercase font-bold">Total</span>
-                    <div class="text-xl font-bold text-slate-900">${{ order.total.toFixed(2) }}</div>
+                    <div class="text-xl font-bold text-slate-900">KES {{ order.total.toFixed(2) }}</div>
                   </div>
                   <div class="flex gap-2">
                     <button v-if="order.status === 'DELIVERED'" @click="reorder(order.id)"
@@ -173,6 +180,7 @@ import { useAuthStore } from '@/stores/auth';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlateWheat, faCalendar } from '@fortawesome/free-solid-svg-icons'
 import type { FrontendOrder, BackendOrder } from '@/types';
+
 // 1. Setup Auth and Config
 const useAuth = useAuthStore();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -188,7 +196,6 @@ const fetchOrders = async () => {
   isLoading.value = true;
   error.value = '';
 
-  // Get token dynamically from store
   const token = useAuth.token;
 
   if (!token) {
@@ -217,7 +224,7 @@ const fetchOrders = async () => {
     }
   } catch (err: unknown) {
     console.error("Error fetching orders:", err);
-    //error.value = err.response?.data?.message || "Failed to load order history.";
+    // error.value = err.response?.data?.message || "Failed to load order history.";
   } finally {
     isLoading.value = false;
   }
