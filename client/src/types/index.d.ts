@@ -79,11 +79,12 @@ interface PaymentInfo {
 
 interface OrderItem {
   _id: string
-  product: string
+  // product can be a string ID OR an object with a title now
+  product: string | { title: string }
   quantity: number
   price: number
   image: string
-  name?: string // Optional because your current JSON is missing 'name'
+  name?: string
 }
 
 // The raw object from the database

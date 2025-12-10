@@ -75,11 +75,13 @@
                         class="font-bold text-orange-500 bg-orange-50 w-6 h-6 flex items-center justify-center rounded-md shrink-0">
                         {{ item.quantity }}
                       </span>
-                      <span class="text-slate-700 font-medium truncate max-w-[120px]" :title="item.name">
-                        {{ item.name || 'Product' }}
+
+                      <span class="text-slate-700 font-medium truncate max-w-[120px]" :title="getItemName(item)">
+                        {{ getItemName(item) }}
                       </span>
+
                     </div>
-                    <span class="font-semibold text-slate-900 shrink-0">KES {{ item.price.toFixed(2) }}</span>
+                    <span class="font-semibold text-slate-900 shrink-0">${{ item.price.toFixed(2) }}</span>
                   </div>
                 </div>
 
@@ -179,7 +181,7 @@ import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlateWheat, faCalendar } from '@fortawesome/free-solid-svg-icons'
-import type { FrontendOrder, BackendOrder } from '@/types';
+import type { FrontendOrder, BackendOrder, OrderItem } from '@/types';
 
 // 1. Setup Auth and Config
 const useAuth = useAuthStore();
@@ -230,37 +232,21 @@ const fetchOrders = async () => {
   }
 };
 
-// --- RESERVATIONS (Dummy Data for now) ---
-const reservations = ref([
-  {
-    id: 'RES-12345',
-    date: '2024-01-20',
-    time: '19:30',
-    guests: 4,
-    tableNumber: 'Table 12',
-    status: 'Confirmed',
-    specialRequests: 'Window seat preferred'
-  },
-  {
-    id: 'RES-12344',
-    date: '2024-01-25',
-    time: '20:00',
-    guests: 2,
-    tableNumber: 'Table 8',
-    status: 'Confirmed',
-    specialRequests: 'Anniversary celebration'
-  }
-])
-
-const upcomingReservations = computed(() =>
-  reservations.value.filter(r => r.status === 'Confirmed')
-)
-
-const pastReservations = computed(() =>
-  reservations.value.filter(r => r.status === 'Completed')
-)
-
 // --- Helper Functions ---
+
+// Safely retrieve item name handling both historical 'name' and populated 'product.title'
+const getItemName = (item: OrderItem) => {
+  // 1. If the saved name exists (historically accurate), use it
+  if (item.name) return item.name;
+
+  // 2. If product is populated (object) and has a title, use that
+  if (item.product && typeof item.product === 'object' && 'title' in item.product) {
+    return (item.product as OrderItem).title;
+  }
+
+  // 3. Fallback
+  return 'Unknown Item';
+};
 
 const formatDate = (dateString: string) => {
   if (!dateString) return '';
@@ -296,6 +282,36 @@ const getStatusClass = (status: string) => {
   }
   return statusClasses[status] || 'bg-gray-100 text-gray-700'
 }
+
+// --- RESERVATIONS (Dummy Data for now) ---
+const reservations = ref([
+  {
+    id: 'RES-12345',
+    date: '2024-01-20',
+    time: '19:30',
+    guests: 4,
+    tableNumber: 'Table 12',
+    status: 'Confirmed',
+    specialRequests: 'Window seat preferred'
+  },
+  {
+    id: 'RES-12344',
+    date: '2024-01-25',
+    time: '20:00',
+    guests: 2,
+    tableNumber: 'Table 8',
+    status: 'Confirmed',
+    specialRequests: 'Anniversary celebration'
+  }
+])
+
+const upcomingReservations = computed(() =>
+  reservations.value.filter(r => r.status === 'Confirmed')
+)
+
+const pastReservations = computed(() =>
+  reservations.value.filter(r => r.status === 'Completed')
+)
 
 const reorder = (orderId: string) => console.log('Reorder:', orderId)
 const viewOrderDetails = (orderId: string) => console.log('View order details:', orderId)

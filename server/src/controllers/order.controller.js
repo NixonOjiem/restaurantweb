@@ -30,7 +30,7 @@ exports.initiateCheckout = async (req, res) => {
 
       return {
         product: item.menuItem._id, // Map 'menuItem' ID to Order's 'product' field
-        name: item.menuItem.name, // Get name from populated Menu item
+        name: item.menuItem.title, // Get name from populated Menu item
         price: item.price, // Use price from Cart snapshot
         image: item.menuItem.image, // Get image from populated Menu item
         quantity: item.quantity,
@@ -89,10 +89,14 @@ exports.initiateCheckout = async (req, res) => {
 // @access  Private
 exports.getUserOrders = async (req, res) => {
   try {
-    // Find orders where 'user' field matches the logged-in user's ID
-    const orders = await Order.find({ user: req.user.id }).sort({
-      createdAt: -1,
-    }); // Sort by newest first
+    const orders = await Order.find({ user: req.user.id })
+      // We populate the 'product' field inside the 'items' array
+      .populate({
+        path: "items.product",
+        select: "title image", // Only fetch the title and image
+        model: "Menu",
+      })
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
