@@ -12,6 +12,8 @@ import CartView from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
 import AdminView from '@/views/AdminView.vue'
+import DashboardView from '@/views/admin/DashboardView.vue'
+import OrdersView from '@/views/admin/OrdersView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -76,9 +78,49 @@ const router = createRouter({
       component: TestView,
     },
     {
-       path: '/admin',
+      path: '/admin',
       name: 'AdminDashboard',
       component: AdminView,
+      children: [
+        // Define child routes for the admin dashboard here
+        {
+          path:'',
+          redirect:{ name:'dashboard' }
+        },
+        {
+          path:'dashboard',
+          name:'dashboard',
+          component:DashboardView
+        },
+        {
+          path:'orders',
+          name:'orders',
+          component:OrdersView
+        },
+        {
+          path:'menu-items',
+          name:'menu-items',
+          component:MenuView
+        },
+        {
+          path:'users',
+          name:'users',
+          component:MenuView
+        },
+        {
+          path:'carts',
+          name:'carts',
+          component:MenuView
+        },
+        {
+          path:'settings',
+          name:'settings',
+          component:MenuView
+        },
+
+
+      ],
+      // meta: { requiresAuth: true },
     }
   ],
 })
