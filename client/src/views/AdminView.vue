@@ -1,8 +1,8 @@
 <template lang="html">
   <div>
-    <Sidebar/>
+    <Sidebar />
   </div>
 </template>
 <script setup lang="ts">
-import Sidebar from '@/components/admin/layouts/Sidebar.vue';
+import Sidebar from '@/components/admin/layouts/SidebarComponent.vue';
 </script>
