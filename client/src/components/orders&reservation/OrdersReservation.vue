@@ -172,15 +172,14 @@ import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlateWheat, faCalendar } from '@fortawesome/free-solid-svg-icons'
-
+import type { FrontendOrder, BackendOrder } from '@/types';
 // 1. Setup Auth and Config
 const useAuth = useAuthStore();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
-// NOTE: Corrected URL to match controller (removed hyphen)
 const myOrdersUrl = `${baseUrl}/orders/myorders`;
 
 const activeTab = ref<'orders' | 'reservations'>('orders');
-const orders = ref<any[]>([]); // Initialize empty
+const orders = ref<FrontendOrder[]>([]); // Initialize empty
 const isLoading = ref(false);
 const error = ref('');
 
@@ -207,7 +206,7 @@ const fetchOrders = async () => {
 
     if (response.data.success) {
       // Map MongoDB backend structure to Frontend UI structure
-      orders.value = response.data.orders.map((order: any) => ({
+      orders.value = response.data.orders.map((order: BackendOrder) => ({
         id: order._id,
         date: order.createdAt,
         total: order.totalAmount,

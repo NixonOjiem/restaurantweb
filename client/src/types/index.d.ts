@@ -57,3 +57,63 @@ export interface CartData {
   __v: number
   id: string
 }
+
+interface OrderLocation {
+  lat: number
+  lng: number
+}
+
+interface DeliveryAddress {
+  location: OrderLocation
+  building: string
+  doorNumber: string
+  instructions: string
+}
+
+interface PaymentInfo {
+  method: string
+  mpesaNumber: string
+  contactNumber: string
+  status: string
+}
+
+interface OrderItem {
+  _id: string
+  product: string
+  quantity: number
+  price: number
+  image: string
+  name?: string // Optional because your current JSON is missing 'name'
+}
+
+// The raw object from the database
+interface BackendOrder {
+  _id: string
+  user: string
+  items: OrderItem[]
+  totalAmount: number
+  orderStatus: string
+  deliveryAddress: DeliveryAddress
+  paymentInfo: PaymentInfo
+  createdAt: string
+  updatedAt: string
+  __v: number
+}
+
+// The API Response wrapper
+interface OrdersApiResponse {
+  success: boolean
+  count: number
+  orders: BackendOrder[]
+}
+
+// --- Type for Frontend State (The 'orders' ref) ---
+
+interface FrontendOrder {
+  id: string
+  date: string
+  total: number
+  status: string
+  items: OrderItem[]
+  isFeatured: boolean
+}
