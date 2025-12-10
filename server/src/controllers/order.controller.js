@@ -1,6 +1,6 @@
 const Order = require("../models/Order.model");
-const Cart = require("../models/Cart.model"); // Assuming you have this
-const Menu = require("../models/Menu.model"); // Assuming you have this
+const Cart = require("../models/Cart.model");
+const Menu = require("../models/Menu.model");
 // const mpesaService = require('../services/mpesaService'); // We will build this later
 
 exports.initiateCheckout = async (req, res) => {
