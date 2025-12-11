@@ -4,12 +4,7 @@
   </div>
 </template>
 <script setup lang="ts">
-
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const getAllOrdersUrl = `${baseUrl}/orders/admin-orders`;
 </script>
-<style lang="css" scoped>
-.test {
-  width: 100vw;
-  height: 100vh;
-  background-color: orange;
-}
-</style>
+<style lang="css" scoped></style>
