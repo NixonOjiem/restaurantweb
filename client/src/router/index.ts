@@ -12,6 +12,12 @@ import CartView from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
 import AdminView from '@/views/AdminView.vue'
+import DashboardView from '@/views/admin/DashboardView.vue'
+import OrdersView from '@/views/admin/OrdersView.vue'
+import UsersView from '@/views/admin/UsersView.vue'
+import CartsView from '@/views/admin/CartsView.vue'
+import SettingsView from '@/views/admin/SettingsView.vue'
+import MenuItemsView from '@/views/admin/MenuItemsView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -76,26 +82,77 @@ const router = createRouter({
       component: TestView,
     },
     {
-       path: '/admin',
+      path: '/admin',
       name: 'AdminDashboard',
       component: AdminView,
-    }
+      children: [
+        // Define child routes for the admin dashboard here
+        {
+          path: '',
+          redirect: { name: 'dashboard' },
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: DashboardView,
+        },
+        {
+          path: 'orders',
+          name: 'orders',
+          component: OrdersView,
+        },
+        {
+          path: 'menu-items',
+          name: 'menu-items',
+          component: MenuItemsView,
+        },
+        {
+          path: 'users',
+          name: 'users',
+          component: UsersView,
+        },
+        {
+          path: 'carts',
+          name: 'carts',
+          component: CartsView,
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: SettingsView,
+        },
+      ],
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  if (!authStore.user && localStorage.getItem('token')) {
+
+  // 1. Initialize Store (Restore User) if page is refreshed
+  // Corrected 'token' to 'authToken' to match your pinia store logic
+  if (!authStore.user && localStorage.getItem('authToken')) {
     await authStore.initializeStore()
   }
+
+  // 2. Check Generic Authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    // User is NOT logged in, redirect to Login
-    // We add a query param so we can redirect them back after they login
-    next({ name: 'login', query: { redirect: to.fullPath } })
-  } else {
-    // User is logged in OR route is public
-    next()
+    return next({ name: 'login', query: { redirect: to.fullPath } })
   }
+
+  // 3. Check Admin Privileges (The new part)
+  if (to.meta.requiresAdmin) {
+    // Check if the role property exists and is strictly 'admin'
+    // You might need to adjust 'admin' string if your DB uses 'ADMIN' or 'administrator'
+    if (authStore.user?.role !== 'admin') {
+      // User is logged in, but not an admin. Redirect to Home or a 403 page.
+      return next({ name: 'home' })
+    }
+  }
+
+  // 4. Allow Access
+  next()
 })
 
 export default router
