@@ -3,7 +3,7 @@ const ErrorResponse = require("../config/errorHandler");
 
 /**
  * @desc    Get current user profile (The 'Me' route)
- * @route   GET /restaurant/v1/user/me
+ * @route   GET /restaurant/v1/profile/me
  * @access  Private
  */
 exports.getMe = async (req, res, next) => {
@@ -36,7 +36,7 @@ exports.getMe = async (req, res, next) => {
 
 /**
  * @desc    Update user details (name, email, role)
- * @route   PUT /restaurant/v1/user/updatedetails
+ * @route   PUT /restaurant/v1/profile/updatedetails
  * @access  Private
  */
 exports.updateDetails = async (req, res, next) => {
@@ -80,7 +80,7 @@ exports.updateDetails = async (req, res, next) => {
 
 /**
  * @desc    Update user password
- * @route   PUT /restaurant/v1/user/updatepassword
+ * @route   PUT /restaurant/v1/profile/updatepassword
  * @access  Private
  */
 exports.updatePassword = async (req, res, next) => {
@@ -132,7 +132,7 @@ exports.updatePassword = async (req, res, next) => {
 
 /**
  * @desc    Soft delete user (Set deletedAt field)
- * @route   DELETE /restaurant/v1/user/:id
+ * @route   DELETE /restaurant/v1/profile/:id
  * @access  Private (Admin or Owner)
  */
 exports.deleteUser = async (req, res, next) => {
@@ -162,7 +162,7 @@ exports.deleteUser = async (req, res, next) => {
 
 /**
  * @desc    Get all users with pagination
- * @route   GET /restaurant/v1/user/admin-all
+ * @route   GET /restaurant/v1/profile/admin-all
  * @access  Private (Admin)
  */
 exports.getAllUsers = async (req, res, next) => {
@@ -199,7 +199,7 @@ exports.getAllUsers = async (req, res, next) => {
 
 /**
  * @desc    Delete a specific user (Admin)
- * @route   DELETE /restaurant/v1/user/admin-delete/:id
+ * @route   DELETE /restaurant/v1/profile/admin-delete/:id
  * @access  Private (Admin)
  */
 exports.deleteUserById = async (req, res, next) => {
