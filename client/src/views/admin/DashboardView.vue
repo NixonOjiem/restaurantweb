@@ -8,11 +8,8 @@
 
     <!-- Stats Grid -->
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <div
-        v-for="stat in stats"
-        :key="stat.label"
-        class="border border-slate-300 bg-white/50 backdrop-blur-sm p-6 rounded-lg"
-      >
+      <div v-for="stat in stats" :key="stat.label"
+        class="border border-slate-300 bg-white/50 backdrop-blur-sm p-6 rounded-lg">
         <div class="flex items-start justify-between">
 
           <!-- Labels & Numbers -->
@@ -22,14 +19,11 @@
 
             <!-- Change -->
             <p v-if="stat.change">
-              <span
-                :class="{
-                  'text-indigo-600': stat.changeType === 'positive',
-                  'text-red-500': stat.changeType === 'negative',
-                  'text-slate-500': stat.changeType === 'neutral'
-                }"
-                class="font-medium text-sm flex items-center gap-1"
-              >
+              <span :class="{
+                'text-indigo-600': stat.changeType === 'positive',
+                'text-red-500': stat.changeType === 'negative',
+                'text-slate-500': stat.changeType === 'neutral'
+              }" class="font-medium text-sm flex items-center gap-1">
 
 
                 {{ stat.change }}
