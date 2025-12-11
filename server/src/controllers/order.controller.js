@@ -191,7 +191,6 @@ exports.updateOrderStatus = async (req, res) => {
 // @access  Private/Admin
 exports.getDashboardStats = async (req, res) => {
   try {
-    // 1. Date Filter (Default to Current Month if not provided)
     const now = new Date();
     const queryDate = req.query.date ? new Date(req.query.date) : now;
 
@@ -209,29 +208,25 @@ exports.getDashboardStats = async (req, res) => {
       59
     );
 
-    // 2. Run Aggregations in Parallel
     const [userCount, menuCount, orderStats, popularItems, dailyRevenue] =
       await Promise.all([
         // A. Total Users
         User.countDocuments({ role: "user" }),
 
         // B. Available Menu Items
-        Menu.countDocuments({ isAvailable: true }),
+        Menu.countDocuments({}),
 
-        // C. Order Statuses & Payment Stats & Total Revenue (For this Month)
+        // C. Order Statuses
         Order.aggregate([
           { $match: { createdAt: { $gte: startOfMonth, $lte: endOfMonth } } },
           {
             $facet: {
-              // Group by Order Status
               byOrderStatus: [
                 { $group: { _id: "$orderStatus", count: { $sum: 1 } } },
               ],
-              // Group by Payment Status
               byPaymentStatus: [
                 { $group: { _id: "$paymentInfo.status", count: { $sum: 1 } } },
               ],
-              // Total Revenue (Only count COMPLETED payments)
               revenue: [
                 { $match: { "paymentInfo.status": "COMPLETED" } },
                 { $group: { _id: null, total: { $sum: "$totalAmount" } } },
@@ -240,23 +235,35 @@ exports.getDashboardStats = async (req, res) => {
           },
         ]),
 
-        // D. Popular Dishes (Top 4)
+        // D. Popular Dishes (UPDATED WITH LOOKUP)
         Order.aggregate([
-          { $unwind: "$items" }, // Break arrays into individual documents
+          { $unwind: "$items" },
+          // 1. Join with the 'menus' collection to get the real title
+          {
+            $lookup: {
+              from: "menus", // This must match your MongoDB collection name (usually lowercase plural of model)
+              localField: "items.product",
+              foreignField: "_id",
+              as: "menuItem",
+            },
+          },
+          // 2. Unwind the looked-up array (since lookup returns an array)
+          { $unwind: "$menuItem" },
+          // 3. Group by the Title from the MENU collection, not the Order
           {
             $group: {
-              _id: "$items.name", // Group by dish name
-              count: { $sum: "$items.quantity" }, // Sum quantity
+              _id: "$menuItem.title",
+              count: { $sum: "$items.quantity" },
               revenue: {
                 $sum: { $multiply: ["$items.price", "$items.quantity"] },
               },
             },
           },
-          { $sort: { count: -1 } }, // Highest sold first
+          { $sort: { count: -1 } },
           { $limit: 4 },
         ]),
 
-        // E. Daily Sales Graph Data (For this month)
+        // E. Daily Sales
         Order.aggregate([
           {
             $match: {
@@ -276,11 +283,7 @@ exports.getDashboardStats = async (req, res) => {
         ]),
       ]);
 
-    // 3. Format Response
     const stats = orderStats[0];
-
-    // Convert array structure to object for easier frontend access
-    // e.g., [{ _id: 'PENDING', count: 5 }] -> { PENDING: 5 }
     const formatCounts = (arr) =>
       arr.reduce((acc, curr) => ({ ...acc, [curr._id]: curr.count }), {});
 
@@ -299,7 +302,7 @@ exports.getDashboardStats = async (req, res) => {
         orderStatus: formatCounts(stats.byOrderStatus),
         paymentStatus: formatCounts(stats.byPaymentStatus),
         popularItems,
-        dailyRevenue, // For the Line Graph
+        dailyRevenue,
       },
     });
   } catch (error) {
