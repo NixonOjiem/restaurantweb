@@ -148,46 +148,63 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
-  ArcElement
+  ArcElement,
+  type ChartData,
+  type ChartOptions
 } from 'chart.js';
 import { Bar, Doughnut } from 'vue-chartjs';
-
+import type { DashboardData, ApiResponse } from '@/types';
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const useAuth = useAuthStore();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-// State
+
 const loading = ref(false);
 const selectedDate = ref(new Date().toISOString().slice(0, 7)); // YYYY-MM
-const stats = reactive({
+
+// Initialize stats with specific DashboardData type
+const stats = reactive<DashboardData>({
   totals: { users: 0, menuItems: 0, revenue: 0, orders: 0 },
-  orderStatus: {} as Record<string, number>,
-  paymentStatus: {} as Record<string, number>,
-  popularItems: [] as any[],
-  dailyRevenue: [] as any[]
+  orderStatus: {},
+  paymentStatus: {},
+  popularItems: [],
+  dailyRevenue: []
 });
 
-// Chart Data
-const chartData = reactive({
-  revenue: null as any,
-  status: null as any
+// Initialize chart data with ChartJS types
+const chartData = reactive<{
+  revenue: ChartData<'bar'> | null;
+  status: ChartData<'doughnut'> | null;
+}>({
+  revenue: null,
+  status: null
 });
 
-// --- API Fetch ---
+// --- 3. API Fetch ---
+
 const fetchDashboardStats = async () => {
   loading.value = true;
   try {
     const token = useAuth.token;
-    // Append the selected month to the query (backend handles aggregation based on this)
+    if (!token) return;
+
     const response = await fetch(`${baseUrl}/orders/dashboard-stats?date=${selectedDate.value}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    const result = await response.json();
+
+    // Cast the response to our typed interface
+    const result: ApiResponse = await response.json();
 
     if (result.success) {
-      Object.assign(stats, result.data);
+      // Update state safely
+      stats.totals = result.data.totals;
+      stats.orderStatus = result.data.orderStatus;
+      stats.paymentStatus = result.data.paymentStatus;
+      stats.popularItems = result.data.popularItems;
+      stats.dailyRevenue = result.data.dailyRevenue;
+
       updateCharts();
     }
   } catch (error) {
@@ -197,59 +214,73 @@ const fetchDashboardStats = async () => {
   }
 };
 
-// --- Chart Configuration ---
+// --- 4. Chart Configuration ---
+
 const updateCharts = () => {
   // 1. Bar Chart (Daily Revenue)
-  const labels = stats.dailyRevenue.map((d: any) => d._id.slice(8)); // Just show Day (e.g. "05")
-  const data = stats.dailyRevenue.map((d: any) => d.dailyTotal);
+  // Ensure we handle empty data safely
+  const dailyLabels = stats.dailyRevenue.map((d) => d._id.slice(8)); // "05" from "2023-12-05"
+  const dailyValues = stats.dailyRevenue.map((d) => d.dailyTotal);
 
   chartData.revenue = {
-    labels: labels,
+    labels: dailyLabels,
     datasets: [{
       label: 'Daily Revenue',
       backgroundColor: '#f97316',
       borderRadius: 6,
-      data: data
+      data: dailyValues
     }]
   };
 
   // 2. Doughnut Chart (Order Status)
   const statusLabels = ["RECEIVED", "PREPARING", "ON_THE_WAY", "DELIVERED", "CANCELLED"];
-  const statusData = statusLabels.map(label => stats.orderStatus[label] || 0);
+  // Use typed Record lookup
+  const statusValues = statusLabels.map(label => stats.orderStatus[label] || 0);
 
   chartData.status = {
     labels: statusLabels,
     datasets: [{
       backgroundColor: ['#fcd34d', '#3b82f6', '#8b5cf6', '#22c55e', '#ef4444'],
-      data: statusData
+      data: statusValues
     }]
   };
 };
 
-const chartOptions = {
+const chartOptions: ChartOptions<'bar'> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: { legend: { display: false } }
 };
 
-const pieOptions = {
+const pieOptions: ChartOptions<'doughnut'> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: { legend: { position: 'bottom' } }
 };
 
-// --- Helpers ---
+// --- 5. Helpers ---
+
 const formatCurrency = (val: number) =>
   new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(val);
 
 const formatMonth = (val: string) => {
+  if (!val) return '';
+
   const [y, m] = val.split('-');
+
+  // Safety check: ensure both year and month exist before parsing
+  if (!y || !m) return val;
+
   const date = new Date(parseInt(y), parseInt(m) - 1);
   return date.toLocaleString('default', { month: 'long', year: 'numeric' });
 };
 
 const getPaymentColor = (status: string) => {
-  const map: any = { COMPLETED: 'bg-green-500', PENDING: 'bg-yellow-500', FAILED: 'bg-red-500' };
+  const map: Record<string, string> = {
+    COMPLETED: 'bg-green-500',
+    PENDING: 'bg-yellow-500',
+    FAILED: 'bg-red-500'
+  };
   return map[status] || 'bg-gray-300';
 };
 
