@@ -118,3 +118,33 @@ interface FrontendOrder {
   items: OrderItem[]
   isFeatured: boolean
 }
+
+export interface PopularItem {
+  _id: string // Dish Name
+  count: number
+  revenue: number
+}
+export interface DailyRevenueItem {
+  _id: string // Date string "YYYY-MM-DD"
+  dailyTotal: number
+}
+
+export interface DashboardTotals {
+  users: number
+  menuItems: number
+  revenue: number
+  orders: number
+}
+
+export interface DashboardData {
+  totals: DashboardTotals
+  orderStatus: Record<string, number>
+  paymentStatus: Record<string, number>
+  popularItems: PopularItem[]
+  dailyRevenue: DailyRevenueItem[]
+}
+
+export interface ApiResponse {
+  success: boolean
+  data: DashboardData
+}

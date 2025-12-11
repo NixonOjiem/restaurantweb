@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <Sidebar />
-    <router-view/>
+    <router-view />
   </div>
 </template>
 <script setup lang="ts">
