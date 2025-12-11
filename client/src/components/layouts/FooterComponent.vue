@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { defineOptions, computed } from 'vue';
+import { computed } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+
+
+const authStore = useAuthStore();
+const adminUser = computed(() => authStore.user?.role === 'admin');
 
 defineOptions({
   name: 'RestaurantFooter'
@@ -97,6 +102,14 @@ const quickLinks = [
               class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-500 hover:text-white hover:border-red-600 hover:bg-red-600/10 transition-all duration-300">
               <span class="text-[10px] font-bold">{{ icon }}</span>
             </a>
+            <router-link v-if="adminUser" to="/admin"
+              class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-500 hover:text-white hover:border-red-600 hover:bg-red-600/10 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8c-.519-.598-1.488-1-2.599-1m0 0C8.903 7 7.5 8.343 7.5 10s1.403 3 2.901 3m0-5c1.11 0 2.08.402 2.599 1m-5.198 4c-.519.598-1.488 1-2.599 1m0 0C8.903 15 7.5 16.343 7.5 18s1.403 3 2.901 3m0-5c1.11 0 2.08.402 2.599 1" />
+              </svg>
+            </router-link>
           </div>
         </div>
 
@@ -110,7 +123,7 @@ const quickLinks = [
                 class="group flex items-center gap-3 text-stone-400 hover:text-white transition-colors text-sm">
                 <span class="w-1.5 h-1.5 rounded-full bg-stone-700 group-hover:bg-red-500 transition-colors"></span>
                 <span class="group-hover:translate-x-1 transition-transform duration-300">{{ link.name
-                }}</span>
+                  }}</span>
               </a>
             </li>
           </ul>
