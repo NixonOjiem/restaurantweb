@@ -1,6 +1,6 @@
 const Order = require("../models/Order.model");
-const Cart = require("../models/Cart.model"); // Assuming you have this
-const Menu = require("../models/Menu.model"); // Assuming you have this
+const Cart = require("../models/Cart.model");
+const Menu = require("../models/Menu.model");
 // const mpesaService = require('../services/mpesaService'); // We will build this later
 
 exports.initiateCheckout = async (req, res) => {
@@ -30,7 +30,7 @@ exports.initiateCheckout = async (req, res) => {
 
       return {
         product: item.menuItem._id, // Map 'menuItem' ID to Order's 'product' field
-        name: item.menuItem.name, // Get name from populated Menu item
+        name: item.menuItem.title, // Get name from populated Menu item
         price: item.price, // Use price from Cart snapshot
         image: item.menuItem.image, // Get image from populated Menu item
         quantity: item.quantity,
@@ -81,5 +81,106 @@ exports.initiateCheckout = async (req, res) => {
     res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+// @desc    Get logged in user orders
+// @route   GET /restaurant/orders/myorders
+// @access  Private
+exports.getUserOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user.id })
+      // We populate the 'product' field inside the 'items' array
+      .populate({
+        path: "items.product",
+        select: "title image", // Only fetch the title and image
+        model: "Menu",
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get User Orders Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Get all orders (Admin only)
+// @route   GET /restaurant/orders/admin/all
+// @access  Private/Admin
+exports.getAllOrders = async (req, res) => {
+  try {
+    // Fetch all orders
+    const orders = await Order.find()
+      .populate("user", "name email phoneNumber") // Populating user details is crucial for Admin to know WHO ordered
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Admin Get All Orders Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Update order status (Admin only)
+// @route   PUT /restaurant/orders/admin/:id/status
+// @access  Private/Admin
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    // Validate status against your Enum in the model
+    const validStatuses = [
+      "RECEIVED",
+      "PREPARING",
+      "ON_THE_WAY",
+      "DELIVERED",
+      "CANCELLED",
+    ];
+    if (!validStatuses.includes(status)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status" });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { orderStatus: status },
+      { new: true } // Return the updated document
+    );
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Order status updated to ${status}`,
+      order,
+    });
+  } catch (error) {
+    console.error("Update Status Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server Error", error: error.message });
   }
 };
