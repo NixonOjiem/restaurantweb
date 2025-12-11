@@ -1,6 +1,7 @@
 const Order = require("../models/Order.model");
 const Cart = require("../models/Cart.model");
 const Menu = require("../models/Menu.model");
+const User = require("../models/User.model");
 // const mpesaService = require('../services/mpesaService'); // We will build this later
 
 exports.initiateCheckout = async (req, res) => {
@@ -186,7 +187,7 @@ exports.updateOrderStatus = async (req, res) => {
 };
 
 // @desc    Get Dashboard Stats
-// @route   GET /restaurant/v1/dashboard/stats
+// @route   GET /restaurant/v1/orders/dashboard-stats
 // @access  Private/Admin
 exports.getDashboardStats = async (req, res) => {
   try {
