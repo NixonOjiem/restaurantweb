@@ -12,15 +12,8 @@
         </div>
       </div>
 
-      <div v-if="isLoading" class="flex justify-center py-20">
+      <div v-if="isLoading && !users.length" class="flex justify-center py-20">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-      </div>
-
-      <div v-else-if="error"
-        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center justify-between">
-        <span>{{ error }}</span>
-        <button @click="fetchUsers(pagination.page)" class="text-sm underline font-semibold hover:text-red-800">Try
-          Again</button>
       </div>
 
       <div v-else class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -37,6 +30,7 @@
             </thead>
             <tbody class="divide-y divide-slate-100">
               <tr v-for="user in users" :key="user._id" class="hover:bg-slate-50 transition-colors group">
+
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
                     <div
@@ -49,20 +43,24 @@
                     </div>
                   </div>
                 </td>
+
                 <td class="px-6 py-4">
-                  <span :class="[
-                    'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide',
-                    user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
-                  ]">
-                    {{ user.role }}
-                  </span>
+                  <select @change="updateRole(user, ($event.target as HTMLSelectElement).value)" :value="user.role"
+                    :disabled="user._id === currentUserId"
+                    class="bg-white border text-xs font-bold uppercase rounded-lg focus:ring-orange-500 focus:border-orange-500 block p-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    :class="user.role === 'admin' ? 'text-purple-700 border-purple-200 bg-purple-50' : 'text-green-700 border-green-200 bg-green-50'">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
                 </td>
+
                 <td class="px-6 py-4 text-sm text-slate-600">
                   {{ formatDate(user.createdAt) }}
                 </td>
+
                 <td class="px-6 py-4 text-right">
-                  <button @click="confirmDelete(user)" :disabled="user.role === 'admin'"
-                    class="text-slate-400 hover:text-red-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  <button @click="confirmDelete(user)" :disabled="user._id === currentUserId"
+                    class="text-slate-400 hover:text-red-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed p-2 hover:bg-red-50 rounded-full"
                     title="Delete User">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -76,39 +74,32 @@
           </table>
         </div>
 
-        <div v-if="users.length === 0" class="text-center py-12">
-          <p class="text-slate-500">No users found.</p>
-        </div>
-
         <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50">
           <span class="text-sm text-slate-500">
             Page {{ pagination.page }} of {{ pagination.totalPages }}
           </span>
           <div class="flex gap-2">
             <button @click="changePage(pagination.page - 1)" :disabled="pagination.page <= 1"
-              class="px-4 py-2 text-sm font-medium bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-              Previous
-            </button>
+              class="px-4 py-2 text-sm font-medium bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50">Previous</button>
             <button @click="changePage(pagination.page + 1)" :disabled="pagination.page >= pagination.totalPages"
-              class="px-4 py-2 text-sm font-medium bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-              Next
-            </button>
+              class="px-4 py-2 text-sm font-medium bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50">Next</button>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const useAuth = useAuthStore();
 
-// --- Types ---
+// Get the current logged-in admin's ID safely
+const currentUserId = computed(() => useAuth.user?.id);
+
 interface User {
   _id: string;
   userName: string;
@@ -117,62 +108,68 @@ interface User {
   createdAt: string;
 }
 
-// --- State ---
 const users = ref<User[]>([]);
 const isLoading = ref(false);
 const error = ref('');
-const pagination = reactive({
-  page: 1,
-  limit: 10,
-  totalPages: 1,
-  totalUsers: 0
-});
+const pagination = reactive({ page: 1, limit: 10, totalPages: 1, totalUsers: 0 });
 
-// --- Actions ---
+// --- API ACTIONS ---
 
 const fetchUsers = async (page = 1) => {
   isLoading.value = true;
-  error.value = '';
-
   try {
     const token = useAuth.token;
-    // URL matches the backend route we created: /restaurant/v1/user/admin/all
     const response = await fetch(`${baseUrl}/profile/admin-all?page=${page}&limit=${pagination.limit}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Authorization': `Bearer ${token}` }
     });
-
     const data = await response.json();
-
-    if (!response.ok) throw new Error(data.message || 'Failed to fetch users');
+    if (!response.ok) throw new Error(data.message);
 
     users.value = data.data;
-
-    // Update Pagination State
     pagination.page = data.pagination.page;
     pagination.totalPages = data.pagination.totalPages;
     pagination.totalUsers = data.pagination.totalUsers;
-
-  } catch (err: unknown) {
-    console.error(err);
-    // error.value = err.message || 'An error occurred loading users.';
+  } catch (err: any) {
+    error.value = err.message;
   } finally {
     isLoading.value = false;
   }
 };
 
-const changePage = (newPage: number) => {
-  if (newPage > 0 && newPage <= pagination.totalPages) {
-    fetchUsers(newPage);
+const updateRole = async (user: User, newRole: string) => {
+  // Optimistic UI update (makes it feel instant)
+  const oldRole = user.role;
+  user.role = newRole;
+
+  try {
+    const token = useAuth.token;
+    const response = await fetch(`${baseUrl}/profile/admin-role/${user._id}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ role: newRole })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update role');
+    }
+
+    // Optional: Show a toast/notification here
+    console.log(`Updated ${user.userName} to ${newRole}`);
+
+  } catch (err: any) {
+    // Revert UI change if API fails
+    user.role = oldRole;
+    alert(err.message);
   }
 };
 
 const confirmDelete = async (user: User) => {
-  if (!confirm(`Are you sure you want to delete user "${user.userName}"? This cannot be undone.`)) {
-    return;
-  }
+  if (!confirm(`Are you sure you want to delete ${user.userName}?`)) return;
 
   try {
     const token = useAuth.token;
@@ -181,28 +178,23 @@ const confirmDelete = async (user: User) => {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    const data = await response.json();
-
-    if (!response.ok) throw new Error(data.message || 'Delete failed');
-
-    // Refresh list after delete
-    // If we deleted the last item on a page, go back one page
-    if (users.value.length === 1 && pagination.page > 1) {
-      fetchUsers(pagination.page - 1);
-    } else {
-      fetchUsers(pagination.page);
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message);
     }
-
-  } catch (err: unknown) {
-    alert(err);
+    fetchUsers(pagination.page);
+  } catch (err: any) {
+    alert(err.message);
   }
+};
+
+const changePage = (p: number) => {
+  if (p > 0 && p <= pagination.totalPages) fetchUsers(p);
 };
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+    year: 'numeric', month: 'short', day: 'numeric'
   });
 };
 

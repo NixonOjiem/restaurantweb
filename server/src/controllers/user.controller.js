@@ -234,3 +234,56 @@ exports.deleteUserById = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * @desc    Update user role (Promote/Demote)
+ * @route   PUT /restaurant/v1/profile/admin-role/:id
+ * @access  Private (Admin)
+ */
+exports.updateUserRole = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    const userIdToUpdate = req.params.id;
+
+    // 1. Validation
+    if (!["user", "admin"].includes(role)) {
+      const error = new Error("Invalid role. Must be 'user' or 'admin'.");
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    // 2. Prevent self-demotion (Safety lock)
+    if (userIdToUpdate === req.user.id) {
+      const error = new Error(
+        "You cannot change your own role. Ask another admin."
+      );
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    // 3. Update User
+    const user = await User.findByIdAndUpdate(
+      userIdToUpdate,
+      { role: role },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `User role updated to ${role}`,
+      data: {
+        id: user._id,
+        userName: user.userName,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
