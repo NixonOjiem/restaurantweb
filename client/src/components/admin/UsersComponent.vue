@@ -1,9 +1,9 @@
 <template lang="html">
-
-  <UsersComponent />
-
+  <div>
+    user component template
+  </div>
 </template>
 <script setup lang="ts">
-import UsersComponent from '@/components/admin/UsersComponent.vue';
+
 </script>
 <style lang="css" scoped></style>

@@ -159,3 +159,78 @@ exports.deleteUser = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * @desc    Get all users with pagination
+ * @route   GET /restaurant/v1/user/admin-all
+ * @access  Private (Admin)
+ */
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const startIndex = (page - 1) * limit;
+
+    // Filter out soft-deleted users if you want, or remove this line to see everyone
+    const query = { deletedAt: null };
+
+    const total = await User.countDocuments(query);
+
+    const users = await User.find(query)
+      .select("-password") // Exclude passwords
+      .sort({ createdAt: -1 }) // Newest first
+      .skip(startIndex)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      pagination: {
+        page,
+        totalPages: Math.ceil(total / limit),
+        totalUsers: total,
+      },
+      data: users,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Delete a specific user (Admin)
+ * @route   DELETE /restaurant/v1/user/admin-delete/:id
+ * @access  Private (Admin)
+ */
+exports.deleteUserById = async (req, res, next) => {
+  try {
+    // Prevent deleting yourself
+    if (req.params.id === req.user.id) {
+      const error = new Error(
+        "You cannot delete your own admin account from here."
+      );
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { deletedAt: Date.now() }, // Soft delete
+      { new: true }
+    );
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+      data: {},
+    });
+  } catch (err) {
+    next(err);
+  }
+};
