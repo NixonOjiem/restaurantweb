@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="w-full">
     <!-- Open Dialog Button -->
     <button
-      class="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-xl
+      class="flex  w-full items-center justify-center bg-indigo-600 text-white px-4 py-2 rounded-xl
              hover:bg-indigo-700 transition-colors shadow-md"
       @click="dialog?.showModal()"
     >
