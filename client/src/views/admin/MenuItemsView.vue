@@ -52,7 +52,9 @@
         <div class="flex flex-col">
           <span v-if="product
           .discountPrice" class="text-xs font-semibold line-through text-gray-500">{{ formatPrice(100) }}</span>
+          <span v-else class="text-xs">&#8203;</span>
           <span class="text-lg font-extrabold" :class="product.discountPrice? 'text-indigo-600': 'text-gray-900'">{{ formatPrice(product.price) }}</span>
+
         </div>
       </div>
 
