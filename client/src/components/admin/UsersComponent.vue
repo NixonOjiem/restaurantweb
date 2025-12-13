@@ -110,7 +110,7 @@ interface User {
 
 const users = ref<User[]>([]);
 const isLoading = ref(false);
-const error = ref('');
+// const error = ref('');
 const pagination = reactive({ page: 1, limit: 10, totalPages: 1, totalUsers: 0 });
 
 // --- API ACTIONS ---
@@ -129,8 +129,8 @@ const fetchUsers = async (page = 1) => {
     pagination.page = data.pagination.page;
     pagination.totalPages = data.pagination.totalPages;
     pagination.totalUsers = data.pagination.totalUsers;
-  } catch (err: any) {
-    error.value = err.message;
+  } catch (err: unknown) {
+    console.log(err);
   } finally {
     isLoading.value = false;
   }
@@ -161,10 +161,10 @@ const updateRole = async (user: User, newRole: string) => {
     // Optional: Show a toast/notification here
     console.log(`Updated ${user.userName} to ${newRole}`);
 
-  } catch (err: any) {
+  } catch (err: unknown) {
     // Revert UI change if API fails
     user.role = oldRole;
-    alert(err.message);
+    alert(err);
   }
 };
 
@@ -183,8 +183,8 @@ const confirmDelete = async (user: User) => {
       throw new Error(data.message);
     }
     fetchUsers(pagination.page);
-  } catch (err: any) {
-    alert(err.message);
+  } catch (err: unknown) {
+    alert(err);
   }
 };
 
