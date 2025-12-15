@@ -1,6 +1,5 @@
 <template>
-  <aside
-    class=" h-screen py-6 px-6 sticky top-0 flex flex-col transition-all duration-300 ease-in-out z-99999"
+  <aside class=" h-screen py-6 px-6 sticky top-0 flex flex-col transition-all duration-300 ease-in-out z-99999"
     :class="isCollapsed ? 'w-[110px]' : 'w-72'">
     <div
       class="h-full flex flex-col p-2 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
@@ -51,44 +50,19 @@
           </ul>
 
 
-          <!-- <ul>
-                        <li v-for="item in category.items" :key="item.name">
-                            <a href="#" @click.prevent="activeItem = item.name"
-                                class="relative flex items-center p-3 rounded-xl transition-all duration-300 group overflow-hidden"
-                                :class="activeItem === item.name
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
-                                    : 'text-slate-400 hover:bg-white/5 hover:text-indigo-300'">
-                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-white transition-all duration-300"
-                                    :class="activeItem === item.name ? 'opacity-100' : 'opacity-0 -translate-x-full'">
-                                </div>
 
-                                <component :is="item.icon"
-                                    class="w-6 h-6 shrink-0 transition-transform duration-300 group-hover:scale-110" />
-
-                                <span class="ml-3 font-medium whitespace-nowrap transition-all duration-300"
-                                    :class="isCollapsed ? 'opacity-0 w-0 translate-x-10' : 'opacity-100 w-auto translate-x-0'">
-                                    {{ item.name }}
-                                </span>
-
-                                <div v-if="isCollapsed"
-                                    class="absolute left-full ml-4 px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 shadow-xl">
-                                    {{ item.name }}
-                                </div>
-                            </a>
-                        </li>
-                    </ul> -->
         </div>
       </nav>
 
       <!-- User Footer -->
       <div class=" border-t pt-4 flex border-white/5 z-10" :class="isCollapsed ? 'justify-center' : ''">
         <div class="flex gap-2">
-          <!-- Avatar -->
+
           <img src="https://i.pravatar.cc/150?img=33" alt="User"
             class="w-10 h-10 rounded-full border-2 border-slate-700 group-hover:border-indigo-500 transition-colors">
           <div class="overflow-hidden transition-all duration-300"
             :class="isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'">
-            <p class="text-sm font-semibold text-white truncate">Alex Morgan</p>
+            <p class="text-sm font-semibold text-white truncate">{{ user }}</p>
             <p class="text-xs text-slate-500 truncate">Admin</p>
           </div>
 
@@ -105,7 +79,10 @@
 import { ref } from 'vue';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
 import { ClipboardList, LayoutDashboard, LogOut, Settings, ShoppingCart, Users, UtensilsCrossed } from 'lucide-vue-next';
-
+import { useAuthStore } from '@/stores/auth';
+const useAuth = useAuthStore();
+const user = useAuth.user?.name;
+// console.log("user is :", user?.name);
 
 // --- State ---
 const isCollapsed = ref(false);
