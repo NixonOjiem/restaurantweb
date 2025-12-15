@@ -90,10 +90,11 @@
     />
   </dialog>
 
-  <!-- Add Product Dialog -->
+  <!-- Add/Edit Product Dialog -->
   <dialog ref="addDialog" class="shadow-2xl bg-white">
     <AddProductComponent 
       v-if="isAddDialogOpen" 
+      :product="editingProduct"
       @close="closeAddDialog"
       @submit="handleProductAdded"
     />
@@ -109,9 +110,13 @@ import { formatPrice } from '../../../utils';
 import { ArrowRight } from 'lucide-vue-next';
 import ProductDetailCopmonent from '@/components/admin/menu-items/productDetailCopmonent.vue';
 import AddProductComponent from '@/components/admin/menu-items/AddProductComponent.vue';
+import { useAuthStore } from '@/stores/auth';
 // 1. Configuration
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 const productsURL = `${baseURL}/menu/menu-fetch`;
+
+const useAuth = useAuthStore();
+const token = useAuth.token;
 
 // 2. Data State
 const products = ref<ProductProps[]>([]); // Holds the API data
@@ -132,6 +137,7 @@ const dialog = ref<HTMLDialogElement | null>(null);
 // Add Product Dialog State
 const addDialog = ref<HTMLDialogElement | null>(null);
 const isAddDialogOpen = ref(false);
+const editingProduct = ref<ProductProps | undefined>(undefined);
 
 // 3. Dialog Functions
 const openDialog = (product: ProductProps) => {
@@ -153,6 +159,7 @@ const closeDialog = () => {
 
 // Add Product Dialog Functions
 const openAddDialog = () => {
+  editingProduct.value = undefined; // Clear editing product for new product
   isAddDialogOpen.value = true;
   if (addDialog.value) {
     // Prevent background scrolling
@@ -167,6 +174,7 @@ const closeAddDialog = () => {
     document.body.style.overflow = 'auto';
     addDialog.value.close();
     isAddDialogOpen.value = false;
+    editingProduct.value = undefined; // Clear editing product when closing
   }
 };
 
@@ -176,19 +184,28 @@ const handleProductAdded = async () => {
   closeAddDialog();
 };
 
-// Handle Edit Product (can be extended to open edit dialog)
+// Handle Edit Product - Reuses AddProductComponent
 const handleEdit = (product: ProductProps) => {
   console.log('Edit product:', product);
-  closeDialog();
-  // TODO: Open edit dialog with product data
-  alert('Edit functionality coming soon!');
+  closeDialog(); // Close detail dialog first
+  
+  // Open add dialog in edit mode
+  editingProduct.value = product;
+  isAddDialogOpen.value = true;
+  if (addDialog.value) {
+    document.body.style.overflow = 'hidden';
+    addDialog.value.showModal();
+  }
 };
 
 // Handle Delete Product
 const handleDelete = async (productId: string) => {
   try {
-    const response = await fetch(`${baseURL}/menu/delete-menu/${productId}`, {
+    const response = await fetch(`${baseURL}/menu/delete-menu-item/${productId}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
