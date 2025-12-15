@@ -5,7 +5,15 @@
          <h1 class="text-2xl font-bold text-foreground">Menu Items</h1>
          <p class="text-muted-foreground">Manage your restaurant&apos;s menu</p>
         </div>
-        <AddMenuItemDialog/>
+        <button 
+          @click="openAddDialog"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Product
+        </button>
     </section>
 
     <section class="border border-gray-300 rounded-lg p-4 bg-white shadow-sm space-y-4">
@@ -81,17 +89,26 @@
       @delete="handleDelete"
     />
   </dialog>
+
+  <!-- Add Product Dialog -->
+  <dialog ref="addDialog" class="shadow-2xl bg-white">
+    <AddProductComponent 
+      v-if="isAddDialogOpen" 
+      @close="closeAddDialog"
+      @submit="handleProductAdded"
+    />
+  </dialog>
 </template>
 
 
 
 <script setup lang="ts" >
-import  AddMenuItemDialog from '@/components/admin/AddMenuItemDialog.vue';
 import type { ProductProps } from '@/types';
 import { onMounted, ref } from 'vue';
 import { formatPrice } from '../../../utils';
 import { ArrowRight } from 'lucide-vue-next';
 import ProductDetailCopmonent from '@/components/admin/menu-items/productDetailCopmonent.vue';
+import AddProductComponent from '@/components/admin/menu-items/AddProductComponent.vue';
 // 1. Configuration
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 const productsURL = `${baseURL}/menu/menu-fetch`;
@@ -112,6 +129,10 @@ const error = ref<string | null>(null);
 const activeProduct = ref<ProductProps | null>(null);
 const dialog = ref<HTMLDialogElement | null>(null);
 
+// Add Product Dialog State
+const addDialog = ref<HTMLDialogElement | null>(null);
+const isAddDialogOpen = ref(false);
+
 // 3. Dialog Functions
 const openDialog = (product: ProductProps) => {
   activeProduct.value = product;
@@ -128,6 +149,31 @@ const closeDialog = () => {
     document.body.style.overflow = 'auto';
     dialog.value.close();
   }
+};
+
+// Add Product Dialog Functions
+const openAddDialog = () => {
+  isAddDialogOpen.value = true;
+  if (addDialog.value) {
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+    addDialog.value.showModal();
+  }
+};
+
+const closeAddDialog = () => {
+  if (addDialog.value) {
+    // Restore background scrolling
+    document.body.style.overflow = 'auto';
+    addDialog.value.close();
+    isAddDialogOpen.value = false;
+  }
+};
+
+const handleProductAdded = async () => {
+  // Refresh the product list after adding a new product
+  await fetchProducts();
+  closeAddDialog();
 };
 
 // Handle Edit Product (can be extended to open edit dialog)
