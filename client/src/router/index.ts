@@ -11,6 +11,8 @@ import EditProfileView from '@/views/EditProfileView.vue'
 import CartView from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
+import AboutView from '@/views/AboutView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -74,6 +76,12 @@ const router = createRouter({
       name: 'test',
       component: TestView,
     },
+    {
+      path: '/about',
+      name:'aboutpage',
+      component:AboutView,
+    },
+   
   ],
 })
 
