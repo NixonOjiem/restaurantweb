@@ -70,7 +70,8 @@
             <div class="flex items-end justify-between mt-auto">
               <div class="flex flex-col">
                 <span v-if="product
-                  .discountPrice" class="text-xs font-semibold line-through text-gray-500">{{ formatPrice(100) }}</span>
+                  .discountPrice" class="text-xs font-semibold line-through text-gray-500">{{ formatPrice(100)
+                  }}</span>
                 <span v-else class="text-xs">&#8203;</span>
                 <span class="text-lg font-extrabold"
                   :class="product.discountPrice ? 'text-indigo-600' : 'text-gray-900'">{{ formatPrice(product.price)
@@ -118,6 +119,26 @@ const productsURL = `${baseURL}/menu/menu-fetch`;
 
 const useAuth = useAuthStore();
 const token = useAuth.token;
+
+// ImageKit Config (Replace with your actual ID)
+const IMAGEKIT_ENDPOINT = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT;
+const IMAGEKIT_FOLDER = 'menu-pic';
+
+// HELPER: Transform DB path to ImageKit URL
+const getOptimizedImageUrl = (dbPath: string | undefined) => {
+  if (!dbPath) return '';
+
+  // 1. Check if it's already a full URL (just in case)
+  if (dbPath.startsWith('http')) return dbPath;
+
+  // 2. Extract just the filename (removes '/menu-pic/')
+  // Input: "/menu-pic/Pan-Seared-scallops.jpg" -> Output: "Pan-Seared-scallops.jpg"
+  const filename = dbPath.split('/').pop();
+
+  // 3. Construct ImageKit URL
+  // You can also add transformation parameters here later (e.g., ?tr=w-400)
+  return `${IMAGEKIT_ENDPOINT}/${IMAGEKIT_FOLDER ? IMAGEKIT_FOLDER + '/' : ''}${filename}`;
+};
 
 // 2. Data State
 const products = ref<ProductProps[]>([]); // Holds the API data
@@ -236,8 +257,14 @@ const fetchProducts = async () => {
 
     const result = await response.json();
 
-    // Assign the data from the API response
-    products.value = result.data;
+    // INTERCEPT: Transform the image paths before saving to state
+    const transformedData = result.data.map((item: any) => ({
+      ...item,
+      // Overwrite the local path with the ImageKit URL
+      image: getOptimizedImageUrl(item.image)
+    }));
+
+    products.value = transformedData;
 
 
   } catch (err: unknown) {
