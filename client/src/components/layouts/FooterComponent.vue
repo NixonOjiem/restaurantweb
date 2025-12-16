@@ -1,10 +1,23 @@
 <script setup lang="ts">
-import { defineOptions, computed } from 'vue';
+import { computed } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faGears } from '@fortawesome/free-solid-svg-icons/faGears';
+import { faSquareInstagram } from '@fortawesome/free-brands-svg-icons/faSquareInstagram';
+import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons/faSquareFacebook';
+import { faYoutube } from '@fortawesome/free-brands-svg-icons/faYoutube';
+const authStore = useAuthStore();
+const adminUser = computed(() => authStore.user?.role === 'admin');
 
 defineOptions({
   name: 'RestaurantFooter'
 });
 
+const socialIcons = [
+  { name: 'IG', icon: faSquareInstagram, url: 'https://instagram.com' },
+  { name: 'FB', icon: faSquareFacebook, url: 'https://facebook.com' },
+  { name: 'YT', icon: faYoutube, url: 'https://youtube.com' }
+];
 const currentYear = computed(() => new Date().getFullYear());
 
 const quickLinks = [
@@ -93,10 +106,15 @@ const quickLinks = [
           </p>
 
           <div class="flex space-x-4">
-            <a v-for="icon in ['IG', 'FB', 'YT']" :key="icon" href="#"
+            <a v-for="social in socialIcons" :key="social.name" :href="social.url"
               class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-500 hover:text-white hover:border-red-600 hover:bg-red-600/10 transition-all duration-300">
-              <span class="text-[10px] font-bold">{{ icon }}</span>
+              <font-awesome-icon :icon="social.icon" class="text-2xl" />
             </a>
+            <router-link v-if="adminUser" to="/admin"
+              class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-500 hover:text-white hover:border-red-600 hover:bg-red-600/10 transition-all duration-300">
+              <font-awesome-icon :icon="faGears"
+                class="text-red-400 text-2xl hover:text-red-700 transition-colors duration-200 cursor-pointer" />
+            </router-link>
           </div>
         </div>
 
@@ -110,7 +128,7 @@ const quickLinks = [
                 class="group flex items-center gap-3 text-stone-400 hover:text-white transition-colors text-sm">
                 <span class="w-1.5 h-1.5 rounded-full bg-stone-700 group-hover:bg-red-500 transition-colors"></span>
                 <span class="group-hover:translate-x-1 transition-transform duration-300">{{ link.name
-                }}</span>
+                  }}</span>
               </a>
             </li>
           </ul>
