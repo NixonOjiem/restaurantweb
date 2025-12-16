@@ -89,14 +89,17 @@ const MenuSchema = new mongoose.Schema(
 );
 
 // Create item slug from the title (e.g. "Spicy Pasta" -> "spicy-pasta")
-MenuSchema.pre("save", function (next) {
-  if (!this.isModified("title")) {
-    next();
-    return;
-  }
-  // If you don't want to install the 'slugify' package, you can write a simple regex function here
-  this.slug = this.title.toLowerCase().split(" ").join("-");
-  next();
+MenuSchema.pre("save", async function () {
+  // 1. If title didn't change, stop here
+  if (!this.isModified("title")) return;
+
+  // 2. Generate slug safely (Regex handles special chars better than split/join)
+  this.slug = this.title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove special characters like "!" or "?"
+    .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with "-"
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing dashes
 });
 
 module.exports = mongoose.model("Menu", MenuSchema);

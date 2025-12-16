@@ -105,11 +105,13 @@
 
                     <div class="bg-white p-4 rounded border border-gray-200">
                       <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">Items Ordered ({{ order.items?.length
-                        }})</h3>
+                      }})</h3>
                       <ul class="divide-y divide-gray-100">
                         <li v-for="item in order.items" :key="item._id" class="py-2 flex items-center gap-3">
-                          <img v-if="item.image" :src="item.image" alt="Product"
+
+                          <img v-if="item.image" :src="getOptimizedImageUrl(item.image)" alt="Product"
                             class="w-10 h-10 object-cover rounded bg-gray-100" />
+
                           <div
                             class="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500"
                             v-else>
@@ -143,7 +145,7 @@ import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import axios from 'axios';
 
-// --- Types (Optional but good for TS) ---
+// --- Types ---
 interface Order {
   _id: string;
   user: { _id: string; email: string };
@@ -159,11 +161,29 @@ interface Order {
 const orders = ref<Order[]>([]);
 const loading = ref(false);
 const error = ref('');
-const expandedRows = ref(new Set<string>()); // Tracks which rows are open
+const expandedRows = ref(new Set<string>());
 
 // --- Config ---
 const authStore = useAuthStore();
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+// ImageKit Config (Must match your Menu component)
+const IMAGEKIT_ENDPOINT = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT;
+const IMAGEKIT_FOLDER = 'menu-pic'; // Set this if your images are in a subfolder
+
+// --- Helper: Transform Local Path to ImageKit URL ---
+const getOptimizedImageUrl = (dbPath: string | undefined) => {
+  if (!dbPath) return '';
+
+  // 1. If it's already a full URL, use it
+  if (dbPath.startsWith('http')) return dbPath;
+
+  // 2. Extract filename (removes '/menu-pic/')
+  const filename = dbPath.split('/').pop();
+
+  // 3. Construct ImageKit URL
+  return `${IMAGEKIT_ENDPOINT}/${IMAGEKIT_FOLDER ? IMAGEKIT_FOLDER + '/' : ''}${filename}`;
+};
 
 // --- Methods ---
 
@@ -194,17 +214,15 @@ const updateStatus = async (orderId: string, newStatus: string) => {
     );
 
     if (response.data.success) {
-      // Update local state immediately
       const order = orders.value.find(o => o._id === orderId);
       if (order) order.orderStatus = newStatus;
     }
   } catch (err: any) {
     alert('Failed to update status');
-    loadOrders(); // Revert on failure
+    loadOrders();
   }
 };
 
-// Toggle function for the "Expand" button
 const toggleExpand = (id: string) => {
   if (expandedRows.value.has(id)) {
     expandedRows.value.delete(id);

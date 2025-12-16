@@ -1,6 +1,7 @@
 {
   "name": "client",
-  "version": "0.0.0",
+  "version": "2.2.0",
+  "author": "nicksonogm@gmail.com || arnoldqym@gmail.com || threedaniel385@gmail.com ||",
   "private": true,
   "type": "module",
   "engines": {
