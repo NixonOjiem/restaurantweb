@@ -11,13 +11,8 @@ import EditProfileView from '@/views/EditProfileView.vue'
 import CartView from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import MyOrdersReservations from '@/views/MyOrdersReservations.vue'
-import AdminView from '@/views/AdminView.vue'
-import DashboardView from '@/views/admin/DashboardView.vue'
-import OrdersView from '@/views/admin/OrdersView.vue'
-import UsersView from '@/views/admin/UsersView.vue'
-import CartsView from '@/views/admin/CartsView.vue'
-import SettingsView from '@/views/admin/SettingsView.vue'
-import MenuItemsView from '@/views/admin/MenuItemsView.vue'
+import AboutView from '@/views/AboutView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -82,48 +77,11 @@ const router = createRouter({
       component: TestView,
     },
     {
-      path: '/admin',
-      name: 'AdminDashboard',
-      component: AdminView,
-      children: [
-        // Define child routes for the admin dashboard here
-        {
-          path: '',
-          redirect: { name: 'dashboard' },
-        },
-        {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: DashboardView,
-        },
-        {
-          path: 'orders',
-          name: 'orders',
-          component: OrdersView,
-        },
-        {
-          path: 'menu-items',
-          name: 'menu-items',
-          component: MenuItemsView,
-        },
-        {
-          path: 'users',
-          name: 'users',
-          component: UsersView,
-        },
-        {
-          path: 'carts',
-          name: 'carts',
-          component: CartsView,
-        },
-        {
-          path: 'settings',
-          name: 'settings',
-          component: SettingsView,
-        },
-      ],
-      meta: { requiresAuth: true, requiresAdmin: true },
+      path: '/about',
+      name:'aboutpage',
+      component:AboutView,
     },
+   
   ],
 })
 
