@@ -126,7 +126,6 @@
 </template>
 
 <script setup lang="ts">
-//import type { ProductProps } from '@/types';
 import type { ModalProduct } from '@/types';
 import { ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
@@ -135,13 +134,11 @@ const authStore = useAuthStore();
 
 const user = authStore.user;
 const token = authStore.token;
-// console.log('is user:', user)
 
 const props = defineProps<{
   isOpen: boolean;
   product: ModalProduct | null;
 }>();
-console.log('product is:', props.product)
 
 const emit = defineEmits(['close', 'add-to-cart']);
 
