@@ -54,7 +54,7 @@ exports.signup = async (req, res, next) => {
         user.fullName = fullName; // Update details
         user.userName = userName;
         user.password = password; // The Mongoose pre-save hook will hash this new password
-        user.role = role || user.role; // Allow role update, or keep old one
+        user.role = "user"; // Allow role update, or keep old one
         await user.save();
 
         // Log in the now-reactivated user
