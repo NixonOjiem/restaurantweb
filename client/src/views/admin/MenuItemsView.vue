@@ -5,7 +5,15 @@
          <h1 class="text-2xl font-bold text-foreground">Menu Items</h1>
          <p class="text-muted-foreground">Manage your restaurant&apos;s menu</p>
         </div>
-        <AddMenuItemDialog/>
+        <button 
+          @click="openAddDialog"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Product
+        </button>
     </section>
 
     <section class="border border-gray-300 rounded-lg p-4 bg-white shadow-sm space-y-4">
@@ -21,7 +29,7 @@
         <p class="text-gray-500">No menu items found.</p>
       </div>
 
-      <div v-else-if="products.length>0" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div v-else-if="products.length>0" class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <!-- Product card -->
       <div v-for="product in products" :key="product._id" class="group relative flex w-full flex-col overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-indigo-200">
 
@@ -62,7 +70,7 @@
           <span class="text-lg font-extrabold" :class="product.discountPrice? 'text-indigo-600': 'text-gray-900'">{{ formatPrice(product.price) }}</span>
         </div>
 
-        <button class="flex px-2 py-1 text-xs font-semibold text-gray-600 hover:text-indigo-600 underline cursor-pointer rounded-md">Details <ArrowRight class="w-4 h-4 ml-1" /></button>
+        <button @click="openDialog(product)" class="flex px-2 py-1 text-xs font-semibold text-gray-600 hover:text-indigo-600 underline cursor-pointer rounded-md">Details <ArrowRight class="w-4 h-4 ml-1" /></button>
 
       </div>
 
@@ -71,19 +79,44 @@
     </div>
     </section>
   </div>
+
+  <dialog ref="dialog" class="shadow-2xl bg-white">
+    <ProductDetailCopmonent 
+      v-if="activeProduct" 
+      :product="activeProduct"
+      @close="closeDialog"
+      @edit="handleEdit"
+      @delete="handleDelete"
+    />
+  </dialog>
+
+  <!-- Add/Edit Product Dialog -->
+  <dialog ref="addDialog" class="shadow-2xl bg-white">
+    <AddProductComponent 
+      v-if="isAddDialogOpen" 
+      :product="editingProduct"
+      @close="closeAddDialog"
+      @submit="handleProductAdded"
+    />
+  </dialog>
 </template>
 
 
 
 <script setup lang="ts" >
-import  AddMenuItemDialog from '@/components/admin/AddMenuItemDialog.vue';
 import type { ProductProps } from '@/types';
 import { onMounted, ref } from 'vue';
 import { formatPrice } from '../../../utils';
 import { ArrowRight } from 'lucide-vue-next';
+import ProductDetailCopmonent from '@/components/admin/menu-items/productDetailCopmonent.vue';
+import AddProductComponent from '@/components/admin/menu-items/AddProductComponent.vue';
+import { useAuthStore } from '@/stores/auth';
 // 1. Configuration
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 const productsURL = `${baseURL}/menu/menu-fetch`;
+
+const useAuth = useAuthStore();
+const token = useAuth.token;
 
 // 2. Data State
 const products = ref<ProductProps[]>([]); // Holds the API data
@@ -97,6 +130,98 @@ const error = ref<string | null>(null);
   Drinks: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   Sides: "bg-purple-500/10 text-purple-500 border-purple-500/20",
 }
+
+const activeProduct = ref<ProductProps | null>(null);
+const dialog = ref<HTMLDialogElement | null>(null);
+
+// Add Product Dialog State
+const addDialog = ref<HTMLDialogElement | null>(null);
+const isAddDialogOpen = ref(false);
+const editingProduct = ref<ProductProps | undefined>(undefined);
+
+// 3. Dialog Functions
+const openDialog = (product: ProductProps) => {
+  activeProduct.value = product;
+  if (dialog.value && activeProduct.value) {
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+    dialog.value.showModal();
+  }
+};
+
+const closeDialog = () => {
+  if (dialog.value) {
+    // Restore background scrolling
+    document.body.style.overflow = 'auto';
+    dialog.value.close();
+  }
+};
+
+// Add Product Dialog Functions
+const openAddDialog = () => {
+  editingProduct.value = undefined; // Clear editing product for new product
+  isAddDialogOpen.value = true;
+  if (addDialog.value) {
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+    addDialog.value.showModal();
+  }
+};
+
+const closeAddDialog = () => {
+  if (addDialog.value) {
+    // Restore background scrolling
+    document.body.style.overflow = 'auto';
+    addDialog.value.close();
+    isAddDialogOpen.value = false;
+    editingProduct.value = undefined; // Clear editing product when closing
+  }
+};
+
+const handleProductAdded = async () => {
+  // Refresh the product list after adding a new product
+  await fetchProducts();
+  closeAddDialog();
+};
+
+// Handle Edit Product - Reuses AddProductComponent
+const handleEdit = (product: ProductProps) => {
+  console.log('Edit product:', product);
+  closeDialog(); // Close detail dialog first
+  
+  // Open add dialog in edit mode
+  editingProduct.value = product;
+  isAddDialogOpen.value = true;
+  if (addDialog.value) {
+    document.body.style.overflow = 'hidden';
+    addDialog.value.showModal();
+  }
+};
+
+// Handle Delete Product
+const handleDelete = async (productId: string) => {
+  try {
+    const response = await fetch(`${baseURL}/menu/delete-menu-item/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete product');
+    }
+
+    // Refresh products list
+    await fetchProducts();
+    closeDialog();
+    alert('Product deleted successfully!');
+  } catch (err) {
+    console.error('Error deleting product:', err);
+    alert('Failed to delete product');
+  }
+};
+
 
 // 4. Fetch Function (Async)
 const fetchProducts = async () => {
@@ -133,3 +258,63 @@ onMounted(() => {
   fetchProducts();
 });
 </script>
+
+<style scoped>
+/* Dialog Positioning and Scrollability */
+dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  border: none;
+  border-radius: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Wider on larger screens for desktop layout */
+@media (min-width: 768px) {
+  dialog {
+    width: 95%;
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 1024px) {
+  dialog {
+    max-width: 1000px;
+  }
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* Custom Scrollbar for Dialog */
+.custom-scrollbar::-webkit-scrollbar,
+dialog::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track,
+dialog::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb,
+dialog::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+dialog::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+</style>
