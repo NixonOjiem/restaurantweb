@@ -1,6 +1,7 @@
 const Order = require("../models/Order.model");
 const Cart = require("../models/Cart.model");
 const Menu = require("../models/Menu.model");
+const User = require("../models/User.model");
 // const mpesaService = require('../services/mpesaService'); // We will build this later
 
 exports.initiateCheckout = async (req, res) => {
@@ -114,7 +115,7 @@ exports.getUserOrders = async (req, res) => {
 };
 
 // @desc    Get all orders (Admin only)
-// @route   GET /restaurant/orders/admin/all
+// @route   GET /restaurant/v1/orders/admin-orders
 // @access  Private/Admin
 exports.getAllOrders = async (req, res) => {
   try {
@@ -179,6 +180,133 @@ exports.updateOrderStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("Update Status Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server Error", error: error.message });
+  }
+};
+
+// @desc    Get Dashboard Stats
+// @route   GET /restaurant/v1/orders/dashboard-stats
+// @access  Private/Admin
+exports.getDashboardStats = async (req, res) => {
+  try {
+    const now = new Date();
+    const queryDate = req.query.date ? new Date(req.query.date) : now;
+
+    const startOfMonth = new Date(
+      queryDate.getFullYear(),
+      queryDate.getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      queryDate.getFullYear(),
+      queryDate.getMonth() + 1,
+      0,
+      23,
+      59,
+      59
+    );
+
+    const [userCount, menuCount, orderStats, popularItems, dailyRevenue] =
+      await Promise.all([
+        // A. Total Users
+        User.countDocuments({ role: "user" }),
+
+        // B. Available Menu Items
+        Menu.countDocuments({}),
+
+        // C. Order Statuses
+        Order.aggregate([
+          { $match: { createdAt: { $gte: startOfMonth, $lte: endOfMonth } } },
+          {
+            $facet: {
+              byOrderStatus: [
+                { $group: { _id: "$orderStatus", count: { $sum: 1 } } },
+              ],
+              byPaymentStatus: [
+                { $group: { _id: "$paymentInfo.status", count: { $sum: 1 } } },
+              ],
+              revenue: [
+                { $match: { "paymentInfo.status": "COMPLETED" } },
+                { $group: { _id: null, total: { $sum: "$totalAmount" } } },
+              ],
+            },
+          },
+        ]),
+
+        // D. Popular Dishes (UPDATED WITH LOOKUP)
+        Order.aggregate([
+          { $unwind: "$items" },
+          // 1. Join with the 'menus' collection to get the real title
+          {
+            $lookup: {
+              from: "menus", // This must match your MongoDB collection name (usually lowercase plural of model)
+              localField: "items.product",
+              foreignField: "_id",
+              as: "menuItem",
+            },
+          },
+          // 2. Unwind the looked-up array (since lookup returns an array)
+          { $unwind: "$menuItem" },
+          // 3. Group by the Title from the MENU collection, not the Order
+          {
+            $group: {
+              _id: "$menuItem.title",
+              count: { $sum: "$items.quantity" },
+              revenue: {
+                $sum: { $multiply: ["$items.price", "$items.quantity"] },
+              },
+            },
+          },
+          { $sort: { count: -1 } },
+          { $limit: 4 },
+        ]),
+
+        // E. Daily Sales
+        Order.aggregate([
+          {
+            $match: {
+              createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+              "paymentInfo.status": "COMPLETED",
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+              },
+              dailyTotal: { $sum: "$totalAmount" },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ]),
+      ]);
+
+    const stats = orderStats[0];
+    const formatCounts = (arr) =>
+      arr.reduce((acc, curr) => ({ ...acc, [curr._id]: curr.count }), {});
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totals: {
+          users: userCount,
+          menuItems: menuCount,
+          revenue: stats.revenue[0]?.total || 0,
+          orders: stats.byOrderStatus.reduce(
+            (acc, curr) => acc + curr.count,
+            0
+          ),
+        },
+        orderStatus: formatCounts(stats.byOrderStatus),
+        paymentStatus: formatCounts(stats.byPaymentStatus),
+        popularItems,
+        dailyRevenue,
+      },
+    });
+  } catch (error) {
+    console.error("Dashboard Stats Error:", error);
     res
       .status(500)
       .json({ success: false, message: "Server Error", error: error.message });

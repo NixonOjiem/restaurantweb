@@ -3,7 +3,7 @@ const ErrorResponse = require("../config/errorHandler");
 
 /**
  * @desc    Get current user profile (The 'Me' route)
- * @route   GET /restaurant/v1/user/me
+ * @route   GET /restaurant/v1/profile/me
  * @access  Private
  */
 exports.getMe = async (req, res, next) => {
@@ -36,7 +36,7 @@ exports.getMe = async (req, res, next) => {
 
 /**
  * @desc    Update user details (name, email, role)
- * @route   PUT /restaurant/v1/user/updatedetails
+ * @route   PUT /restaurant/v1/profile/updatedetails
  * @access  Private
  */
 exports.updateDetails = async (req, res, next) => {
@@ -80,7 +80,7 @@ exports.updateDetails = async (req, res, next) => {
 
 /**
  * @desc    Update user password
- * @route   PUT /restaurant/v1/user/updatepassword
+ * @route   PUT /restaurant/v1/profile/updatepassword
  * @access  Private
  */
 exports.updatePassword = async (req, res, next) => {
@@ -132,7 +132,7 @@ exports.updatePassword = async (req, res, next) => {
 
 /**
  * @desc    Soft delete user (Set deletedAt field)
- * @route   DELETE /restaurant/v1/user/:id
+ * @route   DELETE /restaurant/v1/profile/:id
  * @access  Private (Admin or Owner)
  */
 exports.deleteUser = async (req, res, next) => {
@@ -154,6 +154,134 @@ exports.deleteUser = async (req, res, next) => {
       success: true,
       data: {}, // Conventionally send an empty data object on delete
       message: "User account successfully deactivated.",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Get all users with pagination
+ * @route   GET /restaurant/v1/profile/admin-all
+ * @access  Private (Admin)
+ */
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const startIndex = (page - 1) * limit;
+
+    // Filter out soft-deleted users if you want, or remove this line to see everyone
+    const query = { deletedAt: null };
+
+    const total = await User.countDocuments(query);
+
+    const users = await User.find(query)
+      .select("-password") // Exclude passwords
+      .sort({ createdAt: -1 }) // Newest first
+      .skip(startIndex)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      pagination: {
+        page,
+        totalPages: Math.ceil(total / limit),
+        totalUsers: total,
+      },
+      data: users,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Delete a specific user (Admin)
+ * @route   DELETE /restaurant/v1/profile/admin-delete/:id
+ * @access  Private (Admin)
+ */
+exports.deleteUserById = async (req, res, next) => {
+  try {
+    // Prevent deleting yourself
+    if (req.params.id === req.user.id) {
+      const error = new Error(
+        "You cannot delete your own admin account from here."
+      );
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { deletedAt: Date.now() }, // Soft delete
+      { new: true }
+    );
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+      data: {},
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Update user role (Promote/Demote)
+ * @route   PUT /restaurant/v1/profile/admin-role/:id
+ * @access  Private (Admin)
+ */
+exports.updateUserRole = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    const userIdToUpdate = req.params.id;
+
+    // 1. Validation
+    if (!["user", "admin"].includes(role)) {
+      const error = new Error("Invalid role. Must be 'user' or 'admin'.");
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    // 2. Prevent self-demotion (Safety lock)
+    if (userIdToUpdate === req.user.id) {
+      const error = new Error(
+        "You cannot change your own role. Ask another admin."
+      );
+      error.statusCode = 400;
+      return next(error);
+    }
+
+    // 3. Update User
+    const user = await User.findByIdAndUpdate(
+      userIdToUpdate,
+      { role: role },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `User role updated to ${role}`,
+      data: {
+        id: user._id,
+        userName: user.userName,
+        role: user.role,
+      },
     });
   } catch (err) {
     next(err);

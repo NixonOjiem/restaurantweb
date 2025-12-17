@@ -5,6 +5,7 @@ const {
   getUserOrders,
   getAllOrders,
   updateOrderStatus,
+  getDashboardStats,
 } = require("../controllers/order.controller");
 const { admin } = require("../middleware/admin.middleware");
 const { protect } = require("../middleware/auth.middleware"); // Ensure user is logged in
@@ -23,5 +24,8 @@ router.get("/admin-orders", protect, admin, getAllOrders);
 
 // Update Status (e.g., mark as DELIVERED)
 router.put("/admin-orders/:id/status", protect, admin, updateOrderStatus);
+
+//Get Admin Stats
+router.get("/dashboard-stats", protect, admin, getDashboardStats);
 
 module.exports = router;
