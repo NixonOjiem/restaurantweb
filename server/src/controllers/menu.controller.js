@@ -1,5 +1,5 @@
 const Menu = require("../models/Menu.model");
-
+const { imagekit } = require("../utils/imagekit");
 /**
  * @desc    Create a new menu item
  * @route   POST /restaurant/v1/menu/add-menu-item
@@ -7,22 +7,39 @@ const Menu = require("../models/Menu.model");
  */
 exports.postToMenuItems = async (req, res, next) => {
   try {
-    // 1. Create the menu item
-    // The slug will be automatically created by your pre('save') hook in the model
-    const menuItem = await Menu.create(req.body);
+    let imageUrl = "";
 
-    res.status(201).json({
-      success: true,
-      data: menuItem,
-    });
-  } catch (err) {
-    // Check for duplicate key error (E11000) for title or slug
-    if (err.code === 11000) {
-      const field = Object.keys(err.keyValue)[0];
-      const error = new Error(`A menu item with that ${field} already exists.`);
-      error.statusCode = 400;
-      return next(error);
+    // 1. Upload the file to ImageKit (if a file was sent)
+    if (req.files && req.files.length > 0) {
+      const file = req.files[0];
+      const result = await imagekit.upload({
+        file: file.buffer, // The file data
+        fileName: `menu-${Date.now()}-${file.originalname}`,
+        folder: "/menu-pic",
+      });
+      imageUrl = result.url;
     }
+
+    // 2. Parse the stringified JSON fields coming from Frontend
+    const ingredients = req.body.ingredients
+      ? JSON.parse(req.body.ingredients)
+      : [];
+    const dietaryInfo = req.body.dietaryInfo
+      ? JSON.parse(req.body.dietaryInfo)
+      : [];
+    const badge = req.body.badge ? JSON.parse(req.body.badge) : [];
+
+    // 3. Save to MongoDB
+    const menuItem = await Menu.create({
+      ...req.body,
+      image: imageUrl, // Save the ImageKit URL, not the file itself
+      ingredients,
+      dietaryInfo,
+      badge,
+    });
+
+    res.status(201).json({ success: true, data: menuItem });
+  } catch (err) {
     next(err);
   }
 };
