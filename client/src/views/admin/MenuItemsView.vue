@@ -113,6 +113,7 @@ import { ArrowRight } from 'lucide-vue-next';
 import ProductDetailCopmonent from '@/components/admin/menu-items/productDetailCopmonent.vue';
 import AddProductComponent from '@/components/admin/menu-items/AddProductComponent.vue';
 import { useAuthStore } from '@/stores/auth';
+
 // 1. Configuration
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 const productsURL = `${baseURL}/menu/menu-fetch`;
@@ -258,7 +259,7 @@ const fetchProducts = async () => {
     const result = await response.json();
 
     // INTERCEPT: Transform the image paths before saving to state
-    const transformedData = result.data.map((item: any) => ({
+    const transformedData = result.data.map((item: ProductProps) => ({
       ...item,
       // Overwrite the local path with the ImageKit URL
       image: getOptimizedImageUrl(item.image)

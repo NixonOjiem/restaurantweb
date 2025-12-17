@@ -52,7 +52,8 @@
                 </td>
 
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <select :value="order.orderStatus" @change="updateStatus(order._id, $event.target.value)"
+                  <select :value="order.orderStatus"
+                    @change="updateStatus(order._id, ($event.target as HTMLSelectElement).value)"
                     class="text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 py-1"
                     :class="{
                       'text-green-600 font-bold': order.orderStatus === 'DELIVERED',
@@ -105,7 +106,7 @@
 
                     <div class="bg-white p-4 rounded border border-gray-200">
                       <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">Items Ordered ({{ order.items?.length
-                      }})</h3>
+                        }})</h3>
                       <ul class="divide-y divide-gray-100">
                         <li v-for="item in order.items" :key="item._id" class="py-2 flex items-center gap-3">
 
@@ -144,21 +145,43 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import axios from 'axios';
+import type {
+  BackendOrder,
+  // OrderItem,
+  // DeliveryAddress,
+  // PaymentInfo,
+} from '@/types';
 
-// --- Types ---
-interface Order {
-  _id: string;
-  user: { _id: string; email: string };
-  totalAmount: number;
-  orderStatus: string;
-  createdAt: string;
-  items: any[];
-  deliveryAddress: any;
-  paymentInfo: any;
+// --- Extended Type for Admin View ---
+// We use Omit to remove the 'user' string field and replace it with the Object structure
+// that the Admin API returns (since it likely populates the user).
+interface AdminOrder extends Omit<BackendOrder, 'user'> {
+  user: {
+    _id: string;
+    email: string;
+  } | null;
 }
 
+// --- API Response Wrapper ---
+interface AdminOrdersResponse {
+  success: boolean;
+  orders: AdminOrder[];
+}
+
+// // --- Types ---
+// interface Order {
+//   _id: string;
+//   user: { _id: string; email: string };
+//   totalAmount: number;
+//   orderStatus: string;
+//   createdAt: string;
+//   items: any[];
+//   deliveryAddress: any;
+//   paymentInfo: any;
+// }
+
 // --- State ---
-const orders = ref<Order[]>([]);
+const orders = ref<AdminOrder[]>([]);
 const loading = ref(false);
 const error = ref('');
 const expandedRows = ref(new Set<string>());
@@ -191,13 +214,15 @@ const loadOrders = async () => {
   loading.value = true;
   error.value = '';
   try {
-    const response = await axios.get(`${apiUrl}/orders/admin-orders`, {
+    // We explicitly type the axios response here
+    const response = await axios.get<AdminOrdersResponse>(`${apiUrl}/orders/admin-orders`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     });
+
     if (response.data.success) {
       orders.value = response.data.orders;
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Fetch error:', err);
     error.value = 'Failed to load orders.';
   } finally {
@@ -207,7 +232,7 @@ const loadOrders = async () => {
 
 const updateStatus = async (orderId: string, newStatus: string) => {
   try {
-    const response = await axios.put(
+    const response = await axios.put<{ success: boolean }>(
       `${apiUrl}/orders/admin-orders/${orderId}/status`,
       { status: newStatus },
       { headers: { Authorization: `Bearer ${authStore.token}` } }
@@ -217,8 +242,10 @@ const updateStatus = async (orderId: string, newStatus: string) => {
       const order = orders.value.find(o => o._id === orderId);
       if (order) order.orderStatus = newStatus;
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     alert('Failed to update status');
+    console.log(err);
+    // Reload to ensure UI matches server state
     loadOrders();
   }
 };
