@@ -7,7 +7,7 @@
 
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 relative z-10">
       <div class="space-y-1">
-        <h1 class="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 to-slate-500 bg-clip-text text-transparent">
+        <h1 class="text-4xl font-extrabold tracking-tight bg-linear-to-r from-slate-900 to-slate-500 bg-clip-text text-transparent">
           Dashboard Analytics
         </h1>
         <p class="text-slate-500 font-medium flex items-center gap-2">
@@ -17,7 +17,7 @@
       </div>
 
       <div class="relative group">
-        <div class="absolute -inset-0.5 bg-gradient-to-r from-orange-400 to-rose-400 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+        <div class="absolute -inset-0.5 bg-linear-to-r from-orange-400 to-rose-400 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
         <input
           type="month"
           v-model="selectedDate"
@@ -38,7 +38,7 @@
     <div v-else class="grid grid-cols-12 gap-6 animate-slide-up">
 
       <div class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="md:col-span-2 bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+        <div class="md:col-span-2 bg-linear-to-br from-slate-900 to-slate-800 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
           <div class="relative z-10">
             <p class="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Total Revenue</p>
             <h3 class="text-5xl font-black text-white mt-4 tracking-tighter">
@@ -61,7 +61,7 @@
       </div>
 
       <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
-        <div class="flex-1 bg-white/70 backdrop-blur-md p-6 rounded-[2rem] border border-white shadow-sm flex items-center gap-5">
+        <div class="flex-1 bg-white/70 backdrop-blur-md p-6 rounded-4xl border border-white shadow-sm flex items-center gap-5">
           <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center">
              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
           </div>
@@ -71,7 +71,7 @@
           </div>
         </div>
 
-        <div class="flex-1 bg-white/70 backdrop-blur-md p-6 rounded-[2rem] border border-white shadow-sm flex items-center gap-5">
+        <div class="flex-1 bg-white/70 backdrop-blur-md p-6 rounded-4xl border border-white shadow-sm flex items-center gap-5">
           <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
           </div>
@@ -263,9 +263,9 @@ const pieOptions: ChartOptions<'doughnut'> = {
 const formatCurrency = (val: number) =>
   new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(val);
 
-const formatMonth = (val: string) => {
+const formatMonth = (val: string | number | undefined) => {
   if (!val) return '';
-  const [y, m] = val.split('-');
+  const [y, m] = String(val).split('-');
   return new Date(parseInt(y), parseInt(m) - 1).toLocaleString('default', { month: 'long', year: 'numeric' });
 };
 

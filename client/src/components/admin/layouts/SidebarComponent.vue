@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="h-screen py-5 px-5 sticky top-0 flex flex-col transition-all duration-500 ease-in-out z-999"
+    class="h-screen bg-slate-50/50 py-5 px-5 sticky top-0 flex flex-col transition-all duration-500 ease-in-out z-999"
     :class="isCollapsed ? 'w-[115px]' : 'w-80'"
   >
     <div class="h-full flex flex-col bg-[#05050a] border border-white/8 rounded-4xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] overflow-hidden relative">
