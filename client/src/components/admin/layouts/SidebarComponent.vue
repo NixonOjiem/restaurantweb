@@ -1,99 +1,107 @@
 <template>
-  <aside class=" h-screen py-6 px-6 sticky top-0 flex flex-col transition-all duration-300 ease-in-out z-99999"
-    :class="isCollapsed ? 'w-[110px]' : 'w-72'">
-    <div
-      class="h-full flex flex-col p-2 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
+  <aside
+    class="h-screen py-5 px-5 sticky top-0 flex flex-col transition-all duration-500 ease-in-out z-999"
+    :class="isCollapsed ? 'w-[115px]' : 'w-80'"
+  >
+    <div class="h-full flex flex-col bg-[#05050a] border border-white/8 rounded-4xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] overflow-hidden relative">
 
-      <div class="absolute top-0 left-0 w-full h-32 bg-indigo-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -top-20 -right-20 w-64 h-64 bg-indigo-600/20 blur-[100px] pointer-events-none"></div>
 
-      <!-- Sidenav Header -->
-      <div class="flex items-center  w-full  z-10" :class="isCollapsed ? 'justify-center' : 'justify-between'">
-        <div v-if="!isCollapsed" class="flex items-center gap-3 overflow-hidden">
-          <img :src="logoSvg" alt="Cuisine Elegante Logo" class="w-8 h-8 object-contain" />
-          <span class="font-bold text-xl text-indigo-400 tracking-wide whitespace-nowrap">
-            Admin
-          </span>
+      <div class="p-8 flex items-center gap-4 transition-all duration-500" :class="isCollapsed ? 'justify-center' : ''">
+        <div class="relative shrink-0">
+          <div class="absolute -inset-2 bg-indigo-500/20 blur-lg rounded-full animate-pulse"></div>
+          <img :src="logoSvg" alt="Logo" class="w-9 h-9 relative z-10 brightness-0 invert" />
         </div>
 
-        <button @click="toggleSidebar"
-          class="p-2 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors">
-          <svg class="w-5 h-5 transition-transform duration-300" :class="isCollapsed ? 'rotate-180' : ''" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-          </svg>
-        </button>
+        <div v-if="!isCollapsed" class="overflow-hidden whitespace-nowrap">
+          <h1 class="text-white font-bold tracking-[0.15em] text-base uppercase leading-none">Cuisine</h1>
+          <div class="h-0.5 w-8 bg-indigo-500 mt-2"></div>
+        </div>
       </div>
 
-      <!-- Navlinks -->
-      <nav class="flex-1 my-6 space-y-2 overflow-y-auto z-10 custom-scrollbar">
-        <div v-for="(category, index) in menuStructure" :key="index" class="mb-6">
-
-          <p v-if="!isCollapsed && category.label"
-            class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2 transition-opacity duration-300">
+      <nav class="flex-1 px-4 py-2 space-y-10 overflow-y-auto no-scrollbar z-10">
+        <div v-for="(category, index) in menuStructure" :key="index">
+          <p v-if="!isCollapsed" class="px-4 text-[10px] font-black text-indigo-500/50 uppercase tracking-[0.4em] mb-6">
             {{ category.label }}
           </p>
-          <hr v-else class="mb-3 border-slate-700" />
-          <ul>
+          <div v-else class="h-px w-full bg-white/5 mb-6"></div>
+
+          <ul class="space-y-2">
             <li v-for="item in category.items" :key="item.name">
               <router-link :to="item.url"
-                class="relative flex  items-center p-2 rounded-xl transition-all duration-300 group overflow-hidden text-slate-400 hover:bg-white/5 hover:text-indigo-300"
-                active-class="bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 hover:bg-red-600">
-                <component :is="item.icon"
-                  class="w-6 h-6 shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                class="group relative flex items-center py-3.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white"
+                :class="isCollapsed ? 'justify-center px-0' : 'px-4'"
+                active-class="nav-active"
+              >
+                <div class="absolute inset-0 bg-indigo-600 rounded-xl opacity-0 group-[.nav-active]:opacity-100 shadow-[0_10px_25px_rgba(79,70,229,0.4)] transition-all duration-300"
+                     :class="isCollapsed ? 'w-12 mx-auto' : 'w-full'"></div>
 
-                <span class="ml-3 font-medium whitespace-nowrap transition-all duration-300"
-                  :class="isCollapsed ? 'opacity-0 w-0 translate-x-10' : 'opacity-100 w-auto translate-x-0'">
+                <component :is="item.icon"
+                  class="w-5 h-5 z-10 shrink-0 transition-transform duration-300 group-hover:scale-110 group-[.nav-active]:text-white"
+                />
+
+                <span v-if="!isCollapsed" class="ml-4 text-[13px] font-semibold tracking-wide z-10 transition-all duration-500">
                   {{ item.name }}
                 </span>
               </router-link>
             </li>
           </ul>
-
-
-
         </div>
       </nav>
 
-      <!-- User Footer -->
-      <div class=" border-t pt-4 flex border-white/5 z-10" :class="isCollapsed ? 'justify-center' : ''">
-        <div class="flex gap-2">
+      <div class="mt-auto p-4 border-t border-white/5 z-10">
+        <button @click="toggleSidebar"
+          class="w-full mb-4 py-3 flex items-center justify-center rounded-xl bg-white/3 hover:bg-white/8 border border-white/5 transition-all text-slate-400 hover:text-white group">
+          <svg class="w-5 h-5 transition-transform duration-500" :class="isCollapsed ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+          <span v-if="!isCollapsed" class="ml-3 text-[11px] font-bold uppercase tracking-[0.2em]">Collapse</span>
+        </button>
 
-          <img src="https://i.pravatar.cc/150?img=33" alt="User"
-            class="w-10 h-10 rounded-full border-2 border-slate-700 group-hover:border-indigo-500 transition-colors">
-          <div class="overflow-hidden transition-all duration-300"
-            :class="isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'">
-            <p class="text-sm font-semibold text-white truncate">{{ user }}</p>
-            <p class="text-xs text-slate-500 truncate">Admin</p>
+        <div class="group/profile relative flex items-center gap-3 p-2 rounded-2xl bg-indigo-600/5 border border-indigo-500/10 cursor-pointer transition-all duration-500 hover:bg-indigo-600/10 hover:border-indigo-500/30 hover:-translate-y-1 hover:shadow-[0_10px_20px_-5px_rgba(79,70,229,0.2)]"
+             :class="isCollapsed ? 'justify-center' : ''">
+
+          <div class="relative shrink-0">
+            <img src="https://i.pravatar.cc/150?img=33" class="w-9 h-9 rounded-lg object-cover ring-2 ring-indigo-500/20 group-hover/profile:ring-indigo-500 transition-all duration-500" />
+            <div class="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#05050a]"></div>
           </div>
 
-          <log-out v-if="!isCollapsed" class=" w-10 text-red-500" />
+          <div v-if="!isCollapsed" class="flex flex-col min-w-0">
+            <span class="text-white text-xs font-bold truncate group-hover/profile:text-indigo-200 transition-colors">{{ userName }}</span>
+            <span class="text-indigo-400 text-[9px] font-medium uppercase tracking-tighter">System Admin</span>
+          </div>
+
+          <button v-if="!isCollapsed" @click="handleLogout" class="ml-auto p-1.5 text-slate-500 hover:text-rose-500 transition-all hover:scale-110">
+            <LogOut class="w-4 h-4" />
+          </button>
         </div>
-
       </div>
-
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import logoSvg from '@/assets/Cuisine-Elegante.svg';
-import { ClipboardList, LayoutDashboard, LogOut, Settings, ShoppingCart, Users, UtensilsCrossed } from 'lucide-vue-next';
+import {
+  ClipboardList,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  ShoppingCart,
+  Users,
+  UtensilsCrossed
+} from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
-const useAuth = useAuthStore();
-const user = useAuth.user?.name;
-// console.log("user is :", user?.name);
 
-// --- State ---
 const isCollapsed = ref(false);
+const authStore = useAuthStore();
+const userName = computed(() => authStore.user?.name || 'Admin User');
 
-// --- Configuration ---
 const menuStructure = [
   {
     label: 'Overview',
-    items: [
-      { name: 'Dashboard', icon: LayoutDashboard, url: '/admin/dashboard' },
-    ],
+    items: [{ name: 'Dashboard', icon: LayoutDashboard, url: '/admin/dashboard' }],
   },
   {
     label: 'Management',
@@ -102,41 +110,34 @@ const menuStructure = [
       { name: 'Orders', icon: ClipboardList, url: '/admin/orders' },
       { name: 'Menu Items', icon: UtensilsCrossed, url: '/admin/menu-items' },
       { name: 'Carts', icon: ShoppingCart, url: '/admin/carts' }
-
     ],
   },
   {
     label: 'System',
-    items: [
-      { name: 'Settings', icon: Settings, url: '/admin/settings' },
-    ]
+    items: [{ name: 'Settings', icon: Settings, url: '/admin/settings' }],
   },
 ];
 
-// --- Actions ---
-const toggleSidebar = () => {
-  isCollapsed.value = !isCollapsed.value;
-};
+const toggleSidebar = () => { isCollapsed.value = !isCollapsed.value; };
+const handleLogout = () => { console.log("Logging out..."); };
 </script>
 
 <style scoped>
-/* Custom scrollbar for the nav area
-  Keeps it sleek and hidden until hovered/needed
-*/
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
+.nav-active { color: white !important; }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-.custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+/* Refined Glow for Collapsed vs Expanded */
+.nav-active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: 12px 12px 0 0;
+  z-index: 5;
 }
 </style>
