@@ -36,7 +36,7 @@ const handleResetPassword = async () => {
     router.push('/login');
   } catch (err) {
     alert("Invalid code or password error");
-    console.error(err.response);
+    // console.error(err.response);
     console.error(err);
   } finally {
     isLoading.value = false;
