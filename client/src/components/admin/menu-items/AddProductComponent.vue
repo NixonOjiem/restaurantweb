@@ -12,7 +12,6 @@
     </button>
 
     <form @submit.prevent="handleSubmit" class="flex flex-col lg:flex-row w-full">
-
       <!-- Left Side - Image Upload Section -->
       <div
         class="w-full lg:w-[40%] p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-r border-gray-200 shrink-0">
@@ -286,7 +285,16 @@ const isDragging = ref(false);
 const isSubmitting = ref(false);
 
 // Dietary options
-const dietaryOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Halal', 'Kosher', 'Organic'];
+const dietaryOptions = ["Vegan",
+  "Vegetarian",
+  "Gluten-Free",
+  "Spicy",
+  "Contains Nuts",
+  "Halal",
+  "Dairy-Free",
+  "Nut-Free",
+  "Kosher",
+  "Organic"];
 
 // Initialize form data from product prop if editing
 onMounted(() => {
