@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineOptions, ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia'; // Essential for reactivity

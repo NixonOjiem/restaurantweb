@@ -1,6 +1,8 @@
 const User = require("../models/User.model");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 // Utility function to send JWT token in a response
 const sendTokenResponse = (user, statusCode, res) => {
   // Get token from model method
@@ -209,4 +211,62 @@ exports.googleAuth = async (req, res, next) => {
     error.statusCode = 401;
     next(error);
   }
+};
+
+// @desc    Send Reset OTP Email
+// @route   POST /restaurant/v1/auth/forgotpassword
+exports.forgotPassword = async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user)
+    return res.status(404).json({ success: false, message: "User not found" });
+
+  // Generate 6-digit random number
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Save to DB (ideally hashed, but for simplicity we'll store and expire in 10 mins)
+  user.resetPasswordToken = resetCode;
+  user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+  await user.save();
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password Reset Code",
+      message: `Your password reset code is: ${resetCode}. It expires in 10 minutes.`,
+    });
+    res.status(200).json({ success: true, data: "Email sent" });
+  } catch (err) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+    return res
+      .status(500)
+      .json({ success: false, message: "Email could not be sent" });
+  }
+};
+
+// @desc    Reset password using OTP
+// @route   PUT /restaurant/v1/auth/resetpassword
+exports.resetPassword = async (req, res, next) => {
+  const { email, resetCode, newPassword } = req.body;
+
+  const user = await User.findOne({
+    email,
+    resetPasswordToken: resetCode,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user)
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid or expired code" });
+
+  // Set new password
+  user.password = newPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.status(200).json({ success: true, message: "Password reset successful" });
 };
