@@ -1,17 +1,15 @@
 <template lang="html">
   <div class="sectionOne">
     <div class="image">
-        <img src="/485.jpg" alt="image"></img>
+      <img src="/485.jpg" alt="image" />
     </div>
     <div class="paragraph">
       <h1>HISTORY</h1>
-      <P
-        >ipsum Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nostrum possimus ipsam
+      <P>ipsum Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nostrum possimus ipsam
         voluptatum vel illum laborum, perferendis, odit voluptatibus eveniet officiis officia saepe.
         Tempora nostrum facilis quasi soluta unde similique tempore!
       </P>
-      <P
-        >ipsum Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nostrum possimus ipsam
+      <P>ipsum Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nostrum possimus ipsam
         voluptatum vel illum laborum, perferendis, odit voluptatibus eveniet officiis officia saepe.
         Tempora nostrum facilis quasi soluta unde similique tempore!
       </P>
@@ -27,9 +25,9 @@
   display: flex;
   flex-direction: row;
 }
-.image{
-width: 120%;
+
+.image {
+  width: 120%;
 
 }
-
 </style>
