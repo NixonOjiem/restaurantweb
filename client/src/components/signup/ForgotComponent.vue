@@ -133,5 +133,9 @@ button.forgot-btn:hover {
 }
 </style>
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth';
+const baseUrl = import.meta.env.VITE_BASE_URL;
+const authStore = useAuthStore();
+const updatePasswordUrl = `${baseUrl}/profile/updatepassword`;
 const email = '';
 </script>
