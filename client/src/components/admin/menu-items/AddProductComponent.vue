@@ -12,7 +12,6 @@
     </button>
 
     <form @submit.prevent="handleSubmit" class="flex flex-col lg:flex-row w-full">
-
       <!-- Left Side - Image Upload Section -->
       <div
         class="w-full lg:w-[40%] p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-r border-gray-200 shrink-0">
