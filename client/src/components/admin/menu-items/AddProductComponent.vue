@@ -285,7 +285,16 @@ const isDragging = ref(false);
 const isSubmitting = ref(false);
 
 // Dietary options
-const dietaryOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Nut-Free', 'Halal', 'Kosher', 'Organic'];
+const dietaryOptions = ["Vegan",
+  "Vegetarian",
+  "Gluten-Free",
+  "Spicy",
+  "Contains Nuts",
+  "Halal",
+  "Dairy-Free",
+  "Nut-Free",
+  "Kosher",
+  "Organic"];
 
 // Initialize form data from product prop if editing
 onMounted(() => {
