@@ -5,7 +5,7 @@
       <form>
         <div class="input-email">
           <label>Email Address</label>
-          <input type="email" class="outline-none" placeholder="Enter your email" required>
+          <input type="email" class="outline-none" placeholder="Enter your email" v-model="email" required>
         </div>
 
         <button class="forgot-btn" type="submit">Reset Password</button>
