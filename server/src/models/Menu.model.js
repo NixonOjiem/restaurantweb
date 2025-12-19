@@ -59,6 +59,10 @@ const MenuSchema = new mongoose.Schema(
         "Spicy",
         "Contains Nuts",
         "Halal",
+        "Dairy-Free",
+        "Nut-Free",
+        "Kosher",
+        "Organic",
       ],
       default: [],
     },
@@ -78,7 +82,7 @@ const MenuSchema = new mongoose.Schema(
     },
     badge: {
       type: [String],
-      enum: ["Bestseller", "Light Option", "Chef Choice", "Sweet Tooth"],
+      enum: ["Bestseller", "Light Option", "Chef Choice", "Sweet Tooth", ""],
     },
   },
   {

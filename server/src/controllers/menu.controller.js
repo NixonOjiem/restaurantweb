@@ -72,29 +72,32 @@ exports.fetchFromMenuItems = async (req, res, next) => {
  */
 exports.updateMenuItem = async (req, res, next) => {
   try {
-    // Note: You need to pass the ID in the URL, e.g., /menu-update/656c9...
     const { id } = req.params;
 
-    // 1. Find and Update
-    const menuItem = await Menu.findByIdAndUpdate(id, req.body, {
-      new: true, // Return the updated object, not the old one
-      runValidators: true, // Ensure price isn't negative, category is valid, etc.
+    // Create a copy of the body to manipulate
+    let updateData = { ...req.body };
+
+    // Parse stringified arrays back into real arrays
+    ["ingredients", "dietaryInfo", "badge"].forEach((field) => {
+      if (updateData[field] && typeof updateData[field] === "string") {
+        try {
+          updateData[field] = JSON.parse(updateData[field]);
+        } catch (e) {
+          console.console.log(e);
+        }
+      }
     });
 
-    // 2. Check if item existed
+    const menuItem = await Menu.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
     if (!menuItem) {
-      const error = new Error(`Menu item not found with id of ${id}`);
-      error.statusCode = 404;
-      return next(error);
+      return res.status(404).json({ success: false, message: "Not found" });
     }
 
-    // Optional: If title changed, you might want to regenerate the slug here manually
-    // or use the "Find -> Edit -> Save" pattern instead of findByIdAndUpdate.
-
-    res.status(200).json({
-      success: true,
-      data: menuItem,
-    });
+    res.status(200).json({ success: true, data: menuItem });
   } catch (err) {
     next(err);
   }
