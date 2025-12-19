@@ -13,7 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
+// In a script setup block
+const count = ref(0);
+count.value = "this is a string"; // TS Error: string is not assignable to number
 
 
 type Opt = { value: string | number; label: string } | string | number;
