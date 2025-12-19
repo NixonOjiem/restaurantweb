@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# This will now only trigger the Vue/TSC check in the client folder
 npm run type-check

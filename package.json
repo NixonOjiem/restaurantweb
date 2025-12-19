@@ -11,8 +11,9 @@
   },
   "scripts": {
     "type-check": "npm run type-check --prefix client",
-    "prepare": "husky",
     "lint:server": "npm run lint --prefix server",
-    "check-all": "run-p type-check lint:server"
+    "lint:client": "npm run lint --prefix client",
+    "check-all": "run-p type-check lint:server",
+    "prepare": "husky"
   }
 }
