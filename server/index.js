@@ -11,7 +11,7 @@ const mainRouter = require("./src/routes/index");
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5174",
-  "https://your-frontend-app.com",
+  "https://restaurantprod.netlify.app",
 ];
 const corsOptions = {
   // 1. Define allowed origins
@@ -47,6 +47,10 @@ app.use(express.json());
 
 //4. Test server route
 app.get("/", (req, res) => {
+  res.send("Hello from the restaurant main express server!");
+});
+
+app.get("/restaurant", (req, res) => {
   res.send("Hello from the restaurant main express server!");
 });
 
