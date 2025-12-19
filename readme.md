@@ -62,6 +62,15 @@ JWT_COOKIE_EXPIRE=30d
 
 # OAuth (Optional - if using Google Login)
 GOOGLE_CLIENT_ID=your_google_client_id
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your gmail address
+MAIL_PASSWORD="Your sixteen code password from gmail apps"
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your gmail address
+MAIL_FROM_NAME="Restaurant Web APP"
 ```
 
 # Navigate to the server directory
