@@ -14,8 +14,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-const test = "test";
-console.log(test);
+
 
 type Opt = { value: string | number; label: string } | string | number;
 
