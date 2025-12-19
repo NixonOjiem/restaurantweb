@@ -75,7 +75,7 @@
             <div class="space-y-4">
               <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl">
                 <span class="text-[10px] font-black text-slate-500 uppercase">Managers</span>
-                <span class="text-xs font-black text-purple-700">{{ roleCounts.admin }}</span>
+                <span class="text-xs font-black text-red-700">{{ roleCounts.admin }}</span>
               </div>
               <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl">
                 <span class="text-[10px] font-black text-slate-500 uppercase">Users</span>
@@ -159,10 +159,10 @@
                             @click.stop="toggleDropdown(user._id)"
                             :disabled="user._id === currentUserId"
                             class="w-full sm:w-48 flex items-center justify-between px-6 py-3 rounded-2xl border-2 transition-all text-[10px] font-black uppercase tracking-widest shadow-sm"
-                            :class="user.role === 'admin' ? 'bg-purple-50 border-purple-100 text-purple-700' : 'bg-emerald-50 border-emerald-100 text-emerald-700'"
+                            :class="user.role === 'admin' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-emerald-50 border-emerald-100 text-emerald-700'"
                           >
                             <span class="flex items-center gap-3">
-                              <span class="w-2 h-2 rounded-full" :class="user.role === 'admin' ? 'bg-purple-500' : 'bg-emerald-500'"></span>
+                              <span class="w-2 h-2 rounded-full" :class="user.role === 'admin' ? 'bg-red-500' : 'bg-emerald-500'"></span>
                               {{ user.role === 'admin' ? 'Manager' : 'User' }}
                             </span>
                             <svg v-if="user._id !== currentUserId" class="w-4 h-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -176,7 +176,7 @@
                                   <div><p class="text-xs font-black text-slate-900">User</p><p class="text-[9px] text-slate-500 font-medium uppercase tracking-tight">Regular Access</p></div>
                               </button>
                               <button @click="updateRoleAction(user, 'admin')" class="w-full p-5 hover:bg-slate-50 flex items-center gap-4 transition-colors group/btn text-left">
-                                  <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover/btn:scale-110"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg></div>
+                                  <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center transition-transform group-hover/btn:scale-110"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg></div>
                                   <div><p class="text-xs font-black text-slate-900">Manager</p><p class="text-[9px] text-slate-500 font-medium uppercase tracking-tight">Admin Rights</p></div>
                               </button>
                             </div>
