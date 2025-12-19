@@ -4,13 +4,13 @@
   "description": "This is the server for Restaurant website",
   "license": "ISC",
   "author": "nicksonogm@gmail.com || arnoldqym@gmail.com || threedaniel385@gmail.com ||",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "lint": "eslint . --fix"
+    "lint": "eslint ."
   },
   "keywords": [],
   "dependencies": {
