@@ -265,7 +265,7 @@ const formatCurrency = (val: number) =>
 
 const formatMonth = (val: string | number | undefined) => {
   if (!val) return '';
-  const [y, m] = String(val).split('-');
+  const [y='', m=''] = String(val).split('-');
   return new Date(parseInt(y), parseInt(m) - 1).toLocaleString('default', { month: 'long', year: 'numeric' });
 };
 
