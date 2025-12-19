@@ -5,6 +5,14 @@
     "lucide-vue-next": "^0.556.0"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.21"
+    "@types/leaflet": "^1.9.21",
+    "husky": "^8.0.0",
+    "npm-run-all": "^4.1.5"
+  },
+  "scripts": {
+    "type-check": "npm run type-check --prefix client",
+    "prepare": "husky",
+    "lint:server": "npm run lint --prefix server",
+    "check-all": "run-p type-check lint:server"
   }
 }
