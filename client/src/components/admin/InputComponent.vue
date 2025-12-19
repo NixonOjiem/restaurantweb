@@ -24,7 +24,7 @@ import { computed } from 'vue';
   label?: string;
   modelValue: string | number | null;
   type?: string;
-  error?: any[];
+  error?: string | null;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(["update:modelValue"]);
