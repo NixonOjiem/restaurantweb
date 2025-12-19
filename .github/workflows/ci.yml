@@ -15,16 +15,17 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
 
       - name: Install Dependencies
-        # Installs everything for the CI runner
+        # Using --prefix ensures dependencies are installed in the correct context
+        # without losing the path to the root node_modules.
         run: |
           npm install
-          cd client && npm install
-          cd ../server && npm install
+          npm install --prefix client
+          npm install --prefix server
 
       - name: Run Quality Checks
-        # Triggers your root "check-all" script (Vue types + Server lint)
+        # This triggers the "check-all" from your root package.json
         run: npm run check-all
