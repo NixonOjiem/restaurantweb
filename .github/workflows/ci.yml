@@ -19,13 +19,11 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
-        # Using --prefix ensures dependencies are installed in the correct context
-        # without losing the path to the root node_modules.
         run: |
           npm install
           npm install --prefix client
           npm install --prefix server
 
       - name: Run Quality Checks
-        # This triggers the "check-all" from your root package.json
+        # No extra env variables needed now that config is updated
         run: npm run check-all
