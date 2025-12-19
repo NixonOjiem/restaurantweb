@@ -1,0 +1,30 @@
+name: CI Quality Gate
+
+on:
+  push:
+    branches: [meta, master, main, mini, dashboard]
+  pull_request:
+    branches: [meta, master, main, mini, dashboard]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        # Installs everything for the CI runner
+        run: |
+          npm install
+          cd client && npm install
+          cd ../server && npm install
+
+      - name: Run Quality Checks
+        # Triggers your root "check-all" script (Vue types + Server lint)
+        run: npm run check-all
