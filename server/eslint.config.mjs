@@ -4,11 +4,10 @@ import globals from "globals";
 export default [
   js.configs.recommended,
   {
+    // This tells ESLint how to parse your actual project files
     languageOptions: {
-      ecmaVersion: 2022,
-      // Since this config is for a Node project using CommonJS (require),
-      // we keep the source type as commonjs for the linter to understand your server files.
-      sourceType: "commonjs",
+      ecmaVersion: "latest",
+      sourceType: "commonjs", // Keep this since your server uses require()
       globals: {
         ...globals.node,
       },
@@ -16,6 +15,13 @@ export default [
     rules: {
       "no-unused-vars": "warn",
       "no-undef": "error",
+    },
+  },
+  // ADD THIS SECTION BELOW to specifically handle .mjs files
+  {
+    files: ["**/*.mjs"],
+    languageOptions: {
+      sourceType: "module",
     },
   },
 ];
