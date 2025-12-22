@@ -23,7 +23,7 @@
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expand</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Ref</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cost</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
             </tr>
@@ -106,7 +106,7 @@
 
                     <div class="bg-white p-4 rounded border border-gray-200">
                       <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">Items Ordered ({{ order.items?.length
-                        }})</h3>
+                      }})</h3>
                       <ul class="divide-y divide-gray-100">
                         <li v-for="item in order.items" :key="item._id" class="py-2 flex items-center gap-3">
 
