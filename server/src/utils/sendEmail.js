@@ -9,7 +9,7 @@ const sendEmail = async (options) => {
       pass: process.env.MAIL_PASSWORD,
     },
   });
-
+  // an email messanger client
   const message = {
     from: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_ADDRESS}>`,
     to: options.email,
