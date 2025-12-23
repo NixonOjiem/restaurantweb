@@ -79,7 +79,6 @@ interface PaymentInfo {
 
 interface OrderItem {
   _id: string
-  // product can be a string ID OR an object with a title now
   product: string | { title: string }
   quantity: number
   price: number

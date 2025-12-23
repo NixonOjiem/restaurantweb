@@ -1,0 +1,29 @@
+name: CI Quality Gate
+
+on:
+  push:
+    branches: [meta, master, main, mini, dashboard]
+  pull_request:
+    branches: [meta, master, main, mini, dashboard]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          npm install --prefix client
+          npm install --prefix server
+
+      - name: Run Quality Checks
+        # No extra env variables needed now that config is updated
+        run: npm run check-all

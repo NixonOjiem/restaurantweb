@@ -9,10 +9,11 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide an email"],
     unique: true,
     match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
       "Please provide a valid email",
     ],
   },
+  // user fullname in string
   fullName: {
     type: String,
     required: [true, "Please provide an email"],
@@ -50,6 +51,8 @@ const UserSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     trim: true,
   },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
   createdAt: {
     type: Date,
     default: Date.now,
